@@ -44,17 +44,17 @@ player = {
 art = {
     "success": r"""
 ----------------------------------------------------------------------------------
- _______  __   __  _______  _______  _______  _______  _______ 
+ _______  __   __  _______  _______  _______ _________ ________ 
 |       ||  | |  ||       ||       ||       ||       ||       |
-|  _____||  | |  ||       ||       ||    ___||  _____||  _____|
-| |_____ |  |_|  ||       ||       |   |___ | |_____ | |_____ |
-|_____  ||       ||     __||    ___||    ___||_____  ||_____  |
- _____| ||       ||   | __ |   |___ |   |___  _____| | _____| |
+|  _____||  | |  ||       ||       ||   ____||  _____||  _____|
+| |_____ |  |_|  ||       ||       |   |____ | |_____ | |_____ 
+|_____  ||       ||    ___||    ___||   ____||_____  ||_____  |
+ _____| ||       ||   |___ |   |___ |  |____  _____| | _____| |
 |_______||_______||_______||_______||_______||_______||_______|
 
 
                                      \ o /   Hooray!
-                                      | |    (We did it!)
+                                      | |    We did it!
                                      /   \    
                                    .-------. 
                                   /         \
@@ -72,7 +72,7 @@ art = {
 |    ___||  |_|  ||   ||   |    |    ___||  _    | 
 |   |___ |       ||   ||   |    |   |___ | | |   | 
 |    ___||       ||   ||   |___ |    ___|| |_|   | 
-|   |    |   _   ||   ||_______||   |___ |       | 
+|   |    |   _   ||   ||       ||   |___ |       | 
 |___|    |__| |__||___||_______||_______||______|  
 
 
@@ -219,7 +219,7 @@ def gameLoop():
         print("What do you want to do next?")
 
         # Game continues - Standard state
-        if (player["Energy Level"] >= 0):
+        if (player["Energy Level"] > 0):
             print(" 1. do a homework assignment\n", "2. do a task for work\n", "3. drink coffee\n", "4. take a nap\n", "5. go to sleep\n")
 
         # Success!
@@ -248,8 +248,8 @@ def gameLoop():
             console.print("You complete a homework assignment. It takes about three hours.")
             pause()
         elif pcmd == "1" and (player["Homework Assignments Remaining"] == 0):
-            pause()
             print("\n\nYour homework is already done. Nice job!")
+            pause()
 
             continue
 
@@ -261,8 +261,8 @@ def gameLoop():
             console.print("You complete a work task. It takes about three hours.")
             pause()
         elif pcmd == "2" and (player["Work Tasks Remaining"] == 0):
-            pause()
             print("\n\nYou work tasks are already complete. Nice work!")
+            pause()
 
             continue
 
@@ -388,7 +388,6 @@ def main():
         elif state == "success":
             state = success()
         else:
-            console.print("[red]Unknown room: " + str(state) + "[/]")
             state = "quit"
 
 main() # this is the first thing that happens
