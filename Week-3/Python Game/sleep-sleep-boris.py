@@ -212,23 +212,15 @@ def failWork():
 
 def gameLoop():
     while True:
-        console.print("Energy Remaining: ", player["Energy Level"], " hours")
+        console.print("\n\n\n\nEnergy Remaining: ", player["Energy Level"], " hours")
         console.print("Homework Assignments: ", player["Homework Assignments Remaining"])
         console.print("Work Tasks: ", player["Work Tasks Remaining"])
 
         print("What do you want to do next?")
 
         # Game continues - Standard state
-        if (player["Energy Level"] >= 0) and (player["Homework Assignments Remaining"] > 0) and (player["Work Tasks Remaining"] > 0):
-            print(" do a homework assignment\n", "do a task for work\n", "drink coffee\n", "take a nap\n", "go to sleep\n")
-
-        # Game continues - Homework assignments completed
-        elif (player["Energy Level"] >= 0) and (player["Homework Assignments Remaining"] == 0) and (player["Work Tasks Remaining"] > 0):
-            print(" do a task for work\n", "drink coffee\n", "take a nap\n", "go to sleep\n")
-
-        # Game continues - Work tasks completed
-        elif (player["Energy Level"] >= 0) and (player["Homework Assignments Remaining"] > 0) and (player["Work Tasks Remaining"] == 0):
-            print(" do a homework assignment\n", "drink coffee\n", "take a nap\n", "go to sleep\n")
+        if (player["Energy Level"] >= 0):
+            print(" 1. do a homework assignment\n", "2. do a task for work\n", "3. drink coffee\n", "4. take a nap\n", "5. go to sleep\n")
 
         # Success!
         elif (player["Energy Level"] >= 0) and (player["Homework Assignments Remaining"] == 0) and (player["Work Tasks Remaining"] == 0):
@@ -249,68 +241,77 @@ def gameLoop():
         pcmd = Prompt.ask() # user input
 
         # homework assignment
-        if pcmd == "do a homework assignment":
+        if pcmd == "1" and (player["Homework Assignments Remaining"] > 0):
             player["Energy Level"] -= 3
             player["Homework Assignments Remaining"] -= 1
             player["Turn number"] += 1
             console.print("You complete a homework assignment. It takes about three hours.")
             pause()
+        elif pcmd == "1" and (player["Homework Assignments Remaining"] == 0):
+            pause()
+            print("\n\nYour homework is already done. Nice job!")
 
             continue
 
         # work task
-        if pcmd == "do a task for work":
+        if pcmd == "2" and (player["Work Tasks Remaining"] > 0):
             player["Energy Level"] -= 3
             player["Work Tasks Remaining"] -= 1
             player["Turn number"] += 1
             console.print("You complete a work task. It takes about three hours.")
             pause()
+        elif pcmd == "2" and (player["Work Tasks Remaining"] == 0):
+            pause()
+            print("\n\nYou work tasks are already complete. Nice work!")
 
             continue
 
         # Drink Coffee
-        if pcmd == "drink coffee" and (player["Coffees Drank"] == 0):
+        if pcmd == "3" and (player["Coffees Drank"] == 0):
             player["Energy Level"] += 2
             player["Turn number"] += 1
-            console.print("You drink some coffee. Whew! Feels good.")
+            player["Coffees Drank"] += 1
+            console.print("\n\nYou drink some coffee. Whew! Feels good.")
+            console.print("+2 hours of energy")
             pause()
 
             continue  
 
         # Coffe #2
-        elif pcmd == "drink coffee" and (player["Coffees Drank"] == 1):
+        elif pcmd == "3" and (player["Coffees Drank"] == 1):
             player["Energy Level"] += 1
             player["Turn number"] += 1
-            console.print("You drink some coffee. The second cup doesn't hit as hard...")
+            player["Coffees Drank"] += 1
+            console.print("\n\nYou drink some coffee. The second cup doesn't hit as hard...")
+            console.print("+1 hours of energy")
             pause()
 
             continue  
 
-        elif pcmd == "drink coffee" and (player["Coffees Drank"] == 2):
+        elif pcmd == "3" and (player["Coffees Drank"] == 2):
             player["Energy Level"] += 0
             player["Turn number"] += 1
-            console.print("You drink some coffee. You don't even feel it...")
+            console.print("\n\nYou drink some coffee. You don't even feel it...")
             pause()
 
             continue  
 
         # take a nap - not tired yet
-        if pcmd == "take a nap" and (player["Turn number"] < 3):
-            player["Turn number"] += 1
-            console.print("You're not even tired yet.")
+        if pcmd == "4" and (player["Turn number"] <= 3):
+            console.print("\n\nYou're not tired yet. Maybe wait a few more turns.")
             pause()
 
             continue
 
         # take a nap - roll dice
-        if pcmd == "take a nap" and (player["Turn number"] > 3):
-            console.print("Are you sure you want to take a nap? You're already pretty tired...")
+        elif pcmd == "4" and (player["Turn number"] > 3):
+            console.print("\n\nAre you sure you want to take a nap? It's a bit of a gamble...")
             pcmd = input("y/n: ")
 
-            if pcmd == "N":
+            if pcmd == "n":
                 continue
 
-            if pcmd == "Y":
+            if pcmd == "y":
                 roll = rollDice(0, 12)
 
             if roll > player["Energy Level"] or player["Naps taken"] > 0:
@@ -323,6 +324,7 @@ def gameLoop():
                 player["Naps taken"] += 1
                 player["Turn number"] += 1
                 console.print("You have the perfect nap. You feel refreshed.")
+                console.print("+3 hours of energy")
                 pause()
 
                 continue  
@@ -331,7 +333,7 @@ def gameLoop():
                 
 
         # Go to sleep
-        if pcmd == "go to sleep":
+        if pcmd == "5":
             player["Energy Level"] -= 12
 
             continue  
