@@ -8,7 +8,7 @@ Then while reviewing the folder for this week on github, I found this example: h
 
 This was kind of what I wanted to mess around with but a much, much simpler version. 
 
-It made me want to create susurrations A) because they are pretty, and B) because it's one of the funnest words to say.
+It made me want to create murmuration A) because they are pretty, and B) because it's one of the funnest words to say.
 
 So I gave codex a prompt to be a tutor and used it's instructions to adapt the code to feel more like a susurration and less like a passing flock.
 
