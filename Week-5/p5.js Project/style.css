@@ -1,0 +1,25 @@
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at center, #1a0710 0%, #050207 58%, #000 100%);
+}
+
+canvas {
+  display: block;
+  border: 1px solid #3d0713;
+  border-radius: 4px;
+  box-shadow:
+    0 0 0 7px #070309,
+    0 0 55px rgba(134, 0, 28, 0.28),
+    0 30px 90px rgba(0, 0, 0, 0.9);
+  cursor: crosshair;
+}
