@@ -13,8 +13,8 @@ const LINE_HEIGHT = 35;
 const MARGIN = 100;
 const INTERACTION_RADIUS = 200;
 // Let the flock linger, then gradually trade flocking for a gentle landing.
-const MURMURATION_MS = 7000;
-const HOME_TRANSITION_MS = 9000;
+const MURMURATION_MS = 8500;
+const HOME_TRANSITION_MS = 10500;
 const FLOCK_HOME_WEIGHT = 0.15;
 // Wider awareness and stronger group steering keep the murmuration together.
 const NEIGHBOR_DISTANCE = 120;
