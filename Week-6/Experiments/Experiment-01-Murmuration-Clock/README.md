@@ -21,3 +21,9 @@ Files:
 - `tests/simulation.cjs`: dependency-free headless behavioral checks. Run `node tests/simulation.cjs`. Canvas and font rendering are mocked; these checks do not replace visual browser QA.
 
 Conceptual references: the neighboring nested-loop clock and `Week-5/Flock/let_flock.js`. This experiment uses a fresh implementation. The flocking concepts are separation, alignment, and cohesion; numeral membership supplies an additional time-varying attraction.
+
+## Published version
+
+Live clock: https://pmartin5-gif.github.io/HelloWorld/
+
+GitHub Pages serves the root of the `gh-pages` branch. Its root `index.html`, `style.css`, and `clock.js` match this experiment as published on October 24, 2026. Updating local files or pushing `main` does not update the live clock; publish those three files to `gh-pages` to release changes.
