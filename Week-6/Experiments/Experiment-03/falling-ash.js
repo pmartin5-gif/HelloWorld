@@ -10,7 +10,7 @@
      reposeSlope: Stable mound slope (rise/run); .75 is roughly 37 degrees.
      sloughFraction: Upper fraction released from an overloaded edge.
      gravity: Acceleration of shed ash toward its normal falling speed.
-     surfaceCell: Width of a pile column in CSS pixels.
+     surfaceCell: Spacing of samples along the continuous pile surface.
      margin: Offscreen padding for flake re-entry and horizontal wrapping.
      windWaitMin/Max: Quiet seconds between wind events, in simulation time.
      windDurationMin/Max: Duration of each event, in simulation seconds.
@@ -39,7 +39,7 @@
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   const state = {
     width: 1, height: 1, flakes: [], elapsed: 0, key: '', mask: null,
-    surfaces: [], columns: [], shedCount: 0,
+    surfaces: [], columns: [], dirtySurfaces: new Set(), shedCount: 0,
     wind: null, windWait: rand(8, 16), windCount: 0, windDirection: 1,
     reduced: matchMedia('(prefers-reduced-motion: reduce)').matches
   };
@@ -97,6 +97,7 @@
   // the lower inside edge of a hole in a numeral such as 0, 6, 8, or 9.
   function buildSurfaces() {
     const old = state.surfaces;
+    state.dirtySurfaces.clear();
     state.surfaces = [];
     state.columns = Array.from({ length: Math.ceil(state.width / settings.surfaceCell) }, () => []);
     const mask = state.mask;
@@ -109,7 +110,7 @@
         const solid = row < mask.height && mask.values[row * mask.width + mx] >= .35;
         if (solid && !shelf) {
           shelf = { col, x, y: row * scaleY, bottom: 0, stack: [], depth: 0,
-            cooldown: 0, flowWait: 0, erosion: 0,
+            cooldown: 0, flowWait: 0, erosion: 0, left: null, right: null, sequence: 0,
             glyph: mask.glyphs.reduce((best, g) => !best || Math.abs(x - (g.left + g.right) / 2)
               < Math.abs(x - (best.left + best.right) / 2) ? g : best, null) };
           state.columns[col].push(shelf);
@@ -119,6 +120,23 @@
           shelf = null;
         }
       }
+    }
+    // Connect matching solid runs, not merely shelves within a fixed height
+    // difference. Mutual matches keep the floor of a hole separate from its roof.
+    // Cache this topology only when the clock or viewport changes.
+    const candidates = (surface, direction) => {
+      const column = state.columns[surface.col + direction];
+      if (!column) return null;
+      let best = null;
+      for (const other of column) {
+        if (Math.min(other.bottom, surface.bottom) <= Math.max(other.y, surface.y)) continue;
+        if (!best || Math.abs(other.y - surface.y) < Math.abs(best.y - surface.y)) best = other;
+      }
+      return best;
+    };
+    for (const surface of state.surfaces) {
+      const right = candidates(surface, 1);
+      if (right && candidates(right, -1) === surface) { surface.right = right; right.left = surface; }
     }
     // Reset the entire changed digit, including edges shared by both shapes.
     // Unchanged digits keep their deposits, even if the text shifts sideways.
@@ -150,6 +168,7 @@
       const support = column.find(s => s.glyph.slot !== flake.ignoreGlyph && flake.y + flake.size > s.y && flake.y - flake.size < s.bottom);
       if (support) deposit(flake, support);
     }
+    updatePileGeometry();
   }
   function updateClock() {
     const text = clockText();
@@ -160,20 +179,31 @@
     canvas.setAttribute('aria-label', `Falling ash collecting on the upper edges of ${text}, local time, and occasionally sliding off.`);
   }
   function deposit(flake, surface) {
+    const wasSliding = flake.mode === 'sliding';
+    flake.targetX = undefined;
     flake.mode = 'settled';
     flake.passThrough = false;
     flake.ignoreGlyph = null;
     flake.surface = surface;
-    flake.thickness = Math.max(.55, flake.size * 1.05);
-    flake.x = clamp(flake.x, surface.x - settings.surfaceCell * .48, surface.x + settings.surfaceCell * .48);
-    flake.y = surface.y - surface.depth - flake.size;
+    // A grain adds cross-sectional area / sample width, rather than an entire
+    // grain's height regardless of how much of the strip it actually occupies.
+    flake.thickness = Math.max(.16, flake.size * flake.size * 2.4 / settings.surfaceCell);
+    // Distribute packing positions within the grain's footprint. Repeated
+    // arrivals at a cell boundary must not become a vertical line of grains.
+    const incomingX = clamp(flake.x, surface.x - settings.surfaceCell * .48, surface.x + settings.surfaceCell * .48);
+    const packedX = surface.x + (((surface.sequence++ * .61803398875) % 1) - .5) * settings.surfaceCell * .96;
+    flake.x = wasSliding ? incomingX : clamp(packedX, incomingX - flake.size, incomingX + flake.size);
+    if (!wasSliding && !flake.landing) flake.y = pileHeightAt(surface, incomingX) - flake.size;
+    flake.landing = false;
     flake.restAngle = flake.rotation + state.elapsed * flake.spin;
     flake.restFlutter = .35 + .65 * Math.abs(Math.sin(state.elapsed * .9 + flake.seed));
     flake.vx = 0; flake.vy = 0;
     surface.stack.push(flake);
     surface.depth += flake.thickness;
+    dirtyPile(surface);
   }
   function release(flake, vx, passThrough = false) {
+    flake.targetX = undefined;
     flake.passThrough = passThrough;
     flake.mode = 'falling';
     flake.surface = null;
@@ -181,18 +211,82 @@
     flake.vy = 3;
   }
   function neighbor(surface, direction) {
-    const column = state.columns[surface.col + direction];
-    if (!column) return null;
-    return column.reduce((best, s) => Math.abs(s.y - surface.y) <= settings.surfaceCell * 2 + 2
-      && (!best || Math.abs(s.y - surface.y) < Math.abs(best.y - surface.y)) ? s : best, null);
+    return direction < 0 ? surface.left : surface.right;
+  }
+  function dirtyPile(surface) {
+    state.dirtySurfaces.add(surface);
+    if (surface.left) state.dirtySurfaces.add(surface.left);
+    if (surface.right) state.dirtySurfaces.add(surface.right);
+  }
+  function pileHeightAt(surface, x, bare = false) {
+    const top = surface.y - (bare ? 0 : surface.depth);
+    const next = neighbor(surface, x < surface.x ? -1 : 1);
+    if (!next) return top;
+    const nextTop = next.y - (bare ? 0 : next.depth);
+    // Both sides use exactly the same boundary height. The conservative cap
+    // keeps the interpolated ash above the supporting solid on either side.
+    const edge = Math.min((top + nextTop) * .5, surface.y, next.y);
+    const mix = clamp(Math.abs(x - surface.x) * 2 / settings.surfaceCell, 0, 1);
+    return top + (edge - top) * mix;
+  }
+  function pileSlopeAt(surface, x) {
+    const direction = x < surface.x ? -1 : 1;
+    const next = neighbor(surface, direction);
+    if (!next) return 0;
+    const top = surface.y - surface.depth;
+    const edge = Math.min((top + next.y - next.depth) * .5, surface.y, next.y);
+    return (edge - top) * 2 / (direction * settings.surfaceCell);
+  }
+  function updatePileGeometry(dt = 1 / 60) {
+    // Only strips whose mass or neighboring surface changed need repacking.
+    // Each settled grain keeps its horizontal packing position and layer order.
+    for (const surface of state.dirtySurfaces) {
+      if (!surface.stack.length) { state.dirtySurfaces.delete(surface); continue; }
+      let filled = 0;
+      let moving = false;
+      const topY = surface.y - surface.depth;
+      const left = surface.left, right = surface.right;
+      const leftBase = left ? Math.min(surface.y, left.y) : surface.y;
+      const rightBase = right ? Math.min(surface.y, right.y) : surface.y;
+      const leftTop = left ? Math.min((topY + left.y - left.depth) * .5, leftBase) : topY;
+      const rightTop = right ? Math.min((topY + right.y - right.depth) * .5, rightBase) : topY;
+      const invDepth = 1 / surface.depth;
+      for (const flake of surface.stack) {
+        filled += flake.thickness;
+        if (flake.targetX !== undefined) {
+          const distanceX = flake.targetX - flake.x;
+          flake.x += clamp(distanceX, -flake.creepSpeed * dt, flake.creepSpeed * dt);
+          if (Math.abs(distanceX) > flake.creepSpeed * dt + .001) moving = true;
+          else flake.targetX = undefined;
+        }
+        const mix = Math.min(1, Math.abs(flake.x - surface.x) * 2 / settings.surfaceCell);
+        const onLeft = flake.x < surface.x;
+        const base = surface.y + ((onLeft ? leftBase : rightBase) - surface.y) * mix;
+        const top = topY + ((onLeft ? leftTop : rightTop) - topY) * mix;
+        // Layers follow the same neighboring profile as landing and runoff.
+        const localDepth = Math.max(0, base - top);
+        const targetY = base - localDepth * Math.min(1, filled * invDepth) - flake.size;
+        const distance = targetY - flake.y;
+        // Packing follows a moving pile gradually; changing mass beside a
+        // grain must never teleport it onto a crest or down into a trough.
+        flake.y += clamp(distance, -24 * dt, 24 * dt);
+        if (Math.abs(distance) > 24 * dt + .001) moving = true;
+      }
+      if (!moving) state.dirtySurfaces.delete(surface);
+    }
   }
   function startSlide(surface, direction) {
     const flake = surface.stack.pop();
     surface.depth = Math.max(0, surface.depth - flake.thickness);
+    dirtyPile(surface);
     flake.mode = 'sliding';
+    flake.targetX = undefined;
     flake.surface = surface;
     flake.slideAge = 0;
-    flake.vx = direction * rand(12, 18);
+    const next = neighbor(surface, direction);
+    const drop = next ? Math.max(0, next.y - next.depth - (surface.y - surface.depth)) : flake.size * 2;
+    // Small imbalances creep; steeper failures gain more downhill momentum.
+    flake.vx = direction * clamp(Math.sqrt(2 * settings.gravity * drop) * .35, next ? 3 : 10, next ? 10 : 18);
     flake.vy = 0;
     return flake;
   }
@@ -216,18 +310,16 @@
       flake.vy = vy;
       return;
     }
-    const top = support.y - support.depth;
-    const nextTop = next ? next.y - next.depth : top;
-    const mix = next ? clamp(Math.abs(x - support.x) / settings.surfaceCell, 0, 1) : 0;
-    const floor = top + (nextTop - top) * mix - flake.size;
-    const slope = next ? (nextTop - top) / (next.x - support.x) : 0;
+    const floor = pileHeightAt(support, x) - flake.size;
+    const slope = pileSlopeAt(support, x);
     const acceleration = settings.gravity * slope / (1 + slope * slope)
       - direction * settings.gravity * .16;
     const vx = clamp(flake.vx + acceleration * dt, -90, 90);
     flake.slideAge += dt;
     // Kinetic friction slows a runout on level ground; it never stops at each
     // column. Settling happens only once momentum has actually dissipated.
-    if (floor < flake.y - flake.size * 2) {
+    const oldFloor = pileHeightAt(flake.surface, flake.x) - flake.size;
+    if (support !== flake.surface && floor < oldFloor - flake.size * 2) {
       // An uphill obstruction stops the slide at its foot; depositing on the
       // new column would teleport this grain onto the neighboring pile crest.
       deposit(flake, flake.surface);
@@ -243,7 +335,7 @@
     flake.vy = Math.min(100, flake.vy + settings.gravity * dt);
     const y = flake.y + flake.vy * dt;
     if (y >= floor) {
-      flake.y = floor;
+      flake.y = Math.max(floor, flake.y - 40 * dt);
       flake.vy = Math.max(0, slope * flake.vx);
     } else {
       flake.y = y;
@@ -281,15 +373,35 @@
         const next = neighbor(surface, direction);
         if (!next) continue;
         const drop = next.y - next.depth - top;
-        // Include one grain's thickness and a little cohesion so the slope
-        // does not chatter back and forth as individual flakes settle.
-        const stableDrop = settings.surfaceCell * settings.reposeSlope + grain.thickness + 1.5;
+        // A small hysteresis avoids chatter without silently turning a 37-degree
+        // material into one that supports 52-59-degree steps between samples.
+        const stableDrop = settings.surfaceCell * settings.reposeSlope + Math.min(.3, grain.thickness * .2);
         if (drop > stableDrop && drop > greatestDrop) { downhill = next; greatestDrop = drop; }
       }
       if (downhill) {
-        startSlide(surface, Math.sign(downhill.x - surface.x));
-        surface.flowWait = .06;
-        downhill.flowWait = Math.max(downhill.flowWait, .04);
+        // Bounded local transport: larger imbalances mobilize a few top grains
+        // rather than waiting the same fixed interval for every single grain.
+        const count = Math.min(3, surface.stack.length, Math.max(1, Math.floor(greatestDrop / settings.surfaceCell)));
+        for (let j = 0; j < count; j++) {
+          const excess = downhill.y - downhill.depth - (surface.y - surface.depth);
+          if (excess <= settings.surfaceCell * settings.reposeSlope + .3) break;
+          const flake = surface.stack[surface.stack.length - 1];
+          if (flake.targetX !== undefined) break;
+          // Conservative local area transfer forms the mound. Its visible
+          // grain traverses the shared surface continuously; it is not fired
+          // ballistically from one independent stack to the next.
+          surface.stack.pop();
+          surface.depth = Math.max(0, surface.depth - flake.thickness);
+          flake.surface = downhill;
+          flake.targetX = downhill.x + clamp(flake.x - surface.x, -1.8, 1.8);
+          flake.creepSpeed = clamp(24 + excess * 3, 24, 72);
+          downhill.stack.push(flake);
+          downhill.depth += flake.thickness;
+          dirtyPile(surface);
+          dirtyPile(downhill);
+          downhill.flowWait = Math.max(downhill.flowWait, .08);
+        }
+        surface.flowWait = .025;
       }
     }
   }
@@ -459,6 +571,7 @@
           && surface.depth - surface.stack[surface.stack.length - 1].thickness >= settings.windResidue) {
         const flake = surface.stack.pop();
         surface.depth = Math.max(0, surface.depth - flake.thickness);
+        dirtyPile(surface);
         blowLoose(flake, field, surface.glyph.slot);
         surface.erosion -= 1;
       }
@@ -497,9 +610,24 @@
         const nextY = flake.y + flake.vy * dt / steps;
         const col = Math.floor(nextX / settings.surfaceCell);
         const column = flake.passThrough ? noSurfaces : (state.columns[col] || noSurfaces);
-        const support = column.find(s => s.glyph.slot !== flake.ignoreGlyph && flake.vy >= 0 && oldBottom <= s.y - s.depth + .01
-          && nextY + flake.size >= s.y - s.depth);
+        const support = column.find(s => s.glyph.slot !== flake.ignoreGlyph && flake.vy >= 0
+          && oldBottom <= pileHeightAt(s, flake.x) + .01
+          && nextY + flake.size >= pileHeightAt(s, nextX));
         if (support) {
+          // Resolve at the swept position, not the previous position in a
+          // different sample. A steep profile must not amplify a 1px step into
+          // a many-pixel vertical landing adjustment.
+          let lo = 0, hi = 1;
+          for (let j = 0; j < 5; j++) {
+            const mid = (lo + hi) * .5;
+            const x = flake.x + (nextX - flake.x) * mid;
+            const bottom = oldBottom + (nextY - flake.y) * mid;
+            if (bottom >= pileHeightAt(support, x)) hi = mid;
+            else lo = mid;
+          }
+          flake.x += (nextX - flake.x) * hi;
+          flake.y = Math.min(support.y - flake.size, flake.y + (nextY - flake.y) * hi);
+          flake.landing = true;
           deposit(flake, support);
           break;
         }
@@ -512,12 +640,21 @@
           break;
         }
         // Side contacts cannot teleport a flake to a distant pile crest.
-        const pileContact = column.some(s => s.glyph.slot !== flake.ignoreGlyph && nextY + flake.size > s.y - s.depth && nextY - flake.size < s.bottom);
+        const pileContact = column.some(s => s.glyph.slot !== flake.ignoreGlyph && nextY + flake.size > pileHeightAt(s, nextX) && nextY - flake.size < s.bottom);
         if (pileContact) {
           const oldColumn = flake.passThrough ? noSurfaces
             : (state.columns[Math.floor(flake.x / settings.surfaceCell)] || noSurfaces);
-          const enclosed = oldColumn.some(s => s.glyph.slot !== flake.ignoreGlyph && oldBottom > s.y - s.depth && flake.y - flake.size < s.y);
+          const enclosed = oldColumn.some(s => s.glyph.slot !== flake.ignoreGlyph && oldBottom > pileHeightAt(s, flake.x) && flake.y - flake.size < s.y);
           if (enclosed) {
+            const bed = oldColumn.find(s => s.glyph.slot !== flake.ignoreGlyph
+              && oldBottom > pileHeightAt(s, flake.x) && flake.y + flake.size <= s.y + .01);
+            if (bed) {
+              // An evolving mound can grow around a grain. Incorporate it at
+              // its current position, then settle the layer without a crest snap.
+              flake.mode = 'sliding';
+              deposit(flake, bed);
+              break;
+            }
             // A growing mound can surround an airborne grain. Let it drift
             // sideways out of the ash without sinking through the solid below.
             if (!column.some(s => s.glyph.slot !== flake.ignoreGlyph && nextY + flake.size > s.y && nextY - flake.size < s.bottom)) flake.x = nextX;
@@ -541,6 +678,7 @@
       }
     }
     relaxPiles(dt);
+    updatePileGeometry(dt);
   }
 
   function render() {
