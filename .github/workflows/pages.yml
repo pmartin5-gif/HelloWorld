@@ -1,0 +1,54 @@
+name: Publish Experiment 03
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Week-6/Experiments/Experiment-03/**'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Check JavaScript
+        run: node --check Week-6/Experiments/Experiment-03/falling-ash.js
+      - name: Assemble site
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Preserve the other existing Pages URLs from the last manual deployment.
+          # Experiment 03 always comes from the source folder on main below.
+          git fetch --depth=1 origin 5cff6ab1d996dd769b3b6ac808321218375af4f3
+          mkdir _site
+          git archive 5cff6ab1d996dd769b3b6ac808321218375af4f3 | tar --exclude='.DS_Store' -x -C _site
+          rm -rf _site/experiment-03
+          mkdir _site/experiment-03
+          rsync -a --exclude='tests/' --exclude='README.md' --exclude='PUBLISHING.md' --exclude='.DS_Store' Week-6/Experiments/Experiment-03/ _site/experiment-03/
+          touch _site/.nojekyll
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
