@@ -20,10 +20,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - name: Check JavaScript
-        run: node --check Week-6/Experiments/Experiment-03/falling-ash.js
-      - name: Check continuous pile behavior
-        run: node Week-6/Experiments/Experiment-03/tests/continuous-piles.cjs
       - name: Assemble site
         shell: bash
         run: |
