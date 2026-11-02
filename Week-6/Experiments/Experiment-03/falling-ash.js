@@ -1,52 +1,31 @@
-/* Falling Ash. Ash builds on invisible clock surfaces and sheds in small slides. */
+/* Falling Ash. Drifting flakes land in a cellular sand bed on invisible numerals. */
 (() => {
   'use strict';
   const canvas = document.getElementById('sky');
   const ctx = canvas.getContext('2d', { alpha: false });
   if (!ctx) return;
-  /* Edit these settings, then reload.
-     particles: Total flakes, including deposited ash.
-     pileDepth: Depth at an exposed edge before the upper layer sloughs off.
-     reposeSlope: Stable mound slope (rise/run); .75 is roughly 37 degrees.
-     sloughFraction: Upper fraction released from an overloaded edge.
-     gravity: Acceleration of shed ash toward its normal falling speed.
-     surfaceCell: Width of a pile column in CSS pixels.
-     margin: Offscreen padding for flake re-entry and horizontal wrapping.
-     windWaitMin/Max: Quiet seconds between wind events, in simulation time.
-     windDurationMin/Max: Duration of each event, in simulation seconds.
-     windStrength: Multiplier for gust and eddy intensity; 0 disables wind events.
-     windErosion: Rate at which strong local wind removes exposed pile grains.
-     windResidue: Thin settled layer retained during wind erosion, in CSS pixels.
-  */
+  // Distances use CSS pixels; rates and durations use simulation seconds.
   const settings = Object.freeze({
-    particles: 8000,
-    pileDepth: 42,
-    reposeSlope: .75,
-    sloughFraction: .18,
-    gravity: 32,
-    surfaceCell: 4,
-    margin: 26,
-    windWaitMin: 14,
-    windWaitMax: 28,
-    windDurationMin: 6,
-    windDurationMax: 10,
-    windStrength: .85,
-    windErosion: .08,
-    windResidue: 3
+    particles: 8000, gridCell: 2, sandHz: 12, physicsHz: 60,
+    interiorSupply: .12, gravity: 32, margin: 26,
+    windWaitMin: 14, windWaitMax: 28, windDurationMin: 6, windDurationMax: 10,
+    windStrength: .85, windErosion: .08, windResidue: 3
   });
   const TAU = Math.PI * 2;
   const rand = (a, b) => a + Math.random() * (b - a);
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const media = matchMedia('(prefers-reduced-motion: reduce)');
   const state = {
     width: 1, height: 1, flakes: [], elapsed: 0, key: '', mask: null,
-    surfaces: [], columns: [], shedCount: 0,
+    cols: 0, rows: 0, sand: null, solid: null, interiorSources: [], interiorEntries: 0,
+    sandAccumulator: 0, sandTick: 0, gridMoves: 0, detachments: 0,
     wind: null, windWait: rand(8, 16), windCount: 0, windDirection: 1,
-    reduced: matchMedia('(prefers-reduced-motion: reduce)').matches
+    reduced: media.matches
   };
   const inks = ['rgba(255,255,255,.28)', 'rgba(255,255,255,.40)', 'rgba(255,255,255,.53)', 'rgba(255,255,255,.65)'];
   const groups = [[], [], [], []];
-  let lastFrame;
-  let nextClockCheck = 0;
+  let lastFrame, accumulator = 0, nextClockCheck = 0;
+  const windSample = { x: 0, y: 0 };
   function clockText(date = new Date()) {
     return `${date.getHours() % 12 || 12}:${String(date.getMinutes()).padStart(2, '0')}`;
   }
@@ -93,275 +72,6 @@
     const bottom = mask.values[y1 * mask.width + x0] * (1 - fx) + mask.values[y1 * mask.width + x1] * fx;
     return top * (1 - fy) + bottom * fy;
   }
-  // Each solid vertical run contributes an upward-facing shelf, including
-  // the lower inside edge of a hole in a numeral such as 0, 6, 8, or 9.
-  function buildSurfaces() {
-    const old = state.surfaces;
-    state.surfaces = [];
-    state.columns = Array.from({ length: Math.ceil(state.width / settings.surfaceCell) }, () => []);
-    const mask = state.mask;
-    const scaleY = state.height / mask.height;
-    for (let col = 0; col < state.columns.length; col++) {
-      const x = (col + .5) * settings.surfaceCell;
-      const mx = Math.min(mask.width - 1, Math.floor(x / state.width * mask.width));
-      let shelf = null;
-      for (let row = 0; row <= mask.height; row++) {
-        const solid = row < mask.height && mask.values[row * mask.width + mx] >= .35;
-        if (solid && !shelf) {
-          shelf = { col, x, y: row * scaleY, bottom: 0, stack: [], depth: 0,
-            cooldown: 0, flowWait: 0, erosion: 0, packingPhase: 0,
-            glyph: mask.glyphs.reduce((best, g) => !best || Math.abs(x - (g.left + g.right) / 2)
-              < Math.abs(x - (best.left + best.right) / 2) ? g : best, null) };
-          state.columns[col].push(shelf);
-          state.surfaces.push(shelf);
-        } else if (!solid && shelf) {
-          shelf.bottom = row * scaleY;
-          shelf = null;
-        }
-      }
-    }
-    // Reset the entire changed digit, including edges shared by both shapes.
-    // Unchanged digits keep their deposits, even if the text shifts sideways.
-    for (const surface of old) {
-      const glyph = mask.glyphs.find(g => g.slot === surface.glyph.slot);
-      const changed = !glyph || glyph.char !== surface.glyph.char;
-      const relativeX = (surface.x - surface.glyph.left) / Math.max(1, surface.glyph.right - surface.glyph.left);
-      const x = glyph ? glyph.left + relativeX * (glyph.right - glyph.left) : surface.x;
-      const col = clamp(Math.floor(x / settings.surfaceCell), 0, state.columns.length - 1);
-      const replacement = !changed && state.columns[col].find(s => s.glyph.slot === glyph.slot && Math.abs(s.y - surface.y) < 4);
-      for (const flake of surface.stack) {
-        if (replacement) deposit(flake, replacement);
-        else release(flake, rand(-12, 12), changed);
-      }
-    }
-    // A newly appearing solid must never contain airborne ash.
-    for (const flake of state.flakes) {
-      if (flake.mode === 'settled' || flake.passThrough) continue;
-      if (flake.mode === 'sliding') {
-        const oldGlyph = flake.surface.glyph;
-        const glyph = mask.glyphs.find(g => g.slot === oldGlyph.slot);
-        if (!glyph || glyph.char !== oldGlyph.char) {
-          release(flake, flake.vx, true);
-          continue;
-        }
-      }
-      flake.mode = 'falling';
-      const column = state.columns[clamp(Math.floor(flake.x / settings.surfaceCell), 0, state.columns.length - 1)];
-      const support = column.find(s => s.glyph.slot !== flake.ignoreGlyph && flake.y + flake.size > s.y && flake.y - flake.size < s.bottom);
-      if (support) deposit(flake, support);
-    }
-  }
-  function updateClock() {
-    const text = clockText();
-    if (text === state.key) return;
-    state.mask = makeMask(text);
-    buildSurfaces();
-    state.key = text;
-    canvas.setAttribute('aria-label', `Falling ash collecting on the upper edges of ${text}, local time, and occasionally sliding off.`);
-  }
-  function deposit(flake, surface) {
-    const arrivingFromAir = flake.mode === 'falling';
-    flake.mode = 'settled';
-    flake.passThrough = false;
-    flake.ignoreGlyph = null;
-    flake.surface = surface;
-    flake.thickness = Math.max(.55, flake.size * 1.05);
-    flake.x = clamp(flake.x, surface.x - settings.surfaceCell * .48, surface.x + settings.surfaceCell * .48);
-    if (arrivingFromAir) {
-      // Vary landing positions evenly, without a repeating left/right pattern.
-      // Keep the adjustment within the flake's footprint; sliding grains and
-      // deposits retained across a clock update keep their original positions.
-      surface.packingPhase = (surface.packingPhase + .61803398875) % 1;
-      const targetX = surface.x + (surface.packingPhase - .5) * settings.surfaceCell * .96;
-      const adjustment = Math.min(.8, flake.size * .5);
-      flake.x += clamp(targetX - flake.x, -adjustment, adjustment);
-    }
-    flake.y = surface.y - surface.depth - flake.size;
-    flake.restAngle = flake.rotation + state.elapsed * flake.spin;
-    flake.restFlutter = .35 + .65 * Math.abs(Math.sin(state.elapsed * .9 + flake.seed));
-    flake.vx = 0; flake.vy = 0;
-    surface.stack.push(flake);
-    surface.depth += flake.thickness;
-  }
-  function release(flake, vx, passThrough = false) {
-    flake.passThrough = passThrough;
-    flake.mode = 'falling';
-    flake.surface = null;
-    flake.vx = vx;
-    flake.vy = 3;
-  }
-  function neighbor(surface, direction) {
-    const column = state.columns[surface.col + direction];
-    if (!column) return null;
-    return column.reduce((best, s) => Math.abs(s.y - surface.y) <= settings.surfaceCell * 2 + 2
-      && (!best || Math.abs(s.y - surface.y) < Math.abs(best.y - surface.y)) ? s : best, null);
-  }
-  function startSlide(surface, direction) {
-    const flake = surface.stack.pop();
-    surface.depth = Math.max(0, surface.depth - flake.thickness);
-    flake.mode = 'sliding';
-    flake.surface = surface;
-    flake.slideAge = 0;
-    flake.slideDirection = direction;
-    flake.vx = 0;
-    flake.vy = 0;
-    return flake;
-  }
-  function slide(flake, dt) {
-    const direction = Math.sign(flake.vx) || flake.slideDirection;
-    let support = flake.surface;
-    const x = flake.x + flake.vx * dt;
-    // Retain one continuous trajectory across the accumulation grid.
-    while (Math.abs(x - support.x) > settings.surfaceCell / 2) {
-      const next = neighbor(support, direction);
-      if (!next) break;
-      support = next;
-    }
-    const next = neighbor(support, x >= support.x ? 1 : -1);
-    if (!next && Math.abs(x - support.x) > settings.surfaceCell / 2 + flake.size) {
-      const vx = flake.vx, vy = Math.max(3, flake.vy);
-      const glyph = support.glyph.slot;
-      release(flake, vx);
-      flake.ignoreGlyph = glyph;
-      flake.x = x;
-      flake.vy = vy;
-      return;
-    }
-    const top = support.y - support.depth;
-    const nextTop = next ? next.y - next.depth : top;
-    const mix = next ? clamp(Math.abs(x - support.x) / settings.surfaceCell, 0, 1) : 0;
-    const floor = top + (nextTop - top) * mix - flake.size;
-    const slope = next ? (nextTop - top) / (next.x - support.x) : 0;
-    const acceleration = settings.gravity * slope / (1 + slope * slope)
-      - direction * settings.gravity * .16;
-    // Friction can stop a grain, but must not push a stationary grain backward.
-    const vx = direction * clamp((flake.vx + acceleration * dt) * direction, 0, 90);
-    flake.slideAge += dt;
-    // Kinetic friction slows a runout on level ground; it never stops at each
-    // column. Settling happens only once momentum has actually dissipated.
-    if (floor < flake.y - flake.size * 2) {
-      // An uphill obstruction stops the slide at its foot; depositing on the
-      // new column would teleport this grain onto the neighboring pile crest.
-      deposit(flake, flake.surface);
-      return;
-    }
-    if (vx * direction <= 0 && flake.slideAge > .15) {
-      deposit(flake, support);
-      return;
-    }
-    flake.surface = support;
-    flake.x = x;
-    flake.vx = vx;
-    flake.vy = Math.min(100, flake.vy + settings.gravity * dt);
-    const y = flake.y + flake.vy * dt;
-    if (y >= floor) {
-      flake.y = floor;
-      flake.vy = Math.max(0, slope * flake.vx);
-    } else {
-      flake.y = y;
-    }
-  }
-  function shed(surface) {
-    if (surface.depth < settings.pileDepth || surface.cooldown > 0) return 0;
-    // Failure starts only at an exposed lip, never at an arbitrary middle bin.
-    const left = neighbor(surface, -1), right = neighbor(surface, 1);
-    if (left && right) return 0;
-    const direction = !left ? -1 : 1;
-    const count = Math.max(1, Math.floor(surface.stack.length * settings.sloughFraction));
-    for (let i = 0; i < count; i++) {
-      startSlide(surface, direction);
-    }
-    surface.cooldown = .8;
-    state.shedCount++;
-    return count;
-  }
-  function relaxPiles(dt) {
-    // Alternating traversal avoids biasing every mound to the same side.
-    const reverse = Math.floor(state.elapsed * 60) % 2 === 0;
-    for (let i = 0; i < state.surfaces.length; i++) {
-      const surface = state.surfaces[reverse ? state.surfaces.length - 1 - i : i];
-      surface.cooldown = Math.max(0, surface.cooldown - dt);
-      surface.flowWait = Math.max(0, surface.flowWait - dt);
-      if (!surface.stack.length || surface.flowWait > 0) continue;
-      // Once an exposed lip is excessive, let its upper layer fail outward.
-      // Redistributing inward first could indefinitely prevent a real slough.
-      if (shed(surface) > 0) { surface.flowWait = .06; continue; }
-      const top = surface.y - surface.depth;
-      const grain = surface.stack[surface.stack.length - 1];
-      let downhill = null, greatestDrop = 0;
-      for (const direction of [-1, 1]) {
-        const next = neighbor(surface, direction);
-        if (!next) continue;
-        const drop = next.y - next.depth - top;
-        // Include one grain's thickness and a little cohesion so the slope
-        // does not chatter back and forth as individual flakes settle.
-        const stableDrop = settings.surfaceCell * settings.reposeSlope + grain.thickness + .75;
-        if (drop > stableDrop && drop > greatestDrop) { downhill = next; greatestDrop = drop; }
-      }
-      if (downhill) {
-        startSlide(surface, Math.sign(downhill.x - surface.x));
-        surface.flowWait = .06;
-        downhill.flowWait = Math.max(downhill.flowWait, .04);
-      }
-    }
-  }
-
-  function resize() {
-    const rect = canvas.getBoundingClientRect();
-    const w = Math.max(1, rect.width), h = Math.max(1, rect.height);
-    if (w === state.width && h === state.height && canvas.width > 1) return;
-    const oldW = state.width, oldH = state.height;
-    state.width = w; state.height = h;
-    const dpr = Math.min(devicePixelRatio || 1, 2);
-    canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    for (const flake of state.flakes) { flake.x *= w / oldW; flake.y *= h / oldH; }
-    state.mask = null; state.key = '';
-    updateClock();
-  }
-
-  function spawnFlake() {
-    // Begin in open air; no flakes are seeded inside the invisible solids.
-    let x, y;
-    do { x = rand(0, state.width); y = rand(0, state.height); }
-    while (readMask(state.mask, x, y) >= .1
-      || state.columns[Math.floor(x / settings.surfaceCell)].some(s => y + 2.15 > s.y && y - 2.15 < s.bottom));
-    const flake = {
-      x, y, speed: rand(24, 54), size: rand(.65, 2.15),
-      rotation: rand(0, TAU), spin: rand(-.65, .65),
-      // Each flake keeps its own torn, asymmetric outline throughout its fall.
-      outline: Array.from({ length: 5 }, (_, i) => {
-        const angle = i / 5 * TAU + rand(-.2, .2);
-        const radius = rand(.55, 1);
-        return [Math.cos(angle) * radius, Math.sin(angle) * radius];
-      }),
-      seed: rand(0, TAU), tone: Math.floor(rand(0, 4)),
-      mode: 'falling', passThrough: false, surface: null, vx: rand(-3, 3), vy: 0
-    };
-    flake.vy = flake.speed;
-    return flake;
-  }
-
-  function recycle(flake) {
-    const margin = settings.margin;
-    // Wind brings fresh ash through the upwind edge as well as from above.
-    // Balance incoming flux by edge length and airflow speed, so the lower
-    // upwind sky remains supplied during a long gust.
-    const wind = state.wind;
-    const vx = wind ? (wind.travel || wind.direction) * wind.strength * windFrame(wind).pulse : 0;
-    const sideFlux = Math.abs(vx) * state.height;
-    const topFlux = flake.speed * state.width;
-    const sideEntry = sideFlux > 0 && Math.random() < sideFlux / (sideFlux + topFlux);
-    flake.x = sideEntry ? (vx > 0 ? -flake.size * 2 : state.width + flake.size * 2) : rand(0, state.width);
-    flake.y = sideEntry ? rand(0, state.height) : -margin;
-    flake.passThrough = false;
-    flake.ignoreGlyph = null;
-    flake.mode = 'falling';
-    flake.surface = null;
-    flake.vx = sideEntry ? vx : rand(-3, 3);
-    flake.vy = flake.speed;
-  }
-
   function advanceWind(dt) {
     if (state.wind) {
       state.wind.age += dt;
@@ -441,157 +151,311 @@
     return out;
   }
 
-  const windSample = { x: 0, y: 0 };
-  const noSurfaces = [];
-
-  function windStress(field) {
-    // Crosswinds and updrafts strip ash; a downward current presses it down.
-    return Math.hypot(field.x, Math.min(0, field.y));
+  function cellAt(x, y) {
+    if (x < 0 || y < 0 || x >= state.width || y >= state.height) return -1;
+    return Math.floor(y / settings.gridCell) * state.cols + Math.floor(x / settings.gridCell);
   }
-
-  function blowLoose(flake, field, glyph) {
-    const vx = flake.vx * .3 + field.x * .75;
-    release(flake, vx);
-    flake.vy = Math.min(-10, field.y * .7 - 12);
-    // Loft clear of the source digit instead of catching on its lower ledges.
-    flake.ignoreGlyph = glyph;
+  function free(cell) { return cell >= 0 && cell < state.sand.length && !state.solid[cell] && !state.sand[cell]; }
+  function glyphAt(mask, x) {
+    return mask.glyphs.reduce((best, g) => !best || Math.abs(x - (g.left + g.right) / 2)
+      < Math.abs(x - (best.left + best.right) / 2) ? g : best, null);
   }
-
-  function erodePiles(dt) {
-    for (const surface of state.surfaces) {
-      if (!state.wind || !surface.stack.length) { surface.erosion = 0; continue; }
-      const top = surface.stack[surface.stack.length - 1];
-      const field = windAt(top.x, top.y, windSample);
-      const excess = windStress(field) - 22;
-      if (excess <= 0) { surface.erosion = 0; continue; }
-      surface.erosion += excess * settings.windErosion * dt;
-      // Peel only exposed top grains. Each removal reveals the next layer;
-      // the rest of the pile retains both its position and supporting mass.
-      while (surface.erosion >= 1 && surface.stack.length
-          && surface.depth - surface.stack[surface.stack.length - 1].thickness >= settings.windResidue) {
-        const flake = surface.stack.pop();
-        surface.depth = Math.max(0, surface.depth - flake.thickness);
-        blowLoose(flake, field, surface.glyph.slot);
-        surface.erosion -= 1;
+  function buildGrid() {
+    const size = settings.gridCell;
+    state.cols = Math.ceil(state.width / size); state.rows = Math.ceil(state.height / size);
+    const count = state.cols * state.rows;
+    state.sand = new Int32Array(count); // particle ID + 1; zero means empty
+    state.solid = new Uint8Array(count); // glyph slot + 1; zero means air
+    state.interiorSources = []; state.sandAccumulator = 0;
+    for (let col = 0; col < state.cols; col++) {
+      const x = Math.min(state.width - .01, (col + .5) * size);
+      const glyph = glyphAt(state.mask, x);
+      let previous = 0, roof = -1, roofOwner = 0;
+      for (let row = 0; row < state.rows; row++) {
+        const cell = row * state.cols + col;
+        const solid = readMask(state.mask, x, (row + .5) * size) >= .35 ? glyph.slot + 1 : 0;
+        state.solid[cell] = solid;
+        if (previous && !solid) { roof = row; roofOwner = previous; }
+        if (!previous && solid && roof >= 0) {
+          if (solid === roofOwner && row - roof >= 5) state.interiorSources.push((roof + 1) * state.cols + col);
+          roof = -1;
+        }
+        previous = solid;
       }
-      surface.erosion = Math.min(surface.erosion, 1);
     }
   }
-
+  function put(flake, cell, owner) {
+    if (!free(cell)) return false;
+    state.sand[cell] = flake.id + 1; flake.cell = cell;
+    flake.mode = 'settled'; flake.owner = owner;
+    flake.passThrough = false; flake.ignoreGlyph = null;
+    flake.x = (cell % state.cols + .5) * settings.gridCell;
+    flake.y = (Math.floor(cell / state.cols) + .5) * settings.gridCell;
+    flake.sandX = flake.x; flake.sandY = flake.y;
+    flake.restAngle = flake.rotation + state.elapsed * flake.spin;
+    flake.restPhase = state.elapsed * .9 + flake.flutterPhase;
+    flake.restFlutter = .35 + .65 * Math.abs(Math.sin(flake.restPhase));
+    flake.vx = 0; flake.vy = 0; flake.sandVX = 0; flake.sandVY = 0; flake.erosion = 0;
+    return true;
+  }
+  function release(flake, vx = 0, vy = 3, passThrough = false) {
+    if (flake.mode === 'settled') {
+      // Resume tumbling from the resting pose, with no orientation/width jump.
+      flake.rotation = flake.restAngle - state.elapsed * flake.spin;
+      flake.flutterPhase = flake.restPhase - state.elapsed * .9;
+    }
+    if (flake.cell >= 0 && state.sand[flake.cell] === flake.id + 1) state.sand[flake.cell] = 0;
+    flake.cell = -1; flake.mode = 'falling'; flake.vx = vx; flake.vy = vy;
+    flake.passThrough = passThrough; flake.ignoreGlyph = null; flake.erosion = 0;
+    flake.previousX = flake.x; flake.previousY = flake.y;
+  }
+  function updateClock() {
+    const text = clockText();
+    if (text === state.key) return;
+    const previous = state.mask;
+    state.mask = makeMask(text); state.key = text;
+    buildGrid();
+    for (const flake of state.flakes) {
+      if (flake.mode !== 'settled') continue;
+      // The old grid was discarded. Never clear a cell in the new grid while
+      // releasing an old deposit, even if those numeric cell indices coincide.
+      flake.cell = -1;
+      const before = previous?.glyphs.find(g => g.slot === flake.owner);
+      const after = state.mask.glyphs.find(g => g.slot === flake.owner);
+      if (!before || !after || before.char !== after.char) { release(flake, rand(-12, 12), 3, true); continue; }
+      const relativeX = (flake.x - before.left) / Math.max(1, before.right - before.left);
+      flake.x = after.left + relativeX * (after.right - after.left);
+      const cell = cellAt(flake.x, flake.y);
+      if (!put(flake, cell, flake.owner)) release(flake, 0, 3);
+      flake.previousX = flake.x; flake.previousY = flake.y;
+    }
+    for (const flake of state.flakes) {
+      if (flake.mode !== 'falling' || flake.passThrough) continue;
+      const cell = cellAt(flake.x, flake.y);
+      if (cell >= 0 && state.solid[cell]) recycle(flake);
+    }
+    canvas.setAttribute('aria-label', `Falling ash collecting on the outer and interior ledges of ${text}, local time, and settling in small avalanches.`);
+  }
+  function spawnFlake() {
+    let x, y;
+    do { x = rand(0, state.width); y = rand(0, state.height); }
+    while (state.solid[cellAt(x, y)] || readMask(state.mask, x, y) >= .1);
+    const flake = {
+      id: state.flakes.length, x, y, previousX: x, previousY: y, sandX: x, sandY: y,
+      cell: -1, owner: null, erosion: 0,
+      speed: rand(24, 54), size: rand(.65, 2.15), rotation: rand(0, TAU), spin: rand(-.65, .65),
+      outline: Array.from({ length: 5 }, (_, i) => {
+        const angle = i / 5 * TAU + rand(-.2, .2), radius = rand(.55, 1);
+        return [Math.cos(angle) * radius, Math.sin(angle) * radius];
+      }), seed: rand(0, TAU), tone: Math.floor(rand(0, 4)),
+      mode: 'falling', passThrough: false, ignoreGlyph: null, vx: rand(-3, 3), vy: 0
+    };
+    flake.flutterPhase = flake.seed;
+    flake.sandVX = 0; flake.sandVY = 0;
+    // Derive stable visual offsets from the existing seed so appearance does
+    // not consume random numbers used by the physics. Keep them through flight,
+    // landing, grid moves, and recycling; cell ownership uses unshifted x/y.
+    const jitter = value => (value - Math.floor(value) - .5) * settings.gridCell * .6;
+    flake.offsetX = jitter(Math.sin(flake.seed * 127.1) * 43758.5453);
+    flake.offsetY = jitter(Math.sin(flake.seed * 311.7) * 19642.3491);
+    flake.vy = flake.speed;
+    return flake;
+  }
+  function enterInterior(flake) {
+    for (let attempt = 0; attempt < 8; attempt++) {
+      const cell = state.interiorSources[Math.floor(rand(0, state.interiorSources.length))];
+      if (cell === undefined || !free(cell) || !free(cell + state.cols) || !free(cell + 2 * state.cols)) continue;
+      flake.x = (cell % state.cols + .5) * settings.gridCell;
+      flake.y = (Math.floor(cell / state.cols) + .5) * settings.gridCell;
+      release(flake, rand(-3, 3), 3); state.interiorEntries++;
+      return true;
+    }
+    return false;
+  }
+  function recycle(flake) {
+    if (!flake.passThrough && state.interiorSources.length && Math.random() < settings.interiorSupply && enterInterior(flake)) return;
+    const wind = state.wind;
+    const vx = wind ? (wind.travel || wind.direction) * wind.strength * windFrame(wind).pulse : 0;
+    const sideFlux = Math.abs(vx) * state.height, topFlux = flake.speed * state.width;
+    const sideEntry = sideFlux > 0 && Math.random() < sideFlux / (sideFlux + topFlux);
+    release(flake, sideEntry ? vx : rand(-3, 3), flake.speed);
+    flake.x = sideEntry ? (vx > 0 ? -flake.size * 2 : state.width + flake.size * 2) : rand(0, state.width);
+    flake.y = sideEntry ? rand(0, state.height) : -settings.margin;
+    flake.previousX = flake.x; flake.previousY = flake.y;
+  }
+  function sandStep() {
+    const { cols, rows, flakes, sand } = state;
+    const reverse = (++state.sandTick & 1) === 0;
+    // In-place claims resolve collisions immediately. Each particle is visited
+    // once, so no destination conflicts, overwritten grains, or repeated moves.
+    // Only particles are visited: empty cells are never scanned during settling.
+    for (let i = 0; i < flakes.length; i++) {
+      const f = flakes[reverse ? flakes.length - 1 - i : i];
+      if (f.mode !== 'settled') continue;
+      f.sandX = f.x; f.sandY = f.y;
+      const col = f.cell % cols, row = Math.floor(f.cell / cols), below = f.cell + cols;
+      // Last tick's interpolated movement has now reached this cell. Release
+      // here, before another grid move, preserving both position and velocity.
+      if (row + 1 >= rows || (free(below) && (below + cols >= sand.length || free(below + cols)))) {
+        release(f, f.sandVX, f.sandVY); state.detachments++; continue;
+      }
+      let target = -1, direction = 0;
+      if (free(below)) target = below;
+      else {
+        const first = Math.random() < .5 ? -1 : 1;
+        for (let side = 0; side < 2; side++) {
+          const dir = side === 0 ? first : -first;
+          if (col + dir < 0 || col + dir >= cols) continue;
+          const diagonal = below + dir;
+          // Do not cut through a solid corner of a numeral. Other grains can
+          // slide past one another, but an overhanging solid roof stays solid.
+          if (free(diagonal) && !state.solid[f.cell + dir]) { target = diagonal; direction = dir; break; }
+        }
+      }
+      if (target < 0) { f.sandVX = 0; f.sandVY = 0; continue; }
+      sand[f.cell] = 0; sand[target] = f.id + 1; f.cell = target;
+      f.x = (target % cols + .5) * settings.gridCell;
+      f.y = (Math.floor(target / cols) + .5) * settings.gridCell;
+      state.gridMoves++;
+      f.sandVX = direction * settings.gridCell * settings.sandHz;
+      f.sandVY = settings.gridCell * settings.sandHz;
+    }
+  }
+  function erodeSand(dt) {
+    if (!state.wind) return;
+    const { cols, sand, solid } = state;
+    for (const f of state.flakes) {
+      if (f.mode !== 'settled') continue;
+      const above = f.cell - cols, below = f.cell + cols;
+      // Only exposed grains erode. A layer directly on the numeral remains.
+      let residue = false;
+      for (let n = 1; n <= Math.ceil(settings.windResidue / settings.gridCell); n++) {
+        if (solid[f.cell + n * cols]) { residue = true; break; }
+      }
+      if ((above >= 0 && (sand[above] || solid[above])) || below >= solid.length || residue) { f.erosion = 0; continue; }
+      const field = windAt(f.x, f.y, windSample);
+      f.erosion += Math.max(0, Math.hypot(field.x, Math.min(0, field.y)) - 22) * settings.windErosion * dt;
+      if (f.erosion >= 1) {
+        const owner = f.owner;
+        release(f, field.x * .75, Math.min(-10, field.y * .7 - 12));
+        f.ignoreGlyph = owner;
+      }
+    }
+  }
+  function blocked(cell, flake) {
+    return cell >= 0 && !flake.passThrough && ((state.solid[cell] && state.solid[cell] - 1 !== flake.ignoreGlyph)
+      || state.sand[cell]);
+  }
+  function moveAir(flake, dt, response, settling) {
+    const occupied = cellAt(flake.x, flake.y);
+    if (!flake.passThrough && occupied >= 0 && state.sand[occupied]) {
+      // Several airborne flakes can share a point before either lands. Resolve
+      // that compression locally instead of leaving a second flake trapped in
+      // a cell that the first flake has just claimed. Adjustment is <= one cell.
+      const owner = state.flakes[state.sand[occupied] - 1].owner;
+      const col = occupied % state.cols;
+      for (const cell of [occupied - state.cols, col > 0 ? occupied - 1 : -1,
+        col + 1 < state.cols ? occupied + 1 : -1]) {
+        if (free(cell) && put(flake, cell, owner)) return;
+      }
+      const above = occupied - state.cols;
+      if (above >= 0 && !state.solid[above]) flake.y -= settings.gridCell;
+      return;
+    }
+    const t = state.elapsed;
+    const wind = Math.sin(flake.y / 190 - t * .22) * 5 + Math.cos(flake.x / 280 + t * .16) * 3 + Math.sin(t * .7 + flake.seed) * 4;
+    const event = windAt(flake.x, flake.y, windSample);
+    flake.vx += (wind + event.x - flake.vx) * response;
+    flake.vy = clamp(flake.vy + (flake.speed + (flake.passThrough ? 0 : event.y) - flake.vy) * settling, -80, flake.speed + 60);
+    const steps = Math.max(1, Math.ceil(Math.max(Math.abs(flake.vx), Math.abs(flake.vy)) * dt / (settings.gridCell * .45)));
+    for (let i = 0; i < steps; i++) {
+      const x = flake.x + flake.vx * dt / steps, y = flake.y + flake.vy * dt / steps;
+      const target = cellAt(x, y);
+      if (!blocked(target, flake)) { flake.x = x; flake.y = y; continue; }
+      const current = cellAt(flake.x, flake.y);
+      // A downward crossing lands in the immediately preceding empty cell;
+      // side contacts merely deflect and never snap to a distant pile crest.
+      if (flake.vy >= 0 && current >= 0 && target >= 0 && Math.floor(target / state.cols) > Math.floor(current / state.cols)) {
+        const owner = state.solid[target] ? state.solid[target] - 1 : state.flakes[state.sand[target] - 1].owner;
+        if (put(flake, current, owner)) break;
+      }
+      if (flake.vy < 0) flake.vy = Math.abs(flake.vy) * .2;
+      flake.vx *= -.35;
+      // Let a grain continue vertically along a side wall if that cell is air.
+      if (!blocked(cellAt(flake.x, y), flake)) flake.y = y;
+      break;
+    }
+    if (flake.mode === 'settled') return;
+    const span = state.width + settings.margin * 2;
+    if (flake.x < -settings.margin) { flake.x += span; flake.previousX = flake.x; }
+    else if (flake.x > state.width + settings.margin) { flake.x -= span; flake.previousX = flake.x; }
+    if (flake.y < -settings.margin || flake.y > state.height + settings.margin) recycle(flake);
+  }
   function step(dt) {
-    const { flakes, width: w, height: h, elapsed: t } = state;
-    advanceWind(dt);
-    erodePiles(dt);
-    const windResponse = 1 - Math.exp(-dt * 1.4);
-    const settlingResponse = 1 - Math.exp(-dt * settings.gravity / 36);
-    for (const flake of flakes) {
-      if (flake.mode === 'settled') continue;
-      if (flake.mode === 'sliding') {
-        const field = windAt(flake.x, flake.y, windSample);
-        if (windStress(field) > 38) blowLoose(flake, field, flake.surface.glyph.slot);
-        else { slide(flake, dt); continue; }
-      }
-      const wind = Math.sin(flake.y / 190 - t * .22) * 5
-        + Math.cos(flake.x / 280 + t * .16) * 3
-        + Math.sin(t * .7 + flake.seed) * 4;
-      const event = windAt(flake.x, flake.y, windSample);
-      flake.vx += (wind + event.x - flake.vx) * windResponse;
-      // Ash falls relative to the moving air: vertical wind changes its
-      // settling velocity, rather than acting as an accumulating vortex force.
-      const settlingSpeed = flake.speed + (flake.passThrough ? 0 : event.y);
-      flake.vy = clamp(flake.vy + (settlingSpeed - flake.vy)
-        * settlingResponse, -80, flake.speed + 60);
-      // Sweep in short increments so small flakes cannot tunnel through a shelf.
-      const steps = Math.max(1, Math.ceil(Math.max(Math.abs(flake.vx), Math.abs(flake.vy)) * dt / 2));
-      for (let i = 0; i < steps; i++) {
-        const oldBottom = flake.y + flake.size;
-        const nextX = flake.x + flake.vx * dt / steps;
-        const nextY = flake.y + flake.vy * dt / steps;
-        const col = Math.floor(nextX / settings.surfaceCell);
-        const column = flake.passThrough ? noSurfaces : (state.columns[col] || noSurfaces);
-        const support = column.find(s => s.glyph.slot !== flake.ignoreGlyph && flake.vy >= 0 && oldBottom <= s.y - s.depth + .01
-          && nextY + flake.size >= s.y - s.depth);
-        if (support) {
-          deposit(flake, support);
-          break;
-        }
-        // Updrafts also collide with the underside of the invisible numerals.
-        const ceiling = column.find(s => s.glyph.slot !== flake.ignoreGlyph && flake.vy < 0 && flake.y - flake.size >= s.bottom - .01
-          && nextY - flake.size <= s.bottom);
-        if (ceiling) {
-          flake.y = ceiling.bottom + flake.size;
-          flake.vy = Math.abs(flake.vy) * .2;
-          break;
-        }
-        // Side contacts cannot teleport a flake to a distant pile crest.
-        const pileContact = column.some(s => s.glyph.slot !== flake.ignoreGlyph && nextY + flake.size > s.y - s.depth && nextY - flake.size < s.bottom);
-        if (pileContact) {
-          const oldColumn = flake.passThrough ? noSurfaces
-            : (state.columns[Math.floor(flake.x / settings.surfaceCell)] || noSurfaces);
-          const enclosed = oldColumn.some(s => s.glyph.slot !== flake.ignoreGlyph && oldBottom > s.y - s.depth && flake.y - flake.size < s.y);
-          if (enclosed) {
-            // A growing mound can surround an airborne grain. Let it drift
-            // sideways out of the ash without sinking through the solid below.
-            if (!column.some(s => s.glyph.slot !== flake.ignoreGlyph && nextY + flake.size > s.y && nextY - flake.size < s.bottom)) flake.x = nextX;
-            const base = oldColumn.find(s => s.glyph.slot !== flake.ignoreGlyph && oldBottom > s.y && flake.y - flake.size < s.bottom);
-            if (base) flake.y = Math.min(flake.y, base.y - flake.size);
-            flake.vy = Math.min(0, flake.vy);
-          } else {
-            flake.vx *= -.4;
-            flake.y = nextY;
-          }
-        } else {
-          flake.x = nextX;
-          flake.y = nextY;
-        }
-      }
-      if (flake.mode !== 'settled') {
-        const span = w + settings.margin * 2;
-        if (flake.x < -settings.margin) flake.x += span;
-        else if (flake.x > w + settings.margin) flake.x -= span;
-        if (flake.y < -settings.margin || flake.y > h + settings.margin) recycle(flake);
-      }
+    state.elapsed += dt; advanceWind(dt);
+    erodeSand(dt);
+    const response = 1 - Math.exp(-dt * 1.4), settling = 1 - Math.exp(-dt * settings.gravity / 36);
+    for (const f of state.flakes) {
+      f.previousX = f.x; f.previousY = f.y;
+      if (f.mode === 'falling') moveAir(f, dt, response, settling);
     }
-    relaxPiles(dt);
+    state.sandAccumulator += dt;
+    const interval = 1 / settings.sandHz;
+    while (state.sandAccumulator + 1e-10 >= interval) { state.sandAccumulator -= interval; sandStep(); }
   }
-
-  function render() {
+  function resize() {
+    const rect = canvas.getBoundingClientRect(), w = Math.max(1, rect.width), h = Math.max(1, rect.height);
+    if (w === state.width && h === state.height && canvas.width > 1) return;
+    const oldW = state.width, oldH = state.height;
+    state.width = w; state.height = h;
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    // A resize starts a fresh airborne scene instead of remapping piles into
+    // solid strokes or overlapping cells at a different aspect ratio.
+    for (const f of state.flakes) {
+      f.cell = -1; f.mode = 'falling'; f.x *= w / oldW; f.y *= h / oldH;
+      f.passThrough = false; f.ignoreGlyph = null; f.vx = 0; f.vy = f.speed;
+      f.previousX = f.x; f.previousY = f.y;
+    }
+    state.key = ''; updateClock(); accumulator = 0; lastFrame = undefined;
+  }
+  function render(alpha = 1) {
     ctx.fillStyle = '#000'; ctx.fillRect(0, 0, state.width, state.height);
+    const sandAlpha = clamp((state.sandAccumulator + alpha / settings.physicsHz) * settings.sandHz, 0, 1);
     for (let tone = 0; tone < 4; tone++) {
       ctx.fillStyle = inks[tone]; ctx.beginPath();
       for (const flake of groups[tone]) {
-        // Tumble independently of the direction of travel. The changing
-        // narrowness suggests a light flake turning edge-on in the air.
-        const angle = flake.mode === 'settled' ? flake.restAngle : flake.rotation + state.elapsed * flake.spin;
+        const resting = flake.mode === 'settled';
+        const angle = resting ? flake.restAngle : flake.rotation + state.elapsed * flake.spin;
         const c = Math.cos(angle), s = Math.sin(angle);
-        const flutter = flake.mode === 'settled' ? flake.restFlutter
-          : .35 + .65 * Math.abs(Math.sin(state.elapsed * .9 + flake.seed));
+        const flutter = resting ? flake.restFlutter : .35 + .65 * Math.abs(Math.sin(state.elapsed * .9 + flake.flutterPhase));
+        const px = resting ? flake.sandX : flake.previousX, py = resting ? flake.sandY : flake.previousY;
+        const mix = resting ? sandAlpha : alpha;
+        const cx = px + (flake.x - px) * mix + flake.offsetX;
+        const cy = py + (flake.y - py) * mix + flake.offsetY;
+        const size = flake.size;
         for (let i = 0; i < flake.outline.length; i++) {
-          const [px, py] = flake.outline[i];
-          const x = px * flake.size * flutter, y = py * flake.size;
-          const screenX = flake.x + x * c - y * s;
-          const screenY = flake.y + x * s + y * c;
-          if (i === 0) ctx.moveTo(screenX, screenY);
-          else ctx.lineTo(screenX, screenY);
+          const [ox, oy] = flake.outline[i], x = ox * size * flutter, y = oy * size;
+          const screenX = cx + x * c - y * s, screenY = cy + x * s + y * c;
+          if (i === 0) ctx.moveTo(screenX, screenY); else ctx.lineTo(screenX, screenY);
         }
         ctx.closePath();
       }
       ctx.fill();
     }
   }
-
   function frame(now) {
-    const dt = Math.min((now - (lastFrame ?? now)) / 1000, .05);
+    const dt = Math.min(Math.max(0, (now - (lastFrame ?? now)) / 1000), .1);
     lastFrame = now;
     if (now >= nextClockCheck) { updateClock(); nextClockCheck = now + 200; }
-    const motion = state.reduced ? .45 : 1;
-    state.elapsed += dt * motion;
-    step(dt * motion);
-    render();
-    requestAnimationFrame(frame);
+    accumulator += dt * (state.reduced ? .45 : 1);
+    const interval = 1 / settings.physicsHz;
+    while (accumulator + 1e-10 >= interval) { step(interval); accumulator -= interval; }
+    render(clamp(accumulator / interval, 0, 1)); requestAnimationFrame(frame);
   }
-
-  document.addEventListener('visibilitychange', () => { lastFrame = undefined; nextClockCheck = 0; });
+  media.addEventListener?.('change', event => { state.reduced = event.matches; });
+  document.addEventListener('visibilitychange', () => { lastFrame = undefined; accumulator = 0; nextClockCheck = 0; });
   new ResizeObserver(resize).observe(canvas);
   resize();
   for (let i = 0; i < settings.particles; i++) {

@@ -1,0 +1,23 @@
+[
+  {
+    "id": "easy",
+    "difficulty": "Easy",
+    "title": "Happy Birthday",
+    "chart": "Songs/happy-birthday.chart.json",
+    "audio": "Songs/Happy Birthday to You (Instrumental).mp3"
+  },
+  {
+    "id": "medium",
+    "difficulty": "Medium",
+    "title": "Pink Panther",
+    "chart": "Songs/pink-panther.chart.json",
+    "audio": "Songs/Pink Panther Clip.m4a"
+  },
+  {
+    "id": "hard",
+    "difficulty": "Hard",
+    "title": "Bleeding The Weak",
+    "chart": "Songs/bleeding-the-weak.chart.json",
+    "audio": "Songs/Bleeding The Weak.mp3"
+  }
+]

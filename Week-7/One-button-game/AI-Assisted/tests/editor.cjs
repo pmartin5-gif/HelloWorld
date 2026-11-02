@@ -1,0 +1,60 @@
+const assert = require('node:assert/strict');
+const { ChartDraft, EditorClock } = require('../editor/model.js');
+const { validateChart, SongPlayer } = require('../level.js');
+const chart = { title:'Test', audio:'Songs/test.m4a', duration:10, notes:[1,2,3] };
+const draft = new ChartDraft(chart);
+assert.equal(draft.dirty, false);
+draft.add(1.5); assert.deepEqual(draft.notes,[1,1.5,2,3]); assert.equal(draft.selected,1);
+assert.equal(draft.dirty,true);
+assert.throws(()=>draft.add(1.5)); assert.throws(()=>draft.add(-1));
+draft.move(0.5); assert.equal(draft.selected,0);
+assert.deepEqual(draft.notes,[0.5,1,2,3]);
+draft.undo(); assert.deepEqual(draft.notes,[1,1.5,2,3]);
+draft.redo(); assert.equal(draft.notes[0],0.5);
+draft.remove(); assert.deepEqual(draft.notes,[1,2,3]);
+assert.equal(draft.dirty,false);
+draft.shift(-0.1); assert.deepEqual(draft.notes,[0.9,1.9,2.9]);
+assert.throws(()=>draft.shift(-1));
+draft.clear(0,2); assert.deepEqual(draft.notes,[2.9]);
+draft.undo(); assert.deepEqual(draft.notes,[0.9,1.9,2.9]);
+draft.add(1.05); assert.equal(draft.problems.length,0,'Close notes are allowed');
+draft.move(0.9); assert.ok(draft.problems.length,'Exact duplicates are unsavable');
+draft.undo();
+draft.undo(); assert.equal(draft.problems.length,0);
+draft.clear(0,10); assert.ok(draft.problems.length,'Empty chart cannot be saved');
+draft.undo(); validateChart({...chart,notes:draft.notes});
+const close = new ChartDraft({ ...chart, notes: [1] });
+close.add(1.001); close.add(1.0011); close.add(1.001101);
+assert.equal(close.problems.length,0);
+assert.deepEqual(close.notes,[1,1.001,1.0011,1.001101]);
+assert.throws(()=>close.add(1.0011011), /exact timestamp/);
+close.move(1.001102); assert.equal(close.problems.length,0);
+close.undo(); close.redo(); assert.equal(close.notes[3],1.001102);
+validateChart({...chart,notes:close.notes});
+const clock = new EditorClock();
+clock.offset=4; clock.anchor=20; clock.rate=0.5; clock.playing=true;
+assert.equal(clock.position(22),5,'Slow playback still records song seconds');
+clock.loop=true; clock.start=4; clock.end=6;
+assert.equal(clock.position(25),4.5,'Loop wraps song position');
+clock.offset=clock.position(25); clock.playing=false;
+assert.equal(clock.position(99),4.5,'Pause freezes song position');
+(async()=>{
+  const previousFetch=global.fetch;
+  let diskChart=chart, chartRequests=0, audioRequests=0;
+  global.fetch=async(url, options)=>{
+    if(url.endsWith('catalog.json')) return {ok:true,json:async()=>[{id:'medium',chart:'Songs/test.chart.json'}]};
+    if(url.endsWith('.json')){ chartRequests++; assert.equal(options.cache,'no-store'); return {ok:true,json:async()=>structuredClone(diskChart)}; }
+    audioRequests++; return {ok:true,arrayBuffer:async()=>new ArrayBuffer(0)};
+  };
+  try {
+    const player=new SongPlayer({decodeAudioData:async()=>({duration:10})});
+    await player.load(); assert.deepEqual(player.chart.notes,[1,2,3]);
+    diskChart={...chart,notes:[1.2,2.2]};
+    await player.load(); assert.deepEqual(player.chart.notes,[1.2,2.2],'Next round picks up editor save without reload');
+    assert.equal(chartRequests,2); assert.equal(audioRequests,1,'Decoded audio is reused');
+    diskChart={...chart,notes:[1,1]};
+    await assert.rejects(()=>player.load(),/Invalid song chart/);
+    diskChart=chart; await player.load();
+    console.log('Passed editor operations, undo/redo, spacing, slow/loop timing, and game chart refresh.');
+  } finally {global.fetch=previousFetch;}
+})().catch(error=>{console.error(error);process.exitCode=1;});

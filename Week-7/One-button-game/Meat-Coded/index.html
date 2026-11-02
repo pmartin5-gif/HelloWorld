@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Triangle Hero</title>
+
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+    <script src="libraries/p5.min.js"></script>
+    <!-- p5.sound only works on https or localhost. On plain http it stops
+         p5 from starting at all, so only load it on a secure origin. -->
+    <script>
+      if (window.isSecureContext) {
+        document.write('<script src="libraries/p5.sound.min.js"><\/script>');
+      }
+    </script>
+  </head>
+
+  <body>
+    <!-- the bar above the sketch: name, what to do, fullscreen button, link to the code -->
+    <header class="bar">
+      <div>
+        <strong>Triangle Hero</strong>
+        <span class="hint">Press space</span>
+      </div>
+    </header>
+
+    <!-- p5 adds the <canvas> here, after the header -->
+    <script src="sketch.js"></script>
+    </script>
+  </body>
+</html>

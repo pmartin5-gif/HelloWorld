@@ -22,7 +22,9 @@ function createSimulation({ width = 800, height = 600, seed = 816, shape = 'flat
             const nx = x / image.width, ny = y / image.height;
             const top = shape === 'curve' ? .32 + .28 * ((nx - .5) / .25) ** 2 : .4;
             const solid = shape !== 'empty' && nx >= .25 && nx < .75 && ny >= top && ny < .8
-              && (shape !== 'hollow' || !(nx > .35 && nx < .65 && ny > .5 && ny < .65));
+              && (shape !== 'hollow' || !(nx > .35 && nx < .65 && ny > .5 && ny < .65))
+              && (shape !== 'double-hollow' || !(nx > .35 && nx < .65
+                && ((ny > .46 && ny < .56) || (ny > .63 && ny < .73))));
             if (solid) data[(y * image.width + x) * 4 + 3] = 255;
           }
           return { data };

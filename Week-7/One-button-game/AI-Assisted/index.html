@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Triangle Hero</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="libraries/p5.min.js"></script>
+  </head>
+  <body>
+    <main id="game" aria-label="Triangle Hero game">
+      <!-- The canvas supplies the pixel lettering; this supplies button semantics. -->
+      <button id="start-button" type="button" aria-label="Start">
+        <span class="sr-only">Start</span>
+      </button>
+      <div id="difficulty-menu" role="group" aria-label="Difficulty" hidden>
+        <button id="difficulty-0" type="button" aria-label="Easy"><span class="sr-only">Easy</span></button>
+        <button id="difficulty-1" type="button" aria-label="Medium"><span class="sr-only">Medium</span></button>
+        <button id="difficulty-2" type="button" aria-label="Hard"><span class="sr-only">Hard</span></button>
+      </div>
+    </main>
+    <p id="status" class="sr-only" role="status" aria-live="polite">Use the space bar to make a selection.</p>
+    <script src="level.js"></script>
+    <script src="sketch.js"></script>
+  </body>
+</html>
