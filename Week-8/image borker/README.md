@@ -2,6 +2,8 @@
 
 A local instrument for generating asymmetric ink-like images and interrupting them through deliberate, cumulative signal passes. Built for high-resolution slide backgrounds, with ambiguity and suggested form as the visual starting point.
 
+Project location: `Week-8/image borker` (moved from `Week-6/Experiments/experiment-05`).
+
 ## Open
 
 Open **`index.html`** in a modern browser. No installation, account, network connection, or build step is needed. A first wet-wash source renders automatically; subsequent generation and manipulation happen only when you press the relevant button.

@@ -1,0 +1,31 @@
+{
+  "node": "v24.14.1",
+  "platform": "darwin",
+  "architecture": "arm64",
+  "particles": 8000,
+  "viewport": "1200x700",
+  "fieldSamplesPerRun": 200000,
+  "note": "Headless production physics in Node; excludes browser Canvas painting and display frame rate.",
+  "variants": {
+    "beforeCache": {
+      "fieldMilliseconds": {
+        "median": 14.4783,
+        "p95": 15.4343
+      },
+      "simulationStepMilliseconds": {
+        "median": 1.9566,
+        "p95": 2.2046
+      }
+    },
+    "optimized": {
+      "fieldMilliseconds": {
+        "median": 3.6708,
+        "p95": 3.8445
+      },
+      "simulationStepMilliseconds": {
+        "median": 1.3194,
+        "p95": 2.0637
+      }
+    }
+  }
+}

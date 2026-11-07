@@ -13,6 +13,6 @@ Established direction:
 - Preserve originals, allow recoverable history/branches, and save/export work deliberately.
 - Preserve saved-recipe replay when changing algorithms. The source and each pass record their rendering model; version-1 files retain the original behavior, including when extended with version-2 passes.
 - High-resolution output is central: these images are slide-deck backgrounds. Default to 3840 × 2160 PNG, with processing at output resolution and a scaled preview. Do not substitute an enlarged small preview for a full-resolution result.
-- Keep this local, buildless HTML/CSS/JavaScript experiment alongside the other Week-6 projects unless the user requests another destination or hosting.
+- Keep this local, buildless HTML/CSS/JavaScript experiment in `Week-8/image borker`, the destination requested by the user, unless they request another destination or hosting.
 
 See `README.md` for architecture, controls, run instructions, tests, and known verification limits. The app itself has no external dependencies. `jsdom` is development-only for controller tests; it does not establish browser layout or native Canvas/download behavior.

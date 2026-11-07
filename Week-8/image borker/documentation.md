@@ -175,3 +175,19 @@ Preserved the earlier rendering behavior for saved version-1 recipes. New versio
 **Execution:** Read the current engine and interface definitions so the explanation describes the implemented version-2 behavior. Used brightness values (0 black through 255 white) to introduce the image's stored information, then explained each effect as a concrete operation and its visible consequence: vertical copying/stretching, band displacement, offsets in the stored pixel sequence, brightness sorting, added digital patterns, reduced tonal steps, and brightness noise. Explained Fragment scale, Pattern seed, and Pass mix, including 75 as the full processed signal and 100 as three times the change before clipping. Related repeated passes to the cumulative workflow agreed in entry 12. Suggested a controlled learning exercise: start from one source, clear effect settings, use mix 75, try one effect at a time, and use Undo to compare different amounts from the same starting image. Clarified that Clear prepares settings without undoing an image, and combined effects run in a fixed order. No application behavior was changed.
 
 **Fulfillment:** An explanation grounded in the current implementation is being provided. Whether it improves the user's understanding awaits their feedback; no learning outcome is assumed.
+
+## 20. Resume the project
+
+**Intent:** Pick up the image generation and manipulation platform from the previous conversation.
+
+**Execution:** Located Afterimage in the established experiment-05 folder and reviewed project guidance, the README, and this log. Consulted entries 18–19 to recover the latest state: nine source structures, fresh seeds by default, expanded parameter extremes, and the most recent discussion explaining Signal controls. Prepared a brief recap and a link to the local application. No application behavior was changed.
+
+**Fulfillment:** The project and its recorded stopping point have been recovered. The user's next direction and feedback on the Signal explanation remain pending.
+
+## 21. Move and rename the project folder
+
+**Intent:** Transfer `experiment-05` from Week-6 to Week-8 and rename the folder `image borker`.
+
+**Execution:** Moved the complete folder from `Week-6/Experiments/experiment-05` to `Week-8/image borker`. Verified every file against its pre-move SHA-256 digest before making documentation updates. Updated the README location and standing project guidance to reflect the user's requested destination. Preserved the historical log entries and application behavior.
+
+**Fulfillment:** The folder exists at `Week-8/image borker`, and the previous folder no longer exists. All files were preserved by the move. No Git commit or publication was performed.

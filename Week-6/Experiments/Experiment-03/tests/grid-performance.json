@@ -1,0 +1,65 @@
+{
+  "runtime": "v24.14.1",
+  "platform": "darwin",
+  "architecture": "arm64",
+  "description": "Deterministic synthetic hollow raster, 8,000 particles; 600 warmup and 900 timed physics steps at 60 Hz. Includes wind. Excludes rendering, browser overhead, and mask rebuilds. Models produce different pile geometries.",
+  "results": [
+    {
+      "viewport": "1200x700",
+      "model": "legacy columns",
+      "particles": 8000,
+      "meanMs": 0.686,
+      "p95Ms": 1.095,
+      "settled": 4525
+    },
+    {
+      "viewport": "1200x700",
+      "model": "sand grid",
+      "gridCell": 2,
+      "sandHz": 12,
+      "particles": 8000,
+      "meanMs": 0.479,
+      "p95Ms": 0.687,
+      "settled": 4808,
+      "gridBytes": 1050000
+    },
+    {
+      "viewport": "390x844",
+      "model": "legacy columns",
+      "particles": 8000,
+      "meanMs": 0.801,
+      "p95Ms": 1.197,
+      "settled": 2735
+    },
+    {
+      "viewport": "390x844",
+      "model": "sand grid",
+      "gridCell": 2,
+      "sandHz": 12,
+      "particles": 8000,
+      "meanMs": 0.466,
+      "p95Ms": 0.653,
+      "settled": 3730,
+      "gridBytes": 411450
+    },
+    {
+      "viewport": "1920x1080",
+      "model": "legacy columns",
+      "particles": 8000,
+      "meanMs": 0.889,
+      "p95Ms": 1.277,
+      "settled": 1814
+    },
+    {
+      "viewport": "1920x1080",
+      "model": "sand grid",
+      "gridCell": 2,
+      "sandHz": 12,
+      "particles": 8000,
+      "meanMs": 0.621,
+      "p95Ms": 0.885,
+      "settled": 3990,
+      "gridBytes": 2592000
+    }
+  ]
+}
