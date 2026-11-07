@@ -1,0 +1,8 @@
+{
+  "source_sha256": "6a4c5b61ec71fbfabc561a9936ad0f08841fa295ee61d746143befde5e873631",
+  "protected_sha256": "e378818cb0023f2e6876ba7fc6dccbb4fd68305710a7b021b63c37e8ee18dcf8",
+  "source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261105-201539-651042/after.ino",
+  "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261105-201539-651042/ide-firmware",
+  "previous_source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261105-174130-097879/after.ino",
+  "firmware_delivery": "upload tool verified flash and requested restart"
+}

@@ -1,0 +1,21 @@
+{
+  "description": "Summer together: a brilliant sun, rolling blue sea, distant beachgoers, and three close friends beneath a bold pink-and-yellow umbrella",
+  "previous_state": {
+    "source_sha256": "1ed5776f3fbbe3604663a1d1cd08ae701f8bc98bdeafc84f5dd236847332a349",
+    "protected_sha256": "e378818cb0023f2e6876ba7fc6dccbb4fd68305710a7b021b63c37e8ee18dcf8",
+    "source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261029-193917-008323/after.ino",
+    "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261029-193917-008323/ide-firmware",
+    "previous_source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261029-191615-924302/after.ino",
+    "firmware_delivery": "upload tool verified flash and requested restart"
+  },
+  "status": "uploaded",
+  "started_monotonic": 3295048.781578208,
+  "started_at": "2026-10-29T19:55:50.218099",
+  "port": "/dev/cu.usbserial-0001",
+  "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261029-195550-212455/ide-firmware",
+  "source_sha256": "dc036e48afe601ea33b9239c7c8bad60fbf7eefbea27ec5199bb4349c98881d3",
+  "firmware_compile": "IDE Upload only",
+  "prepare_seconds": 1.394,
+  "upload_backend": "arduino-ide",
+  "delivery_seconds": 72.409
+}

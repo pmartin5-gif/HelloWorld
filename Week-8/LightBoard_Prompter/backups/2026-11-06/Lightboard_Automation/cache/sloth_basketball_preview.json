@@ -1,0 +1,12 @@
+{
+  "preview": "cache/sloth_basketball_preview.png",
+  "sample_times_ms": [
+    500,
+    2200,
+    3200,
+    4100
+  ],
+  "cached_host_renderer": false,
+  "seconds": 0.836,
+  "limitation": "Simplified drawing mock; not ESP32, PxMatrix scan timing, or physical LED glow"
+}

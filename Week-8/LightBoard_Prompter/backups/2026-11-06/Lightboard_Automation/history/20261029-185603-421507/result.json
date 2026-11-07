@@ -1,0 +1,21 @@
+{
+  "description": "A warm hand gently presses into golden beach sand, with dark finger impressions, slipping grains, and a small blue wash at the edge",
+  "previous_state": {
+    "source_sha256": "95113c635b0e650ed87a766a1a4a47c30b574fcaebdf2b1ae68935d9f3eabdd5",
+    "protected_sha256": "e378818cb0023f2e6876ba7fc6dccbb4fd68305710a7b021b63c37e8ee18dcf8",
+    "source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261029-184946-764610/after.ino",
+    "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261029-184946-764610/ide-firmware",
+    "previous_source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261029-183927-611745/after.ino",
+    "firmware_delivery": "upload tool verified flash and requested restart"
+  },
+  "status": "uploaded",
+  "started_monotonic": 3293008.133682166,
+  "started_at": "2026-10-29T18:56:03.427046",
+  "port": "/dev/cu.usbserial-0001",
+  "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261029-185603-421507/ide-firmware",
+  "source_sha256": "5464b9bc0cb7155ab4203c825ddccbf840a3c70e6a49bc13c55c7f6290da0e43",
+  "firmware_compile": "IDE Upload only",
+  "prepare_seconds": 1.386,
+  "upload_backend": "arduino-ide",
+  "delivery_seconds": 59.925
+}

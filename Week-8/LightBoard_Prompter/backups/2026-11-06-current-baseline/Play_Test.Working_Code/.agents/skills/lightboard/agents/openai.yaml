@@ -1,0 +1,4 @@
+interface:
+  display_name: "Lightboard"
+  short_description: "Turn creative prompts into expressive LED animations"
+  default_prompt: "Use $lightboard to resume my saved ESP32 workflow; upload new animations only when my prompt ends with %%%."

@@ -1,0 +1,21 @@
+{
+  "description": "A small warm-lit shelter with embracing walls, a turquoise chair, and one leafy tree just outside; steady safety and gentle natural movement",
+  "previous_state": {
+    "source_sha256": "5464b9bc0cb7155ab4203c825ddccbf840a3c70e6a49bc13c55c7f6290da0e43",
+    "protected_sha256": "e378818cb0023f2e6876ba7fc6dccbb4fd68305710a7b021b63c37e8ee18dcf8",
+    "source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261029-185603-421507/after.ino",
+    "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261029-185603-421507/ide-firmware",
+    "previous_source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261029-184946-764610/after.ino",
+    "firmware_delivery": "upload tool verified flash and requested restart"
+  },
+  "status": "uploaded",
+  "started_monotonic": 3293456.2346755,
+  "started_at": "2026-10-29T19:05:44.623245",
+  "port": "/dev/cu.usbserial-0001",
+  "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261029-190544-618129/ide-firmware",
+  "source_sha256": "6a61d500eaf3d3e7c327f0e84cb6640b3bfba2b714af90e6227a2af6546a3ed2",
+  "firmware_compile": "IDE Upload only",
+  "prepare_seconds": 1.393,
+  "upload_backend": "arduino-ide",
+  "delivery_seconds": 70.964
+}

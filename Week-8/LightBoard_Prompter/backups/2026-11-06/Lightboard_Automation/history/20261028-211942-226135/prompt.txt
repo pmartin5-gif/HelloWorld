@@ -1,0 +1,1 @@
+Verify automatic compile and upload with the current house-fire animation unchanged.

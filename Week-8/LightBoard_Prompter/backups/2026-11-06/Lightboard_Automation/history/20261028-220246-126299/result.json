@@ -1,0 +1,16 @@
+{
+  "description": "A solitary lighthouse: steady red-and-white tower, slow golden searchlight, black twilight, and rolling blue waves",
+  "previous_state": {
+    "source_sha256": "4fa4336b37f0ec92ca00a6f414272a271df3ce3a98e78256d9a739839f25a6b2",
+    "protected_sha256": "e838b9431cafecbd5745b0066f48a49f70d9175927e0728a22bab4133bd815cb",
+    "source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-213125-105683/after.ino",
+    "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-213125-105683/candidate-build",
+    "previous_source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-211859-716297/source.ino",
+    "firmware_delivery": "upload tool verified flash and requested restart"
+  },
+  "status": "uploaded",
+  "port": "/dev/cu.usbserial-0001",
+  "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-220246-126299/candidate-build",
+  "source_sha256": "f6afee473f66bec294ffa3fcdc0643b5dee1178b11a97f0f55d1ee7879ad7495",
+  "upload_backend": "arduino-ide"
+}

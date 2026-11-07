@@ -1,0 +1,15 @@
+{
+  "description": "Unchanged baseline upload test",
+  "previous_state": {
+    "source_sha256": "a3f8e40db74ca392aef570363d67d2b9f1dc21dbccfd53c262e80d5279fb9ee8",
+    "protected_sha256": "e838b9431cafecbd5745b0066f48a49f70d9175927e0728a22bab4133bd815cb",
+    "source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-211859-716297/source.ino",
+    "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-211859-716297/candidate-build",
+    "firmware_delivery": "compiled; not uploaded by checkpoint"
+  },
+  "status": "upload_failed",
+  "port": "/dev/cu.usbserial-0001",
+  "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-211942-226135/candidate-build",
+  "error": "Arduino operation failed; see /Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-211942-226135/upload.log\nesptool.py v4.5.1\nSerial port /dev/cu.usbserial-0001\n\nA fatal error occurred: Could not open /dev/cu.usbserial-0001, the port doesn't exist\nFailed uploading: uploading error: exit status 2\n",
+  "recovery": "FAILED: Arduino operation failed; see /Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-211942-226135/recovery-upload.log\nesptool.py v4.5.1\nSerial port /dev/cu.usbserial-0001\n\nA fatal error occurred: Could not open /dev/cu.usbserial-0001, the port doesn't exist\nFailed uploading: uploading error: exit status 2\n"
+}

@@ -1,0 +1,10 @@
+{
+  "additionalFiles": "../..",
+  "builtInLibrariesFolders": "/Users/pmartin5/Library/Arduino15/libraries",
+  "compiler.optimization_flags": "-Os",
+  "customBuildProperties": "",
+  "fqbn": "esp32:esp32:esp32",
+  "hardwareFolders": "/Users/pmartin5/Library/Arduino15/packages/esp32/hardware/esp32/2.0.17,/Users/pmartin5/Library/Arduino15/packages/esp32/hardware/esp32/2.0.17",
+  "otherLibrariesFolders": "/Users/pmartin5/Documents/Arduino/libraries",
+  "sketchLocation": "/Users/pmartin5/Desktop/Lightboard_Automation/cache/cli-sketch/Play_Test.Working_Code"
+}

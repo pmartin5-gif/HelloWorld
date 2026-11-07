@@ -1,0 +1,1 @@
+Your previous function was cut off after display.drawPixel(w, and has unbalanced braces. Return a complete replacement void restState(unsigned long now), not a continuation. Keep all original constraints and the lighthouse concept. Keep the implementation compact enough to fit within 110 lines. Include every closing brace. Return only the complete function code.

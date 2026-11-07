@@ -1,0 +1,15 @@
+{
+  "function_boundary": "passed",
+  "protected_bytes": "unchanged",
+  "code_review": "Glow phase now bounded before float conversion; finite drawing work and fixed scene state. Visual quality and physical timing remain to be assessed.",
+  "model_correction_count": 2,
+  "preview": "passed",
+  "compile": "passed",
+  "firmware": "/Users/pmartin5/Documents/GitHub/HelloWorld/Week-8/LightBoard_Prompter/experiments/model-verification/2026-11-06/unresolved-figure/verification-firmware",
+  "firmware_bytes": 290544,
+  "seconds": 20.963,
+  "live_source_unchanged": true,
+  "visual_review": "Reaching, waiting, and bracing are visible, and the mood remains unresolved. Thin strokes and a tiny head may be weak on the physical panel. Human creative approval pending.",
+  "physical_panel_test": "not performed",
+  "candidate_sha256": "743e9a073b7e201c50a7560344f95fa341bdbf3f49b71ead1dd3a4e273658946"
+}

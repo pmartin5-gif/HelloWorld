@@ -1,0 +1,21 @@
+{
+  "description": "Three balanced moonstone pebbles glowing in warm ivory, honey and peach with a slow 12-second breath",
+  "previous_state": {
+    "source_sha256": "4b86dd6dbb6d95de95187d1bb5f2d749bcebf04364db6957403d772f82c155e2",
+    "protected_sha256": "68b8b086b13ea3694eea5b4d5674b814a17a7d89206df5764979114e0fcc9e7d",
+    "source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261106-174616-837529/after.ino",
+    "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261106-174616-837529/ide-firmware",
+    "previous_source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261105-174130-097879/after.ino",
+    "firmware_delivery": "upload tool verified flash and requested restart"
+  },
+  "status": "uploaded",
+  "started_monotonic": 3487922.861538,
+  "started_at": "2026-11-06T17:55:18.258993",
+  "port": "/dev/cu.usbserial-0001",
+  "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261106-175518-253620/ide-firmware",
+  "source_sha256": "62a964cbf16e390510c83e7f61aafa70120916cb6086af9d6727ae45bc6b7be2",
+  "firmware_compile": "IDE Upload only",
+  "prepare_seconds": 1.364,
+  "upload_backend": "arduino-ide",
+  "delivery_seconds": 67.703
+}

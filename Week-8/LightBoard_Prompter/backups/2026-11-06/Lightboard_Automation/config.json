@@ -1,0 +1,13 @@
+{
+  "sketch": "/Users/pmartin5/Desktop/Play_Test.Working_Code/Play_Test.Working_Code.ino",
+  "arduino_cli": "/Applications/Arduino IDE.app/Contents/Resources/app/lib/backend/resources/arduino-cli",
+  "arduino_config": "/Users/pmartin5/.arduinoIDE/arduino-cli.yaml",
+  "fqbn": "esp32:esp32:esp32",
+  "upload_backend": "arduino-ide",
+  "ide_build": "/Users/pmartin5/Library/Caches/arduino/sketches/0CFCE85B0D9E2A2FC14091EB9C264B0A",
+  "usb_identity": {
+    "vid": "0x10C4",
+    "pid": "0xEA60",
+    "serialNumber": "0001"
+  }
+}

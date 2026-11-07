@@ -1,0 +1,3 @@
+ok here is the current code. i want you to update it to remove all of the functionality with the buttons, as they are no longer relevant. Please preserve all of the other functionality around creating patterns, and please also don't alter any of the functionality we currently have with the workflow of interpreting prompts and pushing through the arduino ide to the esp32.
+
+The supplied sketch is archived as before.ino.

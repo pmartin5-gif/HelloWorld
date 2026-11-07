@@ -1,0 +1,5 @@
+esptool.py v4.5.1
+Serial port /dev/cu.usbserial-0001
+
+A fatal error occurred: Could not open /dev/cu.usbserial-0001, the port doesn't exist
+Failed uploading: uploading error: exit status 2

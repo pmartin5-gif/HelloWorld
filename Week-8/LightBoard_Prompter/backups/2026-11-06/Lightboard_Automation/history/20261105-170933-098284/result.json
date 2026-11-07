@@ -1,0 +1,21 @@
+{
+  "description": "A shocked blue pufferfish swells and trembles as jagged orange noise presses in, then slowly eases before the next burst.",
+  "previous_state": {
+    "source_sha256": "55008a3cfdaec329ef8dac232c59f62f5d9792dc93ec681e65bda1edc22c672f",
+    "protected_sha256": "e378818cb0023f2e6876ba7fc6dccbb4fd68305710a7b021b63c37e8ee18dcf8",
+    "source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261029-200552-235443/after.ino",
+    "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261029-200552-235443/ide-firmware",
+    "previous_source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261029-195550-212455/after.ino",
+    "firmware_delivery": "upload tool verified flash and requested restart"
+  },
+  "status": "uploaded",
+  "started_monotonic": 3456678.768229,
+  "started_at": "2026-11-05T17:09:33.103961",
+  "port": "/dev/cu.usbserial-0001",
+  "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261105-170933-098284/ide-firmware",
+  "source_sha256": "a9791639c4ed1aba9a8bac149fe930b8d36433fe444b8680c34a4643916fd86c",
+  "firmware_compile": "IDE Upload only",
+  "prepare_seconds": 1.358,
+  "upload_backend": "arduino-ide",
+  "delivery_seconds": 67.798
+}

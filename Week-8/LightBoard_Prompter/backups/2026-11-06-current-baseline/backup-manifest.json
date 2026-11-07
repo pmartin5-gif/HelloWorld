@@ -1,0 +1,105 @@
+{
+  "purpose": "Preserve the latest recorded uploaded baseline without altering the earlier full backup.",
+  "created_at": "2026-11-06T18:03:34.612416-05:00",
+  "source_sha256": "62a964cbf16e390510c83e7f61aafa70120916cb6086af9d6727ae45bc6b7be2",
+  "recorded_upload_history": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261106-175518-253620",
+  "source_and_firmware_copies_verified": true,
+  "physical_flash_readback_performed": false,
+  "files": [
+    {
+      "path": "Play_Test.Working_Code/.agents/skills/lightboard/SKILL.md",
+      "bytes": 4264,
+      "sha256": "e8cf6d8208102b1dc7e40de501e035278b56d67644d7aee10d8e16b5b60f40d5"
+    },
+    {
+      "path": "Play_Test.Working_Code/.agents/skills/lightboard/agents/openai.yaml",
+      "bytes": 244,
+      "sha256": "20de1229d4ff78451c802da63d14f5e163bd7501d0d617a59d3438596a9c9121"
+    },
+    {
+      "path": "Play_Test.Working_Code/AGENTS.md",
+      "bytes": 5666,
+      "sha256": "98d7aae9c0d9382beb163a9b0402d832a0a9dc165986c98ba30b16d39bd86938"
+    },
+    {
+      "path": "Play_Test.Working_Code/Play_Test.Working_Code.ino",
+      "bytes": 4326,
+      "sha256": "62a964cbf16e390510c83e7f61aafa70120916cb6086af9d6727ae45bc6b7be2"
+    },
+    {
+      "path": "capacity-check.json",
+      "bytes": 1004,
+      "sha256": "6da5ea238e547d347b3d3b5daf980e80d4d462524002664512b88227f916a350"
+    },
+    {
+      "path": "config.json",
+      "bytes": 526,
+      "sha256": "58d94ead9646b44c0b7e54c92752fe1f04c09acb5c3d1e2188d1ecf427c1c0b4"
+    },
+    {
+      "path": "decoded-partitions.csv",
+      "bytes": 255,
+      "sha256": "1e148d53e322c2b44da39fcddeff486982885f0d46268774c63eab7a1ce8c2f7"
+    },
+    {
+      "path": "ide-firmware/Play_Test.Working_Code.ino.bin",
+      "bytes": 290560,
+      "sha256": "581b70eef929fd14654121a7951a973176ecc5f839e6e4f0aae783876c9d4edb"
+    },
+    {
+      "path": "ide-firmware/Play_Test.Working_Code.ino.bootloader.bin",
+      "bytes": 18992,
+      "sha256": "3d97b71a61331ebaddef2a74e090c35299650f395f1387f85130010e84e46563"
+    },
+    {
+      "path": "ide-firmware/Play_Test.Working_Code.ino.cpp",
+      "bytes": 4835,
+      "sha256": "0a6dfdd70146e65c6ac46a81122204f802807ca7276d3364d055368bf74d9675"
+    },
+    {
+      "path": "ide-firmware/Play_Test.Working_Code.ino.partitions.bin",
+      "bytes": 3072,
+      "sha256": "148b959cbff1c38aa8e1d5c0ba9d612c54997b945e56a63f41223eef650653a1"
+    },
+    {
+      "path": "ide-firmware/build.options.json",
+      "bytes": 721,
+      "sha256": "7f180cd5e23278f817f41df594fbabb63d1bbde4a329cec460441c09f0e56cec"
+    },
+    {
+      "path": "ide-upload.log",
+      "bytes": 226,
+      "sha256": "7706b17c37f40b93c5728424286a9dbb46aaef7b2559229ee7a1c4ec10b91b09"
+    },
+    {
+      "path": "observed-ide-upload.txt",
+      "bytes": 226,
+      "sha256": "7706b17c37f40b93c5728424286a9dbb46aaef7b2559229ee7a1c4ec10b91b09"
+    },
+    {
+      "path": "partitions.csv",
+      "bytes": 304,
+      "sha256": "3057e2f0b65ffb81f250ba592702c1512cea0ade043ed9baf869ec30987c1290"
+    },
+    {
+      "path": "prompt.txt",
+      "bytes": 149,
+      "sha256": "e35da4cdf431b4749b14009c4d382f205a1324ddfc1b7fa2a008daf6a30510a4"
+    },
+    {
+      "path": "restState.cpp",
+      "bytes": 2421,
+      "sha256": "57b62f7776da5fe819f82b9d37fbc9d806cd6afb02f8114241d234d9f1f88194"
+    },
+    {
+      "path": "result.json",
+      "bytes": 1217,
+      "sha256": "e1dd3260787282b871d4f3d2de541babd69f3dd76fb870a938d4f461c60daf55"
+    },
+    {
+      "path": "state.json",
+      "bytes": 588,
+      "sha256": "41c30024181fdb3322839391b469184d3171fd69128bb03fde17c2f7f7bf18b4"
+    }
+  ]
+}

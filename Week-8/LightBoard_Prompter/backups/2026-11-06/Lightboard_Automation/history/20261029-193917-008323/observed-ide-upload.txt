@@ -1,0 +1,9 @@
+Writing at 0x0004c4e0... (81 %)
+Writing at 0x00051a3e... (90 %)
+Writing at 0x000572d2... (100 %)
+Wrote 294560 bytes (165812 compressed) at 0x00010000 in 2.8 seconds (effective 830.0 kbit/s)...
+Hash of data verified.
+
+Leaving...
+Hard resetting via RTS pin...
+Done uploading.

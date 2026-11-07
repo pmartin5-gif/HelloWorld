@@ -1,0 +1,12 @@
+{
+  "preview": "cache/chicken_three_on_three_preview.png",
+  "sample_times_ms": [
+    500,
+    3500,
+    5100,
+    9500
+  ],
+  "cached_host_renderer": false,
+  "seconds": 0.902,
+  "limitation": "Simplified drawing mock; not ESP32, PxMatrix scan timing, or physical LED glow"
+}

@@ -1,0 +1,21 @@
+{
+  "description": "A miniature Thursday triptych: orderly blue workday forms, an exuberant pink-and-gold garden, and a third panel where their rhythms mingle",
+  "previous_state": {
+    "source_sha256": "09a4b09f1c0e7e9e50c47db5a4a7cc04424d101983744d7fd6eed59b13ff19de",
+    "protected_sha256": "e378818cb0023f2e6876ba7fc6dccbb4fd68305710a7b021b63c37e8ee18dcf8",
+    "source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261029-191615-924302/after.ino",
+    "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261029-191615-924302/ide-firmware",
+    "previous_source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261029-190544-618129/after.ino",
+    "firmware_delivery": "upload tool verified flash and requested restart"
+  },
+  "status": "uploaded",
+  "started_monotonic": 3294645.677740416,
+  "started_at": "2026-10-29T19:39:17.013524",
+  "port": "/dev/cu.usbserial-0001",
+  "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261029-193917-008323/ide-firmware",
+  "source_sha256": "1ed5776f3fbbe3604663a1d1cd08ae701f8bc98bdeafc84f5dd236847332a349",
+  "firmware_compile": "IDE Upload only",
+  "prepare_seconds": 1.407,
+  "upload_backend": "arduino-ide",
+  "delivery_seconds": 66.477
+}

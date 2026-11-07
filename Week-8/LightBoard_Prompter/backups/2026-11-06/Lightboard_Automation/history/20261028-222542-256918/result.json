@@ -1,0 +1,21 @@
+{
+  "description": "Reflected care: a cooking heart echoed in two warm wooden mirrors, beating into harmony",
+  "previous_state": {
+    "source_sha256": "f6afee473f66bec294ffa3fcdc0643b5dee1178b11a97f0f55d1ee7879ad7495",
+    "protected_sha256": "e838b9431cafecbd5745b0066f48a49f70d9175927e0728a22bab4133bd815cb",
+    "source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-221744-596579/after.ino",
+    "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-221744-596579/ide-firmware",
+    "previous_source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-213125-105683/after.ino",
+    "firmware_delivery": "upload tool verified flash and requested restart"
+  },
+  "status": "uploaded",
+  "started_monotonic": 3281029.521043791,
+  "started_at": "2026-10-28T22:25:42.261936",
+  "port": "/dev/cu.usbserial-0001",
+  "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-222542-256918/ide-firmware",
+  "source_sha256": "0ecd9ee76349ec5d68f5aca8a57174ba67acb02d2f578a2084b3ab2f276b180c",
+  "firmware_compile": "IDE Upload only",
+  "prepare_seconds": 1.396,
+  "upload_backend": "arduino-ide",
+  "delivery_seconds": 77.807
+}

@@ -1,0 +1,15 @@
+{
+  "function_boundary": "passed",
+  "protected_bytes": "unchanged",
+  "code_review": "bounded drawing-only function; visual fidelity and physical frame timing remain to be assessed",
+  "model_correction_count": 1,
+  "preview": "passed",
+  "compile": "passed",
+  "firmware": "/Users/pmartin5/Documents/GitHub/HelloWorld/Week-8/LightBoard_Prompter/experiments/model-verification/2026-11-06/lighthouse/verification-firmware",
+  "firmware_bytes": 292384,
+  "seconds": 30.533,
+  "live_source_unchanged": true,
+  "visual_review": "Recognizable tower and sea, but the beam is dim and disappears in most sampled frames. Muted scenery departs from the bold, saturated brief. Human creative approval pending.",
+  "physical_panel_test": "not performed",
+  "candidate_sha256": "f74fd3fa9b2a8e8ed49a87814e79d725e06c5e9f687b7345e6475252adf0a13e"
+}

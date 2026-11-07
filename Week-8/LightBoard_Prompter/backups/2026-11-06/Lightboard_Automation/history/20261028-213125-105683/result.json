@@ -1,0 +1,15 @@
+{
+  "description": "RestState-only replacement test; same house-fire animation",
+  "previous_state": {
+    "source_sha256": "a3f8e40db74ca392aef570363d67d2b9f1dc21dbccfd53c262e80d5279fb9ee8",
+    "protected_sha256": "e838b9431cafecbd5745b0066f48a49f70d9175927e0728a22bab4133bd815cb",
+    "source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-211859-716297/source.ino",
+    "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-211859-716297/candidate-build",
+    "firmware_delivery": "unchanged baseline uploaded and flash verified through Arduino IDE"
+  },
+  "status": "uploaded",
+  "port": "/dev/cu.usbserial-0001",
+  "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-213125-105683/candidate-build",
+  "source_sha256": "4fa4336b37f0ec92ca00a6f414272a271df3ce3a98e78256d9a739839f25a6b2",
+  "upload_backend": "arduino-ide"
+}

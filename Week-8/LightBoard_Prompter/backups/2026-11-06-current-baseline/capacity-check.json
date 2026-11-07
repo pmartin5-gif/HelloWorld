@@ -1,0 +1,24 @@
+{
+  "recorded_date": "2026-11-06",
+  "source_sha256": "62a964cbf16e390510c83e7f61aafa70120916cb6086af9d6727ae45bc6b7be2",
+  "archived_build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261106-175518-253620/ide-firmware",
+  "archive_and_current_build_cache_firmware_match": true,
+  "configured_flash_bytes": 4194304,
+  "physical_flash_capacity_measured": false,
+  "app_slot_bytes": 1310720,
+  "firmware_binary_bytes": 290560,
+  "app_slot_remaining_bytes": 1020160,
+  "firmware_slot_utilization_percent": 22.17,
+  "static_dram_bytes": 21984,
+  "static_dram_sections": {
+    ".dram0.data": 16768,
+    ".dram0.bss": 5216,
+    ".noinit": 0
+  },
+  "runtime_free_heap_measured": false,
+  "wifi_tls_ota_runtime_memory_measured": false,
+  "sdkconfig_bootloader_app_rollback_enable": true,
+  "rollback_behavior_tested": false,
+  "target_network": "Pending user response",
+  "mac_wifi_observation": "system_profiler returned en0 inactive and no SSID; does not establish target network availability"
+}

@@ -1,0 +1,15 @@
+{
+  "function_boundary": "passed",
+  "protected_bytes": "unchanged",
+  "code_review": "Signed spawn offsets fixed; state and work are bounded. Physical quality and frame timing remain to be assessed.",
+  "model_correction_count": 1,
+  "preview": "passed",
+  "compile": "passed",
+  "firmware": "/Users/pmartin5/Documents/GitHub/HelloWorld/Week-8/LightBoard_Prompter/experiments/model-verification/2026-11-06/overflowing-heart/verification-firmware",
+  "firmware_bytes": 292064,
+  "seconds": 22.282,
+  "live_source_unchanged": true,
+  "visual_review": "Readable saturated heart with a pulse and outward particles against black space. Strongest match in this small sample. Human creative approval pending.",
+  "physical_panel_test": "not performed",
+  "candidate_sha256": "b33124676957e43655124dfad93809a5a821d36f4dece71900eac935ebda796c"
+}

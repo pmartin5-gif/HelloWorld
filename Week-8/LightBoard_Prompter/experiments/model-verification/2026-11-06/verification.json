@@ -1,0 +1,62 @@
+{
+  "date": "2026-11-06",
+  "model": "gemini-3.8-flash",
+  "thinking_level": "Medium on initial attempts; Low on correction attempts",
+  "generation_route": "Google AI Studio playground UI",
+  "paid_api_key_selected": false,
+  "tools_enabled": false,
+  "observed_imported_projects": 0,
+  "observed_api_keys": 0,
+  "api_free_tier_and_account_limits_verified": false,
+  "new_billing_enabled": false,
+  "new_key_created": false,
+  "baseline_source_sha256": "62a964cbf16e390510c83e7f61aafa70120916cb6086af9d6727ae45bc6b7be2",
+  "status": "Playground and local checks complete; approved API setup blocked by project-creation rejection; user account choice and creative review pending",
+  "cases": [
+    {
+      "id": "lighthouse",
+      "creative_prompt": "A lighthouse sweeping one clear beam across a dark sea.",
+      "status": "local technical checks passed after model corrections",
+      "correction_count": 1,
+      "results_file": "experiments/model-verification/2026-11-06/lighthouse/verification-results.json",
+      "visual_review": "Recognizable tower and sea, but the beam is dim and disappears in most sampled frames. Muted scenery departs from the bold, saturated brief. Human creative approval pending."
+    },
+    {
+      "id": "overflowing-heart",
+      "creative_prompt": "An overflowing heart that keeps giving",
+      "status": "local technical checks passed after model corrections",
+      "correction_count": 1,
+      "results_file": "experiments/model-verification/2026-11-06/overflowing-heart/verification-results.json",
+      "visual_review": "Readable saturated heart with a pulse and outward particles against black space. Strongest match in this small sample. Human creative approval pending."
+    },
+    {
+      "id": "unresolved-figure",
+      "creative_prompt": "A vulnerable figure reaching into empty space, waiting, and bracing again; keep the feeling unresolved",
+      "status": "local technical checks passed after model corrections",
+      "correction_count": 2,
+      "results_file": "experiments/model-verification/2026-11-06/unresolved-figure/verification-results.json",
+      "visual_review": "Reaching, waiting, and bracing are visible, and the mood remains unresolved. Thin strokes and a tiny head may be weak on the physical panel. Human creative approval pending."
+    }
+  ],
+  "cost_policy": "No paid billing, upgrades, paid keys, paid tools, or paid fallback. Stop on a payment requirement.",
+  "official_pricing": "https://ai.google.dev/gemini-api/docs/pricing",
+  "official_billing": "https://ai.google.dev/gemini-api/docs/billing",
+  "model_selected_for_automation": false,
+  "paid_services_enabled": false,
+  "api_project_or_key_creation_approved": true,
+  "api_setup_question": "User explicitly approved project/key creation with billing disabled and key outside Git.",
+  "live_source_unchanged_at_end": true,
+  "approved_project_name": "lightboard-prompter",
+  "api_project_creation_attempted": true,
+  "api_project_creation_status": "rejected by Google AI Studio",
+  "api_project_creation_error": "Failed to create project, Project creation is disabled. Please try again later.",
+  "api_project_created": false,
+  "api_account_context": "Existing signed-in SVA Google account",
+  "api_creation_cause": "Not established by the error message; could be account policy or service availability.",
+  "api_setup_next_decision": "User asked whether to try a personal Google account or stay with SVA and resolve the restriction.",
+  "work_status": "paused_by_user",
+  "paused_date": "2026-11-06",
+  "resume_note": "RESUME.md",
+  "next_step": "After the user resumes, resolve the choice of personal Google account versus SVA for the approved no-billing project/key setup.",
+  "background_work_scheduled": false
+}

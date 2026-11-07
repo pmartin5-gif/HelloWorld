@@ -1,0 +1,16 @@
+{
+  "description": "A solitary red-and-white lighthouse, a patient golden searching beam, and rolling blue waves against black twilight",
+  "previous_state": {
+    "source_sha256": "4fa4336b37f0ec92ca00a6f414272a271df3ce3a98e78256d9a739839f25a6b2",
+    "protected_sha256": "e838b9431cafecbd5745b0066f48a49f70d9175927e0728a22bab4133bd815cb",
+    "source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-213125-105683/after.ino",
+    "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-213125-105683/candidate-build",
+    "previous_source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-211859-716297/source.ino",
+    "firmware_delivery": "upload tool verified flash and requested restart"
+  },
+  "status": "ide_upload_aborted",
+  "port": "/dev/cu.usbserial-0001",
+  "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-220106-245542/candidate-build",
+  "source_sha256": "e8b65527a8f2cf9013ccdf9c24483a7b935be582e6f27819c931fb01b71875d6",
+  "recovery": "source restored; agent must upload it through IDE if flashing began"
+}

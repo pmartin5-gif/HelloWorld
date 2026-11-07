@@ -1,0 +1,21 @@
+{
+  "description": "A tightly squinting face beneath a small T-shaped pressure mark, with sparse blue drizzle swept sideways by persistent gusts",
+  "previous_state": {
+    "source_sha256": "6a61d500eaf3d3e7c327f0e84cb6640b3bfba2b714af90e6227a2af6546a3ed2",
+    "protected_sha256": "e378818cb0023f2e6876ba7fc6dccbb4fd68305710a7b021b63c37e8ee18dcf8",
+    "source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261029-190544-618129/after.ino",
+    "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261029-190544-618129/ide-firmware",
+    "previous_source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261029-185603-421507/after.ino",
+    "firmware_delivery": "upload tool verified flash and requested restart"
+  },
+  "status": "uploaded",
+  "started_monotonic": 3293852.364354791,
+  "started_at": "2026-10-29T19:16:15.930640",
+  "port": "/dev/cu.usbserial-0001",
+  "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261029-191615-924302/ide-firmware",
+  "source_sha256": "09a4b09f1c0e7e9e50c47db5a4a7cc04424d101983744d7fd6eed59b13ff19de",
+  "firmware_compile": "IDE Upload only",
+  "prepare_seconds": 1.399,
+  "upload_backend": "arduino-ide",
+  "delivery_seconds": 67.901
+}

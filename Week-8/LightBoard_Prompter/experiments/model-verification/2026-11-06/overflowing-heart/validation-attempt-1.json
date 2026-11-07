@@ -1,0 +1,6 @@
+{
+  "function_boundary": "passed",
+  "code_review": "rejected",
+  "issue": "Unsigned modulo offsets subtract 3 or 2 before a signed conversion; underflow can produce huge coordinates and out-of-range float-to-int conversions.",
+  "retry_count": 0
+}

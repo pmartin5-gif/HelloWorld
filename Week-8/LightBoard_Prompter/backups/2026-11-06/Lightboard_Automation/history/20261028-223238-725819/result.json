@@ -1,0 +1,21 @@
+{
+  "description": "Warm blustery sunshine: bright racing clouds, a persistent golden sun, and broad turquoise curls of wind",
+  "previous_state": {
+    "source_sha256": "0ecd9ee76349ec5d68f5aca8a57174ba67acb02d2f578a2084b3ab2f276b180c",
+    "protected_sha256": "e838b9431cafecbd5745b0066f48a49f70d9175927e0728a22bab4133bd815cb",
+    "source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-222542-256918/after.ino",
+    "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-222542-256918/ide-firmware",
+    "previous_source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-221744-596579/after.ino",
+    "firmware_delivery": "upload tool verified flash and requested restart"
+  },
+  "status": "uploaded",
+  "started_monotonic": 3281446.066589958,
+  "started_at": "2026-10-28T22:32:38.731788",
+  "port": "/dev/cu.usbserial-0001",
+  "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-223238-725819/ide-firmware",
+  "source_sha256": "440156f2b155e8854b16a2109728a0adf19686a4e0e91deb672d8187fecaeabc",
+  "firmware_compile": "IDE Upload only",
+  "prepare_seconds": 1.32,
+  "upload_backend": "arduino-ide",
+  "delivery_seconds": 80.869
+}

@@ -1,0 +1,12 @@
+{
+  "preview": "/Users/pmartin5/Documents/GitHub/HelloWorld/Week-8/LightBoard_Prompter/experiments/model-verification/2026-11-06/lighthouse/preview.png",
+  "sample_times_ms": [
+    100,
+    1000,
+    3000,
+    6000
+  ],
+  "cached_host_renderer": false,
+  "seconds": 1.186,
+  "limitation": "Simplified drawing mock; not ESP32, PxMatrix scan timing, or physical LED glow"
+}

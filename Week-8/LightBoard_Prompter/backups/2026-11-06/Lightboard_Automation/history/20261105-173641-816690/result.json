@@ -1,0 +1,21 @@
+{
+  "description": "A long-armed sloth dribbles slowly, raises a patient set shot and sinks a high arc through the basket without leaving the ground.",
+  "previous_state": {
+    "source_sha256": "a9791639c4ed1aba9a8bac149fe930b8d36433fe444b8680c34a4643916fd86c",
+    "protected_sha256": "e378818cb0023f2e6876ba7fc6dccbb4fd68305710a7b021b63c37e8ee18dcf8",
+    "source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261105-170933-098284/after.ino",
+    "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261105-170933-098284/ide-firmware",
+    "previous_source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261029-200552-235443/after.ino",
+    "firmware_delivery": "upload tool verified flash and requested restart"
+  },
+  "status": "uploaded",
+  "started_monotonic": 3457334.590596125,
+  "started_at": "2026-11-05T17:36:41.819540",
+  "port": "/dev/cu.usbserial-0001",
+  "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261105-173641-816690/ide-firmware",
+  "source_sha256": "7a6d4ba86f3f4082571a805620fb06e431b72c1b62d620d4d3a1780211b9d179",
+  "firmware_compile": "IDE Upload only",
+  "prepare_seconds": 1.401,
+  "upload_backend": "arduino-ide",
+  "delivery_seconds": 63.792
+}

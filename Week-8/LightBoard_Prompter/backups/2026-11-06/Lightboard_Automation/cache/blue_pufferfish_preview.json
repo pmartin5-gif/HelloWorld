@@ -1,0 +1,12 @@
+{
+  "preview": "cache/blue_pufferfish_preview.png",
+  "sample_times_ms": [
+    100,
+    1050,
+    1800,
+    3200
+  ],
+  "cached_host_renderer": false,
+  "seconds": 2.445,
+  "limitation": "Simplified drawing mock; not ESP32, PxMatrix scan timing, or physical LED glow"
+}

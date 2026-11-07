@@ -1,0 +1,14 @@
+{
+  "automated_tests_passed": 15,
+  "firmware_compiler": "Arduino IDE Upload only",
+  "preliminary_compile": false,
+  "ide_cache_reused": "/Users/pmartin5/Library/Caches/arduino/sketches/0CFCE85B0D9E2A2FC14091EB9C264B0A",
+  "prepare_seconds": 1.357,
+  "prepare_to_recorded_upload_seconds": 62.344,
+  "benchmark_scope": "unchanged lighthouse, warm cache; excludes creative generation and preview",
+  "first_preview_seconds": 0.783,
+  "cached_preview_seconds": 0.027,
+  "sketch_unchanged": true,
+  "recovery_firmware": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-221744-596579/ide-firmware",
+  "pending_upload": false
+}

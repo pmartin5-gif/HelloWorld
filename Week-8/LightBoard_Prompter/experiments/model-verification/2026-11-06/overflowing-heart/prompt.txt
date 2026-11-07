@@ -1,0 +1,18 @@
+Generate Arduino C++ drawing code for an existing physical 32x32 ESP32 LED panel.
+
+Return exactly one function:
+void restState(unsigned long now)
+
+An existing global PxMatrix display object named display is available. Use now for animation timing. Put all additional constants, arrays, structs, persistent state, and lambdas inside this function. Do not add includes, other global declarations, setup, or loop.
+
+Use basic Adafruit GFX style drawing operations on display, such as fillScreen, drawPixel, drawLine, fillRect, drawCircle, fillCircle, and color565.
+
+Interpret the prompt through ONE central visual or emotional idea. Use bold readable shapes, saturated colors, pronounced movement, and intentional black space. Design for a physical LED grid and its glow. Avoid tiny detail, muted gradients, clutter, and illustrating every phrase. Preserve the requested emotional tone; an unresolved feeling should stay unresolved.
+
+The animation runs indefinitely. Keep per-frame work bounded and state modest and fixed-size. Avoid long-running floating-point time drift. The current firmware renders this scene continuously. Clear and paint the hidden drawing buffer each frame.
+
+Do not use delay, dynamic allocation, serial, networking, filesystem access, hardware initialization, refresh changes, brightness changes, timer changes, or buffer swapping. The existing loop handles display refresh and buffer swaps. Do not call showBuffer.
+
+The existing firmware uses ESP32 Arduino core 2.0.17. Keep the code compatible with that foundation. Return only the function code.
+
+Creative prompt: An overflowing heart that keeps giving

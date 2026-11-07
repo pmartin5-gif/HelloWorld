@@ -1,0 +1,1 @@
+User-approved manual edit: set EFFECT_DURATION_MS to 3000UL. Reconnected USB; verify and preserve this timing. No upload requested.

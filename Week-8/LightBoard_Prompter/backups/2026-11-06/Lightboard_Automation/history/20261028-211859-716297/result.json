@@ -1,0 +1,8 @@
+{
+  "status": "checkpoint",
+  "source_sha256": "a3f8e40db74ca392aef570363d67d2b9f1dc21dbccfd53c262e80d5279fb9ee8",
+  "protected_sha256": "e838b9431cafecbd5745b0066f48a49f70d9175927e0728a22bab4133bd815cb",
+  "source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-211859-716297/source.ino",
+  "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-211859-716297/candidate-build",
+  "firmware_delivery": "compiled; not uploaded by checkpoint"
+}

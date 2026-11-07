@@ -1,0 +1,21 @@
+{
+  "description": "A seated woman in a dark doorway cautiously leans toward one small warm lamp, waits, and retreats",
+  "previous_state": {
+    "source_sha256": "7e0f590764cd3680dec5f92a21d39a84e6f03ed54e5528969296b739d6a5bbfc",
+    "protected_sha256": "e378818cb0023f2e6876ba7fc6dccbb4fd68305710a7b021b63c37e8ee18dcf8",
+    "source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261029-183927-611745/after.ino",
+    "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261029-183927-611745/ide-firmware",
+    "previous_source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261029-162729-822497/after.ino",
+    "firmware_delivery": "upload tool verified flash and requested restart"
+  },
+  "status": "uploaded",
+  "started_monotonic": 3292694.075805083,
+  "started_at": "2026-10-29T18:49:46.769840",
+  "port": "/dev/cu.usbserial-0001",
+  "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261029-184946-764610/ide-firmware",
+  "source_sha256": "95113c635b0e650ed87a766a1a4a47c30b574fcaebdf2b1ae68935d9f3eabdd5",
+  "firmware_compile": "IDE Upload only",
+  "prepare_seconds": 1.385,
+  "upload_backend": "arduino-ide",
+  "delivery_seconds": 69.814
+}

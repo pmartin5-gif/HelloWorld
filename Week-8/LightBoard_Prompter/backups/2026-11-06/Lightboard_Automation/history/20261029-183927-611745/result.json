@@ -1,0 +1,21 @@
+{
+  "description": "Looking up from a forest: clear blue sky framed by green canopy, small steady sun, gently stirring leaf tips, no clouds",
+  "previous_state": {
+    "source_sha256": "1b505ffab7bf559ebc1ed359d674aa297617fe9cf22c0190f84730842b361a8c",
+    "protected_sha256": "e378818cb0023f2e6876ba7fc6dccbb4fd68305710a7b021b63c37e8ee18dcf8",
+    "source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261029-162729-822497/after.ino",
+    "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261029-162729-822497/ide-firmware",
+    "previous_source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261029-162453-513770/after.ino",
+    "firmware_delivery": "upload tool verified flash and requested restart"
+  },
+  "status": "uploaded",
+  "started_monotonic": 3292321.424241625,
+  "started_at": "2026-10-29T18:39:27.618030",
+  "port": "/dev/cu.usbserial-0001",
+  "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261029-183927-611745/ide-firmware",
+  "source_sha256": "7e0f590764cd3680dec5f92a21d39a84e6f03ed54e5528969296b739d6a5bbfc",
+  "firmware_compile": "IDE Upload only",
+  "prepare_seconds": 1.624,
+  "upload_backend": "arduino-ide",
+  "delivery_seconds": 69.155
+}

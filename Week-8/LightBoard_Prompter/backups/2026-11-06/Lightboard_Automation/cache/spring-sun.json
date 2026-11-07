@@ -1,0 +1,12 @@
+{
+  "preview": "cache/spring-sun.png",
+  "sample_times_ms": [
+    100,
+    1000,
+    3000,
+    6000
+  ],
+  "cached_host_renderer": false,
+  "seconds": 1.01,
+  "limitation": "Simplified drawing mock; not ESP32, PxMatrix scan timing, or physical LED glow"
+}

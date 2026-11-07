@@ -1,0 +1,22 @@
+{
+  "maintenance": "remove-buttons",
+  "status": "uploaded",
+  "previous_state": {
+    "source_sha256": "6a4c5b61ec71fbfabc561a9936ad0f08841fa295ee61d746143befde5e873631",
+    "protected_sha256": "e378818cb0023f2e6876ba7fc6dccbb4fd68305710a7b021b63c37e8ee18dcf8",
+    "source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261105-201539-651042/after.ino",
+    "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261105-201539-651042/ide-firmware",
+    "previous_source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261105-174130-097879/after.ino",
+    "firmware_delivery": "upload tool verified flash and requested restart"
+  },
+  "source_sha256": "4b86dd6dbb6d95de95187d1bb5f2d749bcebf04364db6957403d772f82c155e2",
+  "protected_sha256": "68b8b086b13ea3694eea5b4d5674b814a17a7d89206df5764979114e0fcc9e7d",
+  "port": "/dev/cu.usbserial-0001",
+  "started_monotonic": 3487382.810355416,
+  "started_at": "2026-11-06T17:46:16.842537",
+  "firmware_compile": "IDE Upload only",
+  "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261106-174616-837529/ide-firmware",
+  "upload_backend": "arduino-ide",
+  "animation_unchanged": true,
+  "delivery_seconds": 73.007
+}

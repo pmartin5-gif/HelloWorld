@@ -1,0 +1,6 @@
+{
+  "function_boundary": "passed",
+  "code_review": "rejected",
+  "issue": "voidGlow converts unbounded now to float before sinf, causing precision loss during indefinite playback.",
+  "model_correction_count": 1
+}

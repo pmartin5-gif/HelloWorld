@@ -1,0 +1,21 @@
+{
+  "description": "A thin blue-white center line with a bright swelling pulse sweeping left to right, fading back to a fine dim line between passes.",
+  "previous_state": {
+    "source_sha256": "808bc5fdb8a49758bfd79b4fbd313354bdcb42de8282fab585c9e59b53abff52",
+    "protected_sha256": "e378818cb0023f2e6876ba7fc6dccbb4fd68305710a7b021b63c37e8ee18dcf8",
+    "source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261105-174130-097879/after.ino",
+    "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261105-174130-097879/ide-firmware",
+    "previous_source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261105-173641-816690/after.ino",
+    "firmware_delivery": "upload tool verified flash and requested restart"
+  },
+  "status": "uploaded",
+  "started_monotonic": 3459924.934605458,
+  "started_at": "2026-11-05T20:15:39.655298",
+  "port": "/dev/cu.usbserial-0001",
+  "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261105-201539-651042/ide-firmware",
+  "source_sha256": "6a4c5b61ec71fbfabc561a9936ad0f08841fa295ee61d746143befde5e873631",
+  "firmware_compile": "IDE Upload only",
+  "prepare_seconds": 1.588,
+  "upload_backend": "arduino-ide",
+  "delivery_seconds": 71.66
+}

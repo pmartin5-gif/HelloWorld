@@ -1,0 +1,11 @@
+{
+  "automated_tests": "11 passed",
+  "baseline_compile": "passed, ESP32 core 2.0.17",
+  "baseline_ide_upload": "flash verified and reset observed",
+  "restState_only_replacement": "passed; comment-only change, same animation",
+  "replacement_ide_upload": "flash verified and reset observed",
+  "protected_sha256": "e838b9431cafecbd5745b0066f48a49f70d9175927e0728a22bab4133bd815cb",
+  "upload_backend": "arduino-ide",
+  "direct_serial_access": "blocked by execution environment; native IDE upload works",
+  "physical_panel_and_button_check": "awaiting user observation"
+}

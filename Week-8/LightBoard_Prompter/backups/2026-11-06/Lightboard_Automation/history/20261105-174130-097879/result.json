@@ -1,0 +1,21 @@
+{
+  "description": "Six chickens in blue and pink jerseys play three on three, passing and shooting at opposite baskets as evenly matched teams trade scores.",
+  "previous_state": {
+    "source_sha256": "7a6d4ba86f3f4082571a805620fb06e431b72c1b62d620d4d3a1780211b9d179",
+    "protected_sha256": "e378818cb0023f2e6876ba7fc6dccbb4fd68305710a7b021b63c37e8ee18dcf8",
+    "source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261105-173641-816690/after.ino",
+    "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261105-173641-816690/ide-firmware",
+    "previous_source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261105-170933-098284/after.ino",
+    "firmware_delivery": "upload tool verified flash and requested restart"
+  },
+  "status": "uploaded",
+  "started_monotonic": 3457622.903077416,
+  "started_at": "2026-11-05T17:41:30.104297",
+  "port": "/dev/cu.usbserial-0001",
+  "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261105-174130-097879/ide-firmware",
+  "source_sha256": "808bc5fdb8a49758bfd79b4fbd313354bdcb42de8282fab585c9e59b53abff52",
+  "firmware_compile": "IDE Upload only",
+  "prepare_seconds": 1.371,
+  "upload_backend": "arduino-ide",
+  "delivery_seconds": 61.342
+}

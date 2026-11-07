@@ -1,0 +1,6 @@
+{
+  "status": "rejected",
+  "error": "Unbalanced restState braces",
+  "retry_count": 0,
+  "reason": "Model output ends mid-statement; no completed function."
+}

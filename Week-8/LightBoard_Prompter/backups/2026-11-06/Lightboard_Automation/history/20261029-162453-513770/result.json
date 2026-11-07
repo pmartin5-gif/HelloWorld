@@ -1,0 +1,23 @@
+{
+  "status": "reviewed_timing_checkpoint",
+  "approved_change": "EFFECT_DURATION_MS 3500UL -> 3000UL",
+  "only_approved_change": true,
+  "previous_state": {
+    "source_sha256": "440156f2b155e8854b16a2109728a0adf19686a4e0e91deb672d8187fecaeabc",
+    "protected_sha256": "e838b9431cafecbd5745b0066f48a49f70d9175927e0728a22bab4133bd815cb",
+    "source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-223238-725819/after.ino",
+    "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-223238-725819/ide-firmware",
+    "previous_source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-222542-256918/after.ino",
+    "firmware_delivery": "upload tool verified flash and requested restart"
+  },
+  "updated_state": {
+    "source_sha256": "835fb7d26bb067d9ab559b054b5376b6f8eaf21a54d09af2596d8a931f3714f7",
+    "protected_sha256": "e378818cb0023f2e6876ba7fc6dccbb4fd68305710a7b021b63c37e8ee18dcf8",
+    "source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261029-162453-513770/after.ino",
+    "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261029-162453-513770/reviewed-timing-firmware",
+    "previous_source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-222542-256918/after.ino",
+    "firmware_delivery": "Reviewed 3000 ms source compiled; no upload performed during this check"
+  },
+  "usb_port": "/dev/cu.usbserial-0001",
+  "uploaded": false
+}

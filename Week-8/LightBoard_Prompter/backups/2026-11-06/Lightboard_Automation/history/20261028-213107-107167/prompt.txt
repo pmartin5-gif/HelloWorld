@@ -1,0 +1,1 @@
+Verify restState-only automatic replacement and upload. Preserve the current house-fire animation; add only a management comment inside restState.

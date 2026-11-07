@@ -1,0 +1,12 @@
+{
+  "preview": "cache/lighthouse-preview.png",
+  "sample_times_ms": [
+    100,
+    1000,
+    3000,
+    6000
+  ],
+  "cached_host_renderer": true,
+  "seconds": 0.027,
+  "limitation": "Simplified drawing mock; not ESP32, PxMatrix scan timing, or physical LED glow"
+}

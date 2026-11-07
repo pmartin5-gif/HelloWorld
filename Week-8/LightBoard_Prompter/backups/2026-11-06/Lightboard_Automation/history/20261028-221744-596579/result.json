@@ -1,0 +1,21 @@
+{
+  "description": "Single-compile speed test; lighthouse unchanged",
+  "previous_state": {
+    "source_sha256": "f6afee473f66bec294ffa3fcdc0643b5dee1178b11a97f0f55d1ee7879ad7495",
+    "protected_sha256": "e838b9431cafecbd5745b0066f48a49f70d9175927e0728a22bab4133bd815cb",
+    "source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-220246-126299/after.ino",
+    "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-220246-126299/candidate-build",
+    "previous_source_archive": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-213125-105683/after.ino",
+    "firmware_delivery": "upload tool verified flash and requested restart"
+  },
+  "status": "uploaded",
+  "started_monotonic": 3280551.898275833,
+  "started_at": "2026-10-28T22:17:44.601773",
+  "port": "/dev/cu.usbserial-0001",
+  "build": "/Users/pmartin5/Desktop/Lightboard_Automation/history/20261028-221744-596579/ide-firmware",
+  "source_sha256": "f6afee473f66bec294ffa3fcdc0643b5dee1178b11a97f0f55d1ee7879ad7495",
+  "firmware_compile": "IDE Upload only",
+  "prepare_seconds": 1.357,
+  "upload_backend": "arduino-ide",
+  "delivery_seconds": 62.344
+}

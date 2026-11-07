@@ -1,0 +1,12 @@
+{
+  "preview": "cache/traveling_light_line_preview.png",
+  "sample_times_ms": [
+    300,
+    1000,
+    1800,
+    2600
+  ],
+  "cached_host_renderer": false,
+  "seconds": 0.908,
+  "limitation": "Simplified drawing mock; not ESP32, PxMatrix scan timing, or physical LED glow"
+}
