@@ -1,0 +1,31 @@
+{
+  "width": 96,
+  "height": 64,
+  "source": {
+    "mode": "wet",
+    "seed": 42819,
+    "coverage": 0.57,
+    "scale": 0.62,
+    "bleed": 0.55,
+    "density": 0.68,
+    "texture": 0.62
+  },
+  "signal": {
+    "seed": 7183,
+    "pull": 0.67,
+    "shift": 0.3,
+    "slip": 0.2,
+    "sort": 0.36,
+    "weave": 0.25,
+    "crush": 0.24,
+    "grain": 0.08,
+    "scale": 0.24,
+    "mix": 0.85
+  },
+  "hashes": {
+    "wet": "efb60251e8daa518418b2e5420b733e02633c5ba9dd7b414c430a3a872dbccb0",
+    "dry": "96fedc009cfd854c32217067abe0ff36d8a289999a396de99a3802766e063f44",
+    "first": "089e2f1253f1ab3ab2af18d110bdf86ec5f242330e7a04484b932e1731856bfb",
+    "second": "fa7ea0c33436dbbb9fc3cbbf8ae7ee79f1202cca33ddd09f11168c1b060d4858"
+  }
+}

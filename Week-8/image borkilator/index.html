@@ -4,47 +4,43 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#191b19">
-  <title>Afterimage — Ink & signal studies</title>
-  <meta name="description" content="A generative ink and signal instrument. Make an image, interrupt it, and follow what emerges.">
+  <title>borkilator — Image & signal studies</title>
+  <meta name="description" content="Upload an image, interrupt its signal, and follow what emerges.">
   <link rel="stylesheet" href="style.css">
   <script defer src="engine.js"></script>
   <script defer src="app.js"></script>
 </head>
 <body>
   <header class="masthead">
-    <div class="identity"><span class="brand-mark" aria-hidden="true">a<span>∕</span></span><div><h1>afterimage<span class="brand-dot">.</span></h1><p>INK & SIGNAL STUDIES <span>/</span> EXPERIMENT 005</p></div></div>
+    <div class="identity"><span class="brand-mark" aria-hidden="true">b<span>∕</span></span><div><h1>borkilator<span class="brand-dot">.</span></h1><p>IMAGE & SIGNAL STUDIES <span>/</span> EXPERIMENT 005</p></div></div>
     <div class="header-actions"><button class="text-button" id="save-recipe" disabled>Save settings <span aria-hidden="true">↗</span></button><label class="text-button file-label">Open settings<input id="load-recipe" type="file" accept="application/json,.json"></label><button class="button export" id="export" disabled><span aria-hidden="true">↓</span> Export PNG</button></div>
   </header>
   <main class="workbench">
     <aside class="controls" aria-label="Image controls">
-      <div class="tab-list" role="tablist" aria-label="Working stage"><button id="source-tab" role="tab" aria-selected="true" aria-controls="source-panel"><span>01</span> Source</button><button id="signal-tab" role="tab" aria-selected="false" aria-controls="signal-panel" tabindex="-1"><span>02</span> Signal</button></div>
-      <section id="source-panel" role="tabpanel" aria-labelledby="source-tab">
-        <div class="panel-intro"><p class="eyebrow">THE STARTING CONDITIONS</p><h2>Let a form emerge.</h2><p>Ink, paper, and a little uncertainty.</p></div>
-        <fieldset class="modes"><legend>Material</legend><label class="mode-choice"><input type="radio" name="mode" value="wet" checked><span class="mode-image wet-icon" aria-hidden="true"></span><span>Wet wash<small>Pooled & translucent</small></span><span class="radio-dot"></span></label><label class="mode-choice"><input type="radio" name="mode" value="dry"><span class="mode-image dry-icon" aria-hidden="true"></span><span>Dry transfer<small>Dragged & broken</small></span><span class="radio-dot"></span></label></fieldset>
-        <div class="field structure-field"><label for="structure">Structure <span class="hint">Material and composition vary independently</span></label><select id="structure"><option value="explore">Explore · changing combinations</option><option value="blooms">Pools & blooms</option><option value="islands">Archipelago</option><option value="currents">Currents</option><option value="filaments">Filaments</option><option value="strata">Sediment</option><option value="ribbons">Ribbons</option><option value="cells">Membranes</option><option value="impressions">Impressions</option><option value="spatter">Spatter</option></select></div>
-        <div class="slider-group" id="source-sliders"></div>
-        <div class="field seed-field"><label for="source-seed">Seed <span class="hint" id="seed-hint">Generate explores a fresh seed each time</span></label><div class="input-row"><input id="source-seed" type="number" min="0" max="4294967295" step="1" value="42819"><button class="square-button" id="new-seed" title="Choose a new seed" aria-label="Choose a new source seed">↻</button></div><label class="seed-lock"><input id="lock-seed" type="checkbox"> Keep this seed to refine this image</label></div>
-        <details class="output-settings"><summary><span>Output size</span><span id="size-summary">4K · 16:9</span></summary><div class="details-content"><label for="resolution">Canvas dimensions</label><select id="resolution"><option value="3840x2160">4K widescreen · 3840 × 2160</option><option value="1920x1080">HD widescreen · 1920 × 1080</option><option value="3000x3000">Square · 3000 × 3000</option><option value="2160x3840">Portrait · 2160 × 3840</option><option value="custom">Custom dimensions</option></select><div class="dimension-fields" id="custom-size" hidden><label>Width<input id="custom-width" type="number" min="64" max="8192" step="1" value="3840"></label><span>×</span><label>Height<input id="custom-height" type="number" min="64" max="8192" step="1" value="2160"></label></div><p>Rendered at full size. Size changes take effect on Generate.</p></div></details>
-        <div class="panel-action"><p id="source-pending" class="pending-note">Ready for a new source</p><button class="button primary" id="generate"><span aria-hidden="true">✳</span> Generate source</button><p>A new source starts a fresh study.<br>Your earlier states stay in History.</p></div>
+      <section class="upload-section" aria-label="Upload image">
+        <p class="eyebrow">YOUR STARTING IMAGE</p>
+        <label class="button primary file-label">Upload image<input id="upload-image" type="file" accept="image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp"></label>
+        <p>PNG, JPEG, or WebP · up to 100 MiB.<br>Color, transparency, and original size retained.</p>
       </section>
-      <section id="signal-panel" role="tabpanel" aria-labelledby="signal-tab" hidden>
+      <section id="signal-panel" aria-label="Signal settings">
         <div class="panel-intro"><p class="eyebrow">INTERRUPT THE SIGNAL</p><h2>One pass at a time.</h2><p>Set the conditions. Then see what happens.</p></div>
         <div class="preset-section"><p class="field-label">Starting points</p><div class="presets"><button data-preset="dragged">Dragged</button><button data-preset="fractured">Fractured</button><button data-preset="encoded">Encoded</button><button data-preset="clear">Clear</button></div></div>
         <div class="slider-group" id="signal-sliders"></div>
         <div class="signal-meta"><div id="signal-shape-sliders"></div><div class="field seed-field"><label for="signal-seed">Pattern seed</label><div class="input-row"><input id="signal-seed" type="number" min="0" max="4294967295" step="1" value="7183"><button class="square-button" id="new-pattern" title="Choose a new pattern" aria-label="Choose a new pattern seed">↻</button></div></div></div>
-        <div class="panel-action"><p class="pending-note" id="signal-pending">Settings prepare the next pass</p><button class="button primary" id="apply" disabled><span aria-hidden="true">↳</span> Apply pass</button><p>Each pass builds on the current image.<br>Apply again to repeat these settings.</p></div>
+        <div class="panel-action"><p class="pending-note" id="signal-pending">Settings prepare the next pass</p><button class="button primary" id="apply" disabled><span aria-hidden="true">↳</span> borkilate</button><p>Each pass builds on the current image.<br>Borkilate again to repeat these settings.</p></div>
       </section>
       <div class="control-footer"><span class="tiny-dot"></span> MADE HERE. PROCESSED LOCALLY.</div>
     </aside>
     <section class="studio" aria-label="Image workspace">
-      <div class="studio-topline"><div><span class="eyebrow">WORKING IMAGE</span><h2 id="study-title">An image, waiting to happen.</h2></div><span class="state-chip" id="state-chip">SOURCE</span></div>
+      <div class="studio-topline"><div><span class="eyebrow">WORKING IMAGE</span><h2 id="study-title">An image, waiting to happen.</h2></div><span class="state-chip" id="state-chip">IMAGE</span></div>
       <div class="viewer-toolbar"><div class="view-switch" aria-label="Compare images"><button id="view-current" class="active" aria-pressed="true" disabled>Current</button><button id="view-original" aria-pressed="false" disabled>Original</button></div><div class="viewer-tools"><button id="undo" class="text-button" disabled title="Undo current pass (⌘/Ctrl Z)">↶ <span>Undo</span></button><button id="redo" class="text-button" disabled title="Redo (⌘/Ctrl Shift Z)">↷ <span>Redo</span></button><span class="toolbar-rule"></span><button id="zoom" class="zoom-button" disabled aria-pressed="false">Fit <span aria-hidden="true">↗</span></button></div></div>
-      <div class="viewport" id="viewport"><div class="image-wrap" id="image-wrap"><canvas id="artwork" width="3840" height="2160" aria-label="Generated monochrome artwork preview" hidden></canvas><div class="empty-state" id="empty"><span class="empty-glyph" aria-hidden="true">∿</span><p>Every image begins<br>with a set of conditions.</p><small>Choose a material. Generate a source.</small></div></div><div class="render-overlay" id="render-overlay" hidden><div class="render-card"><span class="render-spinner" aria-hidden="true"></span><p id="render-label">Gathering pigment</p><progress id="render-progress" max="1" value="0" aria-label="Render progress"></progress><span id="render-percent">0%</span></div></div></div>
-      <div class="image-caption"><span id="image-details">3840 × 2160 PX <span class="caption-separator">/</span> FULL-RESOLUTION CANVAS</span><span id="image-state">READY TO GENERATE</span></div>
-      <div class="message" id="message" role="status" aria-live="polite">Begin with a source. Follow what emerges.</div>
-      <section class="history" aria-label="Render history"><div class="history-heading"><h3>History <span id="history-count">00</span></h3><p>Return to any state to take another direction.</p><span class="session-note">THIS TAB’S SESSION</span></div><div id="history-list" class="history-list"><p class="history-empty">Your sources and passes will appear here.</p></div></section>
-      <footer class="studio-footer"><span>A STUDY IN CONTROL & CHANCE</span><span>GENERATE <b>→</b> INTERRUPT <b>→</b> OBSERVE <b>→</b> REPEAT</span></footer>
+      <div class="viewport" id="viewport"><div class="image-wrap" id="image-wrap"><canvas id="artwork" width="3840" height="2160" aria-label="Working image preview" hidden></canvas><div class="empty-state" id="empty"><span class="empty-glyph" aria-hidden="true">∿</span><p>Begin with your image.</p><small>Upload a PNG, JPEG, or WebP image.</small></div></div><div class="render-overlay" id="render-overlay" hidden><div class="render-card"><span class="render-spinner" aria-hidden="true"></span><p id="render-label">Gathering pigment</p><progress id="render-progress" max="1" value="0" aria-label="Render progress"></progress><span id="render-percent">0%</span></div></div></div>
+      <div class="image-caption"><span id="image-details">NATIVE-RESOLUTION IMAGES</span><span id="image-state">READY TO UPLOAD</span></div>
+      <div class="message" id="message" role="status" aria-live="polite">Upload an image. Then interrupt the signal.</div>
+      <section class="history" aria-label="Render history"><div class="history-heading"><h3>History <span id="history-count">00</span></h3><p>Return to any state to take another direction.</p><span class="session-note">THIS TAB’S SESSION</span></div><div id="history-list" class="history-list"><p class="history-empty">Your uploads and passes will appear here.</p></div></section>
+      <footer class="studio-footer"><span>A STUDY IN CONTROL & CHANCE</span><span>UPLOAD <b>→</b> INTERRUPT <b>→</b> OBSERVE <b>→</b> REPEAT</span></footer>
     </section>
   </main>
+  <dialog id="resize-dialog"><form method="dialog"><h2>Resize this image?</h2><p id="resize-description"></p><p>The processing limit is 8192 pixels per side and 16,777,216 pixels total.</p><div class="resize-actions"><button value="cancel" class="text-button">Cancel</button><button value="resize" class="button primary">Resize proportionally</button></div></form></dialog>
 </body>
 </html>

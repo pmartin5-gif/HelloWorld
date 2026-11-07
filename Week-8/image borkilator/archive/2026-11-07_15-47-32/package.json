@@ -1,0 +1,14 @@
+{
+  "name": "afterimage-experiment-05",
+  "version": "2.0.0",
+  "private": true,
+  "description": "A local procedural ink and signal instrument. The app itself has no dependencies or build step.",
+  "scripts": {
+    "test": "node tests/engine.cjs && node tests/variety.cjs",
+    "test:workflow": "node tests/workflow.cjs",
+    "samples": "node tests/engine.cjs --samples && node tests/variety.cjs --samples"
+  },
+  "devDependencies": {
+    "jsdom": "20.0.3"
+  }
+}

@@ -1,12 +1,13 @@
 {
-  "name": "afterimage-experiment-05",
-  "version": "2.0.0",
+  "name": "borkilator",
+  "version": "3.0.0",
   "private": true,
-  "description": "A local procedural ink and signal instrument. The app itself has no dependencies or build step.",
+  "description": "A local image upload and cumulative signal instrument. No runtime dependencies or build step.",
   "scripts": {
-    "test": "node tests/engine.cjs && node tests/variety.cjs",
+    "test": "node tests/rgba.cjs && node tests/workflow.cjs",
     "test:workflow": "node tests/workflow.cjs",
-    "samples": "node tests/engine.cjs --samples && node tests/variety.cjs --samples"
+    "samples": "node tests/engine.cjs --samples && node tests/variety.cjs --samples",
+    "test:legacy-engine": "node tests/engine.cjs && node tests/variety.cjs"
   },
   "devDependencies": {
     "jsdom": "20.0.3"

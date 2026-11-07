@@ -4,13 +4,6 @@
   const canvas = $('artwork'), ctx = canvas.getContext('2d', { willReadFrequently: true });
   const engine = window.InkEngine;
   const state = { busy: false, pixels: null, width: 3840, height: 2160, history: [], active: null, originalView: false, actualSize: false, nextId: 1, worker: null, jobs: new Map(), jobId: 0, viewToken: 0, redo: [] };
-  const sourceFields = [
-    ['coverage', 'Coverage', 57, 'From isolated traces and empty paper to flooded, edge-to-edge coverage.'],
-    ['scale', 'Form scale', 62, 'From tiny fragments and dense networks to forms larger than the frame.'],
-    ['bleed', 'Bleed', 55, 'From hard-cut boundaries to turbulent spreading and dissolving contours.'],
-    ['density', 'Ink load', 68, 'From barely visible traces to saturated, clipped black.'],
-    ['texture', 'Paper & pigment', 62, 'From flat, smooth material to coarse grain, torn coverage, and severe pigment breakup.']
-  ];
   const signalFields = [
     ['pull', 'Vertical pull', 25, 'Stretch fragments of columns into long vertical traces.'],
     ['shift', 'Band shift', 0, 'Displace horizontal bands of the image.'],
@@ -52,7 +45,6 @@
       container.append(div);
     }
   }
-  makeSliders($('source-sliders'), 'source', sourceFields);
   makeSliders($('signal-sliders'), 'signal', signalFields);
   makeSliders($('signal-shape-sliders'), 'signal', shapeFields);
   function getFields(prefix, fields) { return Object.fromEntries(fields.map(([key]) => [key, Number($(`${prefix}-${key}`).value) / 100])); }
@@ -61,7 +53,6 @@
     if (!Number.isInteger(value) || value < 0 || value > 4294967295) throw new Error('Use a whole-number seed between 0 and 4294967295.');
     return value;
   }
-  function sourceSettings() { return engine.sourceSettings({ ...getFields('source', sourceFields), structure: $('structure').value, mode: document.querySelector('input[name=mode]:checked').value, seed: readSeed('source-seed') }); }
   function signalSettings() { return engine.signalSettings({ ...getFields('signal', [...signalFields, ...shapeFields]), seed: readSeed('signal-seed') }); }
   function writeFields(prefix, fields, settings) {
     for (const [key] of fields) {
@@ -71,51 +62,13 @@
       $(`${prefix}-${key}`).setAttribute('aria-valuetext', `${value} percent`);
     }
   }
-  function writeSource(settings) {
-    writeFields('source', sourceFields, settings); $('source-seed').value = settings.seed;
-    document.querySelector(`input[name=mode][value=${settings.mode}]`).checked = true;
-    $('structure').value = settings.structure || 'explore';
-    $('lock-seed').checked = true; updateSeedHint();
-  }
   function writeSignal(settings) {
     writeFields('signal', [...signalFields, ...shapeFields], settings); $('signal-seed').value = settings.seed;
     document.querySelectorAll('[data-preset]').forEach(el => el.classList.remove('selected'));
   }
-  function dimensions() {
-    const value = $('resolution').value;
-    const [width, height] = value === 'custom' ? [Number($('custom-width').value), Number($('custom-height').value)] : value.split('x').map(Number);
-    engine.validateSize(width, height); return { width, height };
-  }
-  function writeDimensions(width, height) {
-    const val = `${width}x${height}`;
-    $('resolution').value = [...$('resolution').options].some(o => o.value === val) ? val : 'custom';
-    $('custom-width').value = width; $('custom-height').value = height;
-    updateSize();
-  }
-  function updateSize() {
-    $('custom-size').hidden = $('resolution').value !== 'custom';
-    try {
-      const { width, height } = dimensions();
-      $('size-summary').textContent = width === 3840 && height === 2160 ? '4K · 16:9' : `${width} × ${height}`;
-      if (!state.active) $('image-details').textContent = `${width} × ${height} PX / FULL-RESOLUTION CANVAS`;
-    } catch { $('size-summary').textContent = 'Check dimensions'; }
-    pending('source');
-  }
-  function pending(prefix) {
-    if (prefix === 'source') $('source-pending').textContent = state.active ? 'Changes take effect on Generate' : 'Ready for a new source';
-    else { $('signal-pending').textContent = Number($('signal-mix').value) > 75 ? 'Overdrive · the next pass can clip or invert tones' : 'Settings ready for the next pass'; document.querySelectorAll('[data-preset]').forEach(el => el.classList.remove('selected')); }
-  }
-  function selectTab(which, focus = false) {
-    for (const key of ['source', 'signal']) {
-      const selected = which === key;
-      $(`${key}-tab`).setAttribute('aria-selected', selected); $(`${key}-tab`).tabIndex = selected ? 0 : -1;
-      $(`${key}-panel`).hidden = !selected;
-    }
-    if (focus) $(`${which}-tab`).focus();
-  }
-  for (const key of ['source', 'signal']) {
-    $(`${key}-tab`).addEventListener('click', () => selectTab(key));
-    $(`${key}-tab`).addEventListener('keydown', e => { if (['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(e.key)) { e.preventDefault(); selectTab(e.key === 'Home' ? 'source' : e.key === 'End' ? 'signal' : key === 'source' ? 'signal' : 'source', true); } });
+  function pending() {
+    $('signal-pending').textContent = Number($('signal-mix').value) > 75 ? 'Overdrive · the next pass can clip or invert tones' : 'Settings ready for the next pass';
+    document.querySelectorAll('[data-preset]').forEach(el => el.classList.remove('selected'));
   }
   function updateButtons() {
     const unavailable = state.busy || !state.active;
@@ -161,12 +114,12 @@
         });
       } catch (error) { if (!error.fallback) throw error; }
     }
-    return operation === 'generate' ? engine.generate(width, height, settings, report) : engine.distort(input, width, height, settings, report);
+    return engine.distortRGBA(input, width, height, settings, report);
   }
   function raster(pixels, width, height) {
     const result = document.createElement('canvas'); result.width = width; result.height = height;
     const c = result.getContext('2d'), image = c.createImageData(width, height);
-    for (let p = 0, q = 0; p < pixels.length; p++, q += 4) { const v = pixels[p]; image.data[q] = v; image.data[q + 1] = v; image.data[q + 2] = v; image.data[q + 3] = 255; }
+    image.data.set(pixels);
     c.putImageData(image, 0, 0); return result;
   }
   const toBlob = c => new Promise((resolve, reject) => c.toBlob(blob => blob ? resolve(blob) : reject(new Error('Could not encode the image. Try a smaller output size.')), 'image/png'));
@@ -180,11 +133,10 @@
   }
   function activeDetails() {
     const item = state.active; if (!item) return;
-    const mode = item.recipe.source.mode === 'wet' ? 'Wet wash' : 'Dry transfer';
-    $('study-title').textContent = `${engine.describeSource(item.recipe.source)} · ${mode.toLowerCase()}`;
-    $('state-chip').textContent = state.originalView || !item.recipe.passes.length ? 'SOURCE' : `PASS ${String(item.recipe.passes.length).padStart(2, '0')}`;
+    $('study-title').textContent = item.recipe.filename;
+    $('state-chip').textContent = state.originalView || !item.recipe.passes.length ? 'IMAGE' : `PASS ${String(item.recipe.passes.length).padStart(2, '0')}`;
     $('image-details').textContent = `${item.width} × ${item.height} PX / ${((item.width * item.height) / 1e6).toFixed(1)} MEGAPIXELS`;
-    $('image-state').textContent = state.originalView ? 'VIEWING ORIGINAL' : item.recipe.passes.length ? 'CUMULATIVE PASS' : 'UNTOUCHED SOURCE';
+    $('image-state').textContent = state.originalView ? 'VIEWING ORIGINAL' : item.recipe.passes.length ? 'CUMULATIVE PASS' : 'UNTOUCHED UPLOAD';
     updateButtons();
   }
   function historyBytes() { const blobs = new Set(); for (const item of state.history) { blobs.add(item.blob); blobs.add(item.original.blob); } return [...blobs].reduce((n, b) => n + b.size, 0); }
@@ -205,7 +157,7 @@
       button.title = `Study ${item.study}, ${item.recipe.passes.length ? `pass ${item.recipe.passes.length}` : 'original'} · ${item.width} × ${item.height}`;
       const img = document.createElement('img'); img.src = item.thumb; img.alt = ''; img.width = 118; img.height = 66;
       const label = document.createElement('span'); label.className = 'history-label';
-      const name = document.createElement('span'); name.textContent = item.recipe.passes.length ? `Pass ${String(item.recipe.passes.length).padStart(2, '0')}` : 'Source';
+      const name = document.createElement('span'); name.textContent = item.recipe.passes.length ? `Pass ${String(item.recipe.passes.length).padStart(2, '0')}` : 'Upload';
       const number = document.createElement('span'); number.textContent = `${String(item.study).padStart(2, '0')} / ${String(item.id).padStart(2, '0')}`;
       label.append(name, number); button.append(img, label);
       button.addEventListener('click', () => restore(item)); list.append(button);
@@ -217,40 +169,96 @@
       else if (left + active.offsetWidth > list.scrollLeft + list.clientWidth) list.scrollLeft = left + active.offsetWidth - list.clientWidth;
     }
   }
-  async function commit(pixels, width, height, recipe, parent, original = null) {
+  async function prepare(pixels, width, height, recipe, parent, original = null) {
     progress(.97, 'Keeping this state');
     const image = raster(pixels, width, height), blob = await toBlob(image);
-    const thumbCanvas = document.createElement('canvas'); thumbCanvas.width = 236; thumbCanvas.height = 133;
-    const tc = thumbCanvas.getContext('2d'); tc.fillStyle = '#141711'; tc.fillRect(0, 0, 236, 133);
-    const scale = Math.min(236 / width, 133 / height); tc.drawImage(image, (236 - width * scale) / 2, (133 - height * scale) / 2, width * scale, height * scale);
-    const study = parent ? parent.study : 1 + state.history.reduce((n, h) => Math.max(n, h.study), 0);
-    const root = original || parent?.original || { blob, width, height };
-    const item = { id: state.nextId++, study, width, height, recipe: structuredClone(recipe), parentId: parent?.id ?? null, blob, thumb: thumbCanvas.toDataURL('image/jpeg', .8), original: root };
-    state.history.push(item); state.active = item; state.pixels = pixels; state.width = width; state.height = height; state.originalView = false; state.redo = []; state.viewToken++;
-    drawImage(image, width, height); image.width = 1; image.height = 1;
-    const trimmed = pruneHistory(); drawHistory(); activeDetails();
-    return trimmed;
+    const thumb = document.createElement('canvas'); thumb.width = 236; thumb.height = 133;
+    const tc = thumb.getContext('2d'); tc.fillStyle = '#aaa'; tc.fillRect(0, 0, 236, 133);
+    const scale = Math.min(236 / width, 133 / height);
+    tc.drawImage(image, (236 - width * scale) / 2, (133 - height * scale) / 2, width * scale, height * scale);
+    const thumbnail = thumb.toDataURL('image/jpeg', .8); image.width = 1; image.height = 1;
+    return { id: state.nextId++, study: parent ? parent.study : 1 + state.history.reduce((n, h) => Math.max(n, h.study), 0), width, height, recipe: structuredClone(recipe), parentId: parent?.id ?? null, blob, thumb: thumbnail, original: original || parent?.original || { blob, width, height } };
+  }
+  function adopt(items, pixels) {
+    const item = items.at(-1);
+    // All decoding, processing and encoding completes before this visible commit.
+    const image = raster(pixels, item.width, item.height);
+    drawImage(image, item.width, item.height); image.width = 1; image.height = 1;
+    state.history.push(...items); state.active = item; state.pixels = pixels;
+    state.width = item.width; state.height = item.height; state.originalView = false; state.redo = []; state.viewToken++;
+    const trimmed = pruneHistory(); drawHistory(); activeDetails(); return trimmed;
+  }
+  async function commit(pixels, width, height, recipe, parent) {
+    return adopt([await prepare(pixels, width, height, recipe, parent)], pixels);
   }
   function freshSeed() { const values = new Uint32Array(1); crypto.getRandomValues(values); return values[0]; }
-  function updateSeedHint() { $('seed-hint').textContent = $('lock-seed').checked ? 'Seed held · adjust settings to refine' : 'Generate explores a fresh seed each time'; }
-  async function generate(options = {}) {
-    if (state.busy) return;
-    let settings, size;
-    try {
-      settings = sourceSettings(); size = dimensions();
-      if (!$('lock-seed').checked && !options.reuseSeed) {
-        do { settings.seed = freshSeed(); } while (settings.seed === Number($('source-seed').value));
-        $('source-seed').value = settings.seed;
+  const UPLOAD_LIMIT = 100 * 1024 * 1024, SAVE_LIMIT = 128 * 1024 * 1024;
+  async function inspectImage(blob) {
+    if (blob.size > UPLOAD_LIMIT) throw new Error('Choose an image up to 100 MiB.');
+    const bytes = new Uint8Array(await blob.arrayBuffer()), view = new DataView(bytes.buffer);
+    const text = (start, count) => String.fromCharCode(...bytes.subarray(start, start + count));
+    let kind = '';
+    if (bytes.length >= 24 && text(0, 8) === '\x89PNG\r\n\x1a\n') {
+      kind = 'png';
+      for (let i = 8; i + 12 <= bytes.length;) {
+        const n = view.getUint32(i); if (n > bytes.length - i - 12) throw new Error('This PNG file is incomplete.');
+        if (text(i + 4, 4) === 'acTL') throw new Error('Animated images are not supported. Choose a still PNG, JPEG, or WebP.');
+        i += 12 + n;
       }
-    } catch (error) { message(error.message, true); return; }
-    busy(true); progress(0, 'Preparing the paper');
+    } else if (bytes[0] === 255 && bytes[1] === 216 && bytes[2] === 255) kind = 'jpeg';
+    else if (text(0, 4) === 'RIFF' && text(8, 4) === 'WEBP') {
+      kind = 'webp';
+      for (let i = 12; i + 8 <= bytes.length;) {
+        const n = view.getUint32(i + 4, true), tag = text(i, 4);
+        if (n > bytes.length - i - 8) throw new Error('This WebP file is incomplete.');
+        if (tag === 'ANIM' || tag === 'ANMF' || (tag === 'VP8X' && (bytes[i + 8] & 2))) throw new Error('Animated images are not supported. Choose a still image.');
+        i += 8 + n + (n % 2);
+      }
+    }
+    if (!kind) throw new Error('Choose a still PNG, JPEG, or WebP image.');
+    return kind;
+  }
+  function askResize(width, height, w, h) {
+    const dialog = $('resize-dialog');
+    $('resize-description').textContent = `This image is ${width} × ${height}. Import a proportional ${w} × ${h} copy? Your file on disk stays unchanged.`;
+    return new Promise(resolve => {
+      dialog.returnValue = 'cancel';
+      dialog.addEventListener('close', () => resolve(dialog.returnValue === 'resize'), { once: true });
+      // Modal controls must remain available while the rest of the app is busy.
+      dialog.querySelectorAll('button').forEach(b => { b.disabled = false; }); dialog.showModal();
+    });
+  }
+  async function decodeImage(blob, allowResize = false) {
+    const image = await bitmap(blob);
     try {
-      const pixels = await render('generate', size.width, size.height, settings);
-      const trimmed = await commit(pixels, size.width, size.height, { version: 2, ...size, source: settings, passes: [] }, null);
-      $('source-pending').textContent = 'Source generated · settings recorded';
-      message(`${engine.describeSource(settings)} · seed ${settings.seed}. ${$('lock-seed').checked ? 'Seed held for refinement.' : 'Generate again to explore another source.'}${trimmed ? ' Older history was trimmed to make room.' : ''}`);
-    } catch (error) { message(error.message || 'The image could not be generated. Your previous state is preserved.', true); }
-    finally { busy(false); }
+      let width = image.width || image.naturalWidth, height = image.height || image.naturalHeight;
+      if (!width || !height) throw new Error('This image has no readable dimensions.');
+      const factor = Math.min(1, 8192 / width, 8192 / height, Math.sqrt(16777216 / (width * height)));
+      if (factor < 1) {
+        const w = Math.max(1, Math.floor(width * factor)), h = Math.max(1, Math.floor(height * factor));
+        if (!allowResize) throw new Error('The saved image exceeds processing limits.');
+        if (!await askResize(width, height, w, h)) return null;
+        width = w; height = h;
+      }
+      engine.validateUploadSize(width, height);
+      const c = document.createElement('canvas'); c.width = width; c.height = height;
+      const context = c.getContext('2d', { willReadFrequently: true });
+      context.drawImage(image, 0, 0, width, height);
+      const pixels = new Uint8ClampedArray(context.getImageData(0, 0, width, height).data);
+      c.width = 1; c.height = 1; return { width, height, pixels };
+    } finally { image.close?.(); }
+  }
+  async function upload(file) {
+    if (!file || state.busy) return;
+    busy(true); progress(0, 'Reading your image');
+    try {
+      await inspectImage(file);
+      const decoded = await decodeImage(file, true); if (!decoded) { message('Upload cancelled. Your current study is preserved.'); return; }
+      const { pixels, width, height } = decoded;
+      const trimmed = await commit(pixels, width, height, { version: 3, width, height, filename: file.name || 'image', passes: [] }, null);
+      message(`Imported ${file.name} at ${width} × ${height}. Signal settings are prepared; press borkilate to use them.${trimmed ? ' Older history was trimmed.' : ''}`);
+    } catch (error) { message(`Could not upload image: ${error.message || 'The image could not be decoded.'} Your current study is preserved.`, true); }
+    finally { busy(false); $('upload-image').value = ''; }
   }
   async function apply() {
     if (state.busy || !state.active) return;
@@ -261,7 +269,8 @@
     busy(true); progress(0, 'Reading the current image');
     try {
       const pixels = await render('distort', state.width, state.height, settings, state.pixels);
-      const recipe = { ...parent.recipe, version: 2, passes: [...parent.recipe.passes, settings] };
+      if (pixels.every((v, i) => v === state.pixels[i])) { message('This pass leaves the image unchanged.'); return; }
+      const recipe = { ...parent.recipe, version: 3, passes: [...parent.recipe.passes, settings] };
       const trimmed = await commit(pixels, state.width, state.height, recipe, parent);
       $('signal-pending').textContent = 'Pass applied · ready to repeat';
       message(`Pass ${recipe.passes.length} complete. Inspect it, adjust the settings, or apply the same pass again.${trimmed ? ' Older history was trimmed to make room.' : ''}`);
@@ -276,15 +285,12 @@
       const image = await bitmap(item.blob);
       drawImage(image, item.width, item.height); image.close?.();
       const rgba = ctx.getImageData(0, 0, item.width, item.height).data;
-      state.pixels = new Uint8ClampedArray(item.width * item.height);
-      for (let p = 0; p < state.pixels.length; p++) state.pixels[p] = rgba[p * 4];
+      state.pixels = new Uint8ClampedArray(rgba);
       state.active = item; state.width = item.width; state.height = item.height; state.originalView = false; state.viewToken++;
       if (kind === 'undo') state.redo.push(previous.id); else if (kind === 'redo') state.redo.pop(); else state.redo = [];
-      writeSource(item.recipe.source); writeDimensions(item.width, item.height);
       if (item.recipe.passes.length) writeSignal(item.recipe.passes.at(-1));
-      $('source-pending').textContent = 'Settings restored from this state';
       $('signal-pending').textContent = 'Ready to continue from this state';
-      drawHistory(); activeDetails(); message(`Returned to study ${item.study}, ${item.recipe.passes.length ? `pass ${item.recipe.passes.length}` : 'the source'}. The next pass will build from here.`);
+      drawHistory(); activeDetails(); message(`Returned to study ${item.study}, ${item.recipe.passes.length ? `pass ${item.recipe.passes.length}` : 'the upload'}. The next pass will build from here.`);
     } catch (error) { message(error.message, true); }
     finally { busy(false); }
   }
@@ -296,75 +302,77 @@
       if (token !== state.viewToken) { image.close?.(); return; }
       drawImage(image, state.width, state.height); image.close?.();
       state.originalView = original; activeDetails();
-      message(original ? 'Viewing the untouched source. Apply pass and Export PNG still use your current result.' : 'Viewing the current result.');
+      message(original ? 'Viewing the untouched upload. borkilate and Export PNG still use your current result.' : 'Viewing the current result.');
     } catch (error) { message(error.message, true); }
   }
   function download(blob, filename) {
     const url = URL.createObjectURL(blob), a = document.createElement('a');
     a.href = url; a.download = filename; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 60000);
   }
-  function filename(ext) { const a = state.active; return `afterimage-${a.recipe.source.mode}-${a.recipe.source.seed}-pass-${String(a.recipe.passes.length).padStart(2, '0')}-${a.width}x${a.height}.${ext}`; }
+  function filename(ext) {
+    const a = state.active, stem = a.recipe.filename.replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9_-]+/g, '-').slice(0, 80) || 'image';
+    return `borkilator-${stem}-pass-${String(a.recipe.passes.length).padStart(2, '0')}-${a.width}x${a.height}.${ext}`;
+  }
   function exportPNG() {
     if (!state.active || state.busy) return;
     download(state.active.blob, filename('png'));
     message(`Exported the current image at ${state.width} × ${state.height} pixels. No interface or labels are included.`);
   }
-  function saveRecipe() {
+  const dataURL = blob => new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.onerror = () => reject(new Error('Could not read image data.')); reader.readAsDataURL(blob); });
+  async function saveRecipe() {
     if (!state.active || state.busy) return;
-    download(new Blob([JSON.stringify({ application: 'afterimage', ...state.active.recipe }, null, 2)], { type: 'application/json' }), filename('json'));
-    message('Saved the source and applied passes. Open these settings to recreate this result at the same resolution.');
+    busy(true); progress(0, 'Saving image and passes');
+    try {
+      const recipe = { application: 'afterimage', ...state.active.recipe, image: await dataURL(state.active.original.blob) };
+      const blob = new Blob([JSON.stringify(recipe)], { type: 'application/json' });
+      if (blob.size > SAVE_LIMIT) throw new Error('This save exceeds 128 MiB. Export PNG to preserve the current result.');
+      download(blob, filename('json')); message('Saved the starting image and applied passes. This file reopens without the original upload.');
+    } catch (error) { message(error.message, true); }
+    finally { busy(false); }
   }
   function validateRecipe(recipe) {
-    if (!recipe || recipe.application !== 'afterimage' || ![1, 2].includes(recipe.version) || !recipe.source || !Array.isArray(recipe.passes) || recipe.passes.length > 64) throw new Error('Choose an Afterimage settings file (version 1 or 2, up to 64 passes).');
-    engine.validateSize(recipe.width, recipe.height);
-    if (!['wet', 'dry'].includes(recipe.source.mode)) throw new Error('The source material in this settings file is not recognized.');
-    for (const [settings, fields] of [[recipe.source, sourceFields], ...recipe.passes.map(s => [s, [...signalFields, ...shapeFields]])]) {
-      if (!settings || !Number.isInteger(settings.seed) || settings.seed < 0 || settings.seed > 4294967295) throw new Error('The settings file has an invalid seed.');
-      for (const [key] of fields) if (!Number.isFinite(settings[key]) || settings[key] < 0 || settings[key] > 1) throw new Error(`The settings file has an invalid ${key} value.`);
+    if (recipe?.application === 'afterimage' && [1, 2].includes(recipe.version)) throw new Error('Procedural saves belong to the archived version. Open them in archive/2026-11-07_15-47-32/index.html.');
+    if (!recipe || recipe.application !== 'afterimage' || recipe.version !== 3 || !Array.isArray(recipe.passes) || recipe.passes.length > 64) throw new Error('Choose an upload-based borkilator settings file (version 3, up to 64 passes).');
+    engine.validateUploadSize(recipe.width, recipe.height);
+    if (typeof recipe.filename !== 'string' || recipe.filename.length > 1024 || typeof recipe.image !== 'string' || !/^data:image\/png;base64,[A-Za-z0-9+/]+={0,2}$/.test(recipe.image)) throw new Error('This settings file has invalid starting-image data.');
+    for (const settings of recipe.passes) {
+      if (!settings || settings.model !== 2 || !Number.isInteger(settings.seed) || settings.seed < 0 || settings.seed > 4294967295) throw new Error('This settings file has an invalid pattern seed or rendering model.');
+      for (const [key] of [...signalFields, ...shapeFields]) if (!Number.isFinite(settings[key]) || settings[key] < 0 || settings[key] > 1) throw new Error(`Invalid ${key} setting.`);
     }
-    const fallbackModel = recipe.version === 1 ? 1 : 2;
-    const withModel = settings => {
-      const model = settings.model ?? fallbackModel;
-      if (![1, 2].includes(model)) throw new Error('This settings file uses an unknown rendering model.');
-      return { ...settings, model };
-    };
-    if (recipe.source.structure && recipe.source.structure !== 'explore' && !Object.hasOwn(engine.structures, recipe.source.structure)) throw new Error('This source structure is not recognized.');
-    return { version: recipe.version, width: recipe.width, height: recipe.height, source: engine.sourceSettings(withModel(recipe.source)), passes: recipe.passes.map(s => engine.signalSettings(withModel(s))) };
+    return recipe;
   }
   async function loadRecipe(file) {
     if (!file || state.busy) return;
-    let recipe;
-    try { if (file.size > 1e6) throw new Error('This settings file is too large. Choose a saved Afterimage JSON file.'); recipe = validateRecipe(JSON.parse(await file.text())); }
-    catch (error) { $('load-recipe').value = ''; message(`Could not open settings: ${error.message}`, true); return; }
-    busy(true);
+    busy(true); progress(0, 'Opening saved work');
     try {
-      const total = 1 + recipe.passes.length;
-      const report = step => (value, text) => progress((step + value) / total * .95, `${text}${total > 1 ? ` · ${step + 1}/${total}` : ''}`);
-      let pixels = await render('generate', recipe.width, recipe.height, recipe.source, null, report(0));
-      await commit(pixels, recipe.width, recipe.height, { ...recipe, passes: [] }, null);
-      for (let i = 0; i < recipe.passes.length; i++) {
-        pixels = await render('distort', recipe.width, recipe.height, recipe.passes[i], pixels, report(i + 1));
-        await commit(pixels, recipe.width, recipe.height, { ...recipe, passes: recipe.passes.slice(0, i + 1) }, state.active);
+      if (file.size > SAVE_LIMIT) throw new Error('Choose a saved file up to 128 MiB.');
+      const saved = validateRecipe(JSON.parse(await file.text()));
+      const raw = atob(saved.image.split(',')[1]);
+      const blob = new Blob([Uint8Array.from(raw, ch => ch.charCodeAt(0))], { type: 'image/png' });
+      if (await inspectImage(blob) !== 'png') throw new Error('The embedded image must be PNG.');
+      const decoded = await decodeImage(blob);
+      if (decoded.width !== saved.width || decoded.height !== saved.height) throw new Error('Saved dimensions do not match the embedded image.');
+      const { image, application, ...recipe } = saved;
+      let pixels = decoded.pixels, parent = await prepare(pixels, saved.width, saved.height, { ...recipe, passes: [] }, null);
+      const staged = [parent];
+      for (let i = 0; i < saved.passes.length; i++) {
+        pixels = await render('distort', saved.width, saved.height, saved.passes[i], pixels, (v, text) => progress((i + v) / Math.max(1, saved.passes.length), text));
+        parent = await prepare(pixels, saved.width, saved.height, { ...recipe, passes: saved.passes.slice(0, i + 1) }, parent);
+        staged.push(parent);
+        while (staged.length > 2 && (staged.length > 24 || staged.reduce((n, s) => n + s.blob.size, parent.original.blob.size) > 192 * 1024 * 1024)) staged.shift();
       }
-      writeSource(recipe.source); writeDimensions(recipe.width, recipe.height);
-      if (recipe.passes.length) writeSignal(recipe.passes.at(-1));
-      message(`Recreated a ${recipe.width} × ${recipe.height} study with ${recipe.passes.length} applied passes. Earlier session images remain in History.`);
-    } catch (error) { message(`Could not recreate this study: ${error.message}`, true); }
+      adopt(staged, pixels);
+      if (saved.passes.length) writeSignal(saved.passes.at(-1));
+      message(`Reopened ${saved.filename} with ${saved.passes.length} applied passes. Earlier session studies remain in History.`);
+    } catch (error) { message(`Could not open settings: ${error.message} Your current study is preserved.`, true); }
     finally { busy(false); $('load-recipe').value = ''; }
   }
-  $('generate').addEventListener('click', generate); $('apply').addEventListener('click', apply);
+  $('upload-image').addEventListener('change', e => upload(e.target.files[0]));
+  $('apply').addEventListener('click', apply);
   $('export').addEventListener('click', exportPNG); $('save-recipe').addEventListener('click', saveRecipe);
   $('load-recipe').addEventListener('change', e => loadRecipe(e.target.files[0]));
-  $('resolution').addEventListener('change', updateSize);
-  for (const id of ['custom-width', 'custom-height']) $(id).addEventListener('change', updateSize);
-  document.querySelectorAll('input[name=mode]').forEach(el => el.addEventListener('change', () => pending('source')));
-  $('structure').addEventListener('change', () => pending('source'));
-  $('lock-seed').addEventListener('change', updateSeedHint);
-  for (const [button, input, prefix] of [['new-seed', 'source-seed', 'source'], ['new-pattern', 'signal-seed', 'signal']]) {
-    const holdSource = () => { if (prefix === 'source') { $('lock-seed').checked = true; updateSeedHint(); } };
-    $(button).addEventListener('click', () => { $(input).value = freshSeed(); holdSource(); pending(prefix); });
-    $(input).addEventListener('input', () => { holdSource(); pending(prefix); });
-  }
+  $('new-pattern').addEventListener('click', () => { $('signal-seed').value = freshSeed(); pending(); });
+  $('signal-seed').addEventListener('input', pending);
   document.querySelectorAll('[data-preset]').forEach(button => button.addEventListener('click', () => {
     writeSignal({ ...presets[button.dataset.preset], seed: Number($('signal-seed').value) });
     pending('signal'); button.classList.add('selected');
@@ -378,6 +386,5 @@
     if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'z') { event.preventDefault(); $(event.shiftKey ? 'redo' : 'undo').click(); }
   });
   initWorker(); updateButtons();
-  // A first full-resolution source is rendered on opening; all later renders are explicit.
-  setTimeout(() => generate({ reuseSeed: true }), 100);
+
 })();

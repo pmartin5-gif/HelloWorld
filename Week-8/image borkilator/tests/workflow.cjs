@@ -13,6 +13,7 @@ const w = dom.window, d = w.document;
 const frames = new WeakMap(), blobs = new Map(), downloads = [];
 let urlId = 0;
 w.structuredClone = structuredClone; w.Blob = Blob;
+w.FileReader = class { readAsDataURL(blob) { blob.arrayBuffer().then(bytes => { this.result = 'data:image/png;base64,' + Buffer.from(bytes).toString('base64'); this.onload(); }, () => this.onerror()); } };
 w.HTMLElement.prototype.scrollIntoView = function () {};
 w.URL.createObjectURL = blob => { const id = `blob:test-${++urlId}`; blobs.set(id, blob); return id; };
 w.URL.revokeObjectURL = id => blobs.delete(id);
@@ -35,9 +36,17 @@ w.HTMLCanvasElement.prototype.getContext = function () {
     }
   };
 };
-w.HTMLCanvasElement.prototype.toBlob = function (callback) { callback(new Blob([JSON.stringify({ width: this.width, height: this.height, rgba: Buffer.from(pixels(this)).toString('base64') })], { type: 'image/png' })); };
+// These are mock PNG containers for the controller, not browser encoding tests.
+function mockPNG(width,height,rgba) {
+  const payload=Buffer.from(JSON.stringify({width,height,rgba:Buffer.from(rgba).toString('base64')}));
+  const length=Buffer.alloc(4); length.writeUInt32BE(payload.length);
+  return Buffer.concat([Buffer.from([137,80,78,71,13,10,26,10]),length,Buffer.from('jsON'),payload,Buffer.alloc(4)]);
+}
+w.HTMLCanvasElement.prototype.toBlob = function(callback) { callback(new Blob([mockPNG(this.width,this.height,pixels(this))], {type:'image/png'})); };
 w.HTMLCanvasElement.prototype.toDataURL = () => 'data:image/jpeg;base64,dGVzdA==';
-w.createImageBitmap = async blob => { const data = JSON.parse(await blob.text()); return { width: data.width, height: data.height, rgba: Buffer.from(data.rgba, 'base64'), close() {} }; };
+w.createImageBitmap = async blob => { const data=JSON.parse(Buffer.from(await blob.arrayBuffer()).subarray(16,-4).toString()); return {width:data.width,height:data.height,rgba:Buffer.from(data.rgba,'base64'),close(){}}; };
+w.HTMLDialogElement.prototype.showModal = function() { this.open=true; };
+w.HTMLDialogElement.prototype.close = function(value) { this.returnValue=value; this.open=false; this.dispatchEvent(new w.Event('close')); };
 const $ = id => d.getElementById(id);
 const click = id => $(id).click();
 const event = (id, type) => $(id).dispatchEvent(new w.Event(type, { bubbles: true }));
@@ -47,85 +56,67 @@ const activeId = () => d.querySelector('.history-item[aria-current=true]')?.titl
 async function until(predicate) { for (let i = 0; i < 1000; i++) { if (predicate()) return; await new Promise(r => setTimeout(r, 10)); } throw new Error(`Timed out. UI message: ${$('message').textContent}`); }
 const idle = () => until(() => $('viewport').getAttribute('aria-busy') === 'false');
 function adjust(prefix, key, value) { $(`${prefix}-${key}`).value = value; event(`${prefix}-${key}`, 'input'); }
-async function main() {
-  assert.equal($('resolution').value, '3840x2160', 'default output must be 4K');
-  w.eval(fs.readFileSync(path.join(root, 'engine.js'), 'utf8'));
-  w.eval(fs.readFileSync(path.join(root, 'app.js'), 'utf8'));
-  $('resolution').value = 'custom'; $('custom-width').value = 320; $('custom-height').value = 180; event('resolution', 'change');
-  await until(() => count() === 1 && !$('generate').disabled);
-  const source = art(); assert.equal(source.length, 320 * 180 * 4); assert.equal($('state-chip').textContent, 'SOURCE');
-  click('signal-tab'); assert($('source-panel').hidden); assert(!$('signal-panel').hidden);
-  adjust('signal', 'pull', 70); adjust('signal', 'shift', 30);
-  assert.deepEqual(art(), source, 'moving controls must not render'); assert.equal(count(), 1);
-  click('apply'); await idle(); const first = art(); assert.notDeepEqual(first, source); assert.equal(count(), 2);
-  click('apply'); await idle(); const second = art(); assert.notDeepEqual(second, first); assert.equal(count(), 3);
-  click('undo'); await idle(); assert.deepEqual(art(), first, 'undo must restore exact pixels'); assert(!$('redo').disabled);
-  click('redo'); await idle(); assert.deepEqual(art(), second, 'redo must restore exact pixels');
-  click('undo'); await idle(); adjust('signal', 'weave', 75); click('apply'); await idle(); const branch = art();
-  assert.equal(count(), 4); assert.notDeepEqual(branch, second); assert($('redo').disabled);
-  const originalId = activeId(); click('view-original'); await until(() => $('view-original').getAttribute('aria-pressed') === 'true');
-  assert.deepEqual(art(), source); assert.equal(activeId(), originalId, 'comparison must not change working state');
-  click('export');
-  const png = JSON.parse(await downloads.at(-1).blob.text());
-  assert.equal(png.width, 320); assert.equal(png.height, 180); assert.deepEqual(Buffer.from(png.rgba, 'base64'), Buffer.from(branch), 'export must use current result even when comparing original');
-  click('view-current'); await until(() => $('view-current').getAttribute('aria-pressed') === 'true'); assert.deepEqual(art(), branch);
-  click('zoom'); assert($('viewport').classList.contains('actual-size')); click('zoom'); assert(!$('viewport').classList.contains('actual-size'));
-  click('save-recipe'); const saved = await downloads.at(-1).blob.text(); const recipe = JSON.parse(saved);
-  assert.equal(recipe.passes.length, 2); assert.equal(recipe.width, 320); assert.equal(recipe.source.seed, 42819);
-  const beforeZero = count(); d.querySelector('[data-preset=clear]').click(); click('apply'); await idle(); assert.equal(count(), beforeZero, 'no-op pass must not create a history state');
-  Object.defineProperty($('load-recipe'), 'files', { configurable: true, value: [{ size: saved.length, text: async () => saved }] }); event('load-recipe', 'change');
-  await until(() => count() === beforeZero + 3 && !$('generate').disabled);
-  assert.deepEqual(art(), branch, 'reopened settings must recreate the exact image'); assert(!$('undo').disabled, 'reopened passes must be undoable');
-  click('undo'); await idle(); assert.deepEqual(art(), first);
-  const beforeInvalid = count(), beforeInvalidPixels = art();
-  const invalid = JSON.stringify({ ...recipe, width: 99999 });
-  Object.defineProperty($('load-recipe'), 'files', { configurable: true, value: [{ size: invalid.length, text: async () => invalid }] }); event('load-recipe', 'change');
-  await until(() => $('message').classList.contains('error')); assert.equal(count(), beforeInvalid); assert.deepEqual(art(), beforeInvalidPixels);
-  $('custom-width').value = 99999; click('generate'); assert.equal(count(), beforeInvalid); assert.deepEqual(art(), beforeInvalidPixels);
-  $('custom-width').value = 400; $('custom-height').value = 225; d.querySelector('input[value=dry]').checked = true; click('generate'); await idle();
-  assert.equal(count(), beforeInvalid + 1); assert.equal($('artwork').width, 400); assert.equal($('artwork').height, 225);
-  d.querySelector('.history-item').click(); await idle(); assert.deepEqual(art(), source); assert.equal($('custom-width').value, '320');
-  const unknownIds = [...d.querySelectorAll('[aria-controls]')].map(el => el.getAttribute('aria-controls')).filter(id => !$(id)); assert.deepEqual(unknownIds, []);
-  assert.equal(d.querySelectorAll('canvas').length, 1); assert.equal(d.querySelectorAll('input[type=range]').length, 14);
-  console.log('PASS: control preparation, tabs, cumulative passes, exact undo/redo, history branches, original comparison, export selection, saved-settings replay, loaded undo, no-op handling, invalid input, dimensions, earlier studies.');
-  // New source exploration must change seeds without requiring a separate reroll.
-  const seedBefore = $('source-seed').value;
-  $('lock-seed').checked = false; event('lock-seed', 'change');
-  click('generate'); await idle(); const explored = art(), exploredSeed = $('source-seed').value;
-  assert.notEqual(exploredSeed, seedBefore, 'unlocked Generate must use a new seed');
-  click('generate'); await idle(); assert.notEqual($('source-seed').value, exploredSeed); assert.notDeepEqual(art(), explored);
-  $('lock-seed').checked = true; event('lock-seed', 'change'); const heldSeed = $('source-seed').value, heldImage = art();
-  click('generate'); await idle(); assert.equal($('source-seed').value, heldSeed); assert.deepEqual(art(), heldImage, 'locking a seed must let the user revisit the exact source');
-  $('source-seed').value = 2026; event('source-seed', 'input'); assert($('lock-seed').checked, 'manual seed input must be respected');
-  $('structure').value = 'strata'; event('structure', 'change');
-  const beforePreparing = art(); adjust('source', 'bleed', 100); assert.deepEqual(art(), beforePreparing, 'new source settings still prepare without rendering');
-  click('generate'); await idle(); assert($('study-title').textContent.includes('Sediment'));
-  click('save-recipe'); const modern = JSON.parse(await downloads.at(-1).blob.text());
-  assert.equal(modern.version, 2); assert.equal(modern.source.structure, 'strata'); assert.equal(modern.source.model, 2); assert.equal(modern.source.seed, 2026);
-  // Existing v1 settings still reconstruct their original pixels, and may gain v2 passes.
-  const old = require('./fixtures/v1.json');
-  const oldRecipe = JSON.stringify({ application: 'afterimage', version: 1, width: old.width, height: old.height, source: old.source, passes: [old.signal, old.signal] });
-  Object.defineProperty($('load-recipe'), 'files', { configurable: true, value: [{ size: oldRecipe.length, text: async () => oldRecipe }] }); event('load-recipe', 'change');
-  await until(() => $('message').textContent.includes('Recreated a 96 × 64') && !$('generate').disabled);
-  const gray = new Uint8Array(old.width * old.height), rgba = art(); for (let i = 0; i < gray.length; i++) gray[i] = rgba[i * 4];
-  assert.equal(crypto.createHash('sha256').update(gray).digest('hex'), old.hashes.second, 'opening a legacy file must preserve its exact result');
-  d.querySelector('[data-preset=dragged]').click(); click('apply'); await idle(); const extended = art();
-  click('save-recipe'); const hybridText = await downloads.at(-1).blob.text(), hybrid = JSON.parse(hybridText);
-  assert.equal(hybrid.version, 2); assert.equal(hybrid.source.model, 1); assert.deepEqual(hybrid.passes.map(s => s.model), [1, 1, 2]);
-  Object.defineProperty($('load-recipe'), 'files', { configurable: true, value: [{ size: hybridText.length, text: async () => hybridText }] }); event('load-recipe', 'change');
-  await until(() => $('message').textContent.includes('with 3 applied passes') && !$('generate').disabled);
-  assert.deepEqual(art(), extended, 'a legacy source with new passes must also replay exactly');
-  console.log('PASS: fresh-source exploration, locked/manual seeds, independent structure choice, extreme prepared settings, modern recipes, exact legacy imports, mixed-model replay.');
-  // Exercise the actual worker message handler without a browser or network.
-  const replies = []; const context = vm.createContext({ self: { postMessage: data => replies.push(data) }, setTimeout, Uint8ClampedArray, Uint32Array, Float32Array, Math, Number, Object, Error, Promise, console });
-  context.importScripts = name => vm.runInContext(fs.readFileSync(path.join(root, name), 'utf8'), context);
-  Object.defineProperty(context, 'InkEngine', { get: () => context.self.InkEngine });
-  vm.runInContext(fs.readFileSync(path.join(root, 'worker.js'), 'utf8'), context);
-  await context.self.onmessage({ data: { id: 1, operation: 'generate', width: 96, height: 64, settings: {} } });
-  assert.equal(replies.at(-1).id, 1); assert.equal(replies.at(-1).result.byteLength, 96 * 64);
-  await context.self.onmessage({ data: { id: 2, operation: 'distort', width: 96, height: 64, settings: { pull: .7 }, pixels: replies.at(-1).result } });
-  assert.equal(replies.at(-1).id, 2); assert.equal(replies.at(-1).result.byteLength, 96 * 64);
-  await context.self.onmessage({ data: { id: 3, operation: 'generate', width: 9000, height: 64, settings: {} } }); assert(replies.at(-1).error);
-  console.log('PASS: worker generation/distortion protocol, progress, result buffers, and error reporting.');
+function choose(id,file) { Object.defineProperty($(id),'files',{configurable:true,value:[file]}); event(id,'change'); }
+function imageFile(width=80,height=70,name='color.png') {
+  const rgba=Uint8ClampedArray.from({length:width*height*4},(_,i)=>i%4===3?(Math.floor(i/4)*13)%256:(i*37)%256);
+  const file=new Blob([mockPNG(width,height,rgba)],{type:'image/png'}); file.name=name; return {file,rgba};
 }
-main().then(() => dom.window.close()).catch(error => { console.error(error); dom.window.close(); process.exitCode = 1; });
+async function main() {
+  w.eval(fs.readFileSync(path.join(root,'engine.js'),'utf8'));
+  w.eval(fs.readFileSync(path.join(root,'app.js'),'utf8'));
+  assert.equal(count(),0); assert.equal($('apply').disabled,true); assert.equal($('source-panel'),null);
+  assert.equal($('signal-panel').hidden,false);
+  const first=imageFile(); choose('upload-image',first.file); await idle();
+  assert.equal(count(),1); assert.deepEqual(art(),first.rgba); assert.equal($('study-title').textContent,'color.png');
+  const original=art(); adjust('signal','shift',80); adjust('signal','pull',0); adjust('signal','mix',75);
+  assert.deepEqual(art(),original,'settings must prepare only');
+  click('apply'); await idle(); const pass=art(); assert.notDeepEqual(pass,original); assert.equal(count(),2);
+  click('view-original'); await until(()=>$('view-original').getAttribute('aria-pressed')==='true'); assert.deepEqual(art(),original);
+  click('export'); const exported=JSON.parse(Buffer.from(await downloads.at(-1).blob.arrayBuffer()).subarray(16,-4).toString());
+  assert.deepEqual(Buffer.from(exported.rgba,'base64'),Buffer.from(pass),'export must use current while comparing original');
+  click('undo'); await idle(); assert.deepEqual(art(),original);
+  click('redo'); await idle(); assert.deepEqual(art(),pass);
+  click('undo'); await idle(); adjust('signal','grain',40); click('apply'); await idle(); assert.equal(count(),3); assert.equal($('redo').disabled,true);
+  const branch=art();
+  click('save-recipe'); await idle(); const saved=downloads.at(-1).blob, recipe=JSON.parse(await saved.text());
+  assert.equal(recipe.version,3); assert.equal(recipe.filename,'color.png'); assert.match(recipe.image,/^data:image\/png;base64,/);
+  assert.equal(recipe.passes.length,1);
+  const next=imageFile(80,70,'next.png'); choose('upload-image',next.file); await idle(); assert.equal(count(),4);
+  assert.equal($('signal-grain').value,'40'); assert.deepEqual(art(),next.rgba);
+  choose('load-recipe',saved); await idle(); assert.deepEqual(art(),branch); assert.equal(count(),6);
+  click('undo'); await idle(); assert.deepEqual(art(),original); click('redo'); await idle(); assert.deepEqual(art(),branch);
+  const stable=art(), stableCount=count();
+  for(const file of [new Blob(['bad']),new Blob([JSON.stringify({...recipe,version:2})]),new Blob([JSON.stringify({...recipe,width:81})]),new Blob([JSON.stringify({...recipe,passes:[{seed:-1}]})])]) {
+    choose('load-recipe',file); await idle(); assert.deepEqual(art(),stable); assert.equal(count(),stableCount);
+  }
+  choose('upload-image',new Blob(['invalid image'])); await idle(); assert.match($('message').textContent,/Choose a still/); assert.deepEqual(art(),stable);
+  choose('upload-image',{size:101*1024*1024}); await idle(); assert.match($('message').textContent,/100 MiB/);
+  // Animated PNG rejection before decoding.
+  const animated=Buffer.concat([Buffer.from([137,80,78,71,13,10,26,10]),Buffer.alloc(4),Buffer.from('acTL'),Buffer.alloc(4),Buffer.alloc(4)]);
+  choose('upload-image',new Blob([animated])); await idle(); assert.match($('message').textContent,/Animated/);
+  const narrow=imageFile(1,70,'narrow.png'); choose('upload-image',narrow.file); await idle(); assert.equal($('artwork').width,1); assert.deepEqual(art(),narrow.rgba);
+  // Resize cancellation keeps the working state, confirmation imports at bounded dimensions.
+  const huge=imageFile(8193,1,'wide.png'); choose('upload-image',huge.file); await until(()=>$('resize-dialog').open);
+  assert.match($('resize-description').textContent,/8192 × 1/); $('resize-dialog').close('cancel'); await idle(); assert.deepEqual(art(),narrow.rgba);
+  choose('upload-image',huge.file); await until(()=>$('resize-dialog').open); $('resize-dialog').close('resize'); await idle(); assert.equal($('artwork').width,8192);
+  // Inject a mid-replay engine failure: no partial history or visible image may commit.
+  const current=art(), num=count(), real=w.InkEngine.distortRGBA;
+  w.InkEngine.distortRGBA=async()=>{throw new Error('injected failure');}; choose('load-recipe',saved); await idle();
+  assert.deepEqual(art(),current); assert.equal(count(),num); w.InkEngine.distortRGBA=real;
+  // No-op passes preserve history; picker cancellation does too.
+  click('view-current'); choose('upload-image',undefined); assert.equal(count(),num);
+  d.querySelector('[data-preset="clear"]').click(); click('apply'); assert.equal(count(),num);
+  choose('upload-image',first.file); await idle();
+  adjust('signal','grain',35); adjust('signal','mix',75); click('apply'); await idle();
+  const once=art(); click('apply'); await idle(); assert.notDeepEqual(art(),once,'passes must accumulate');
+  const exact=art(), priorCount=count(), encode=w.HTMLCanvasElement.prototype.toBlob;
+  w.HTMLCanvasElement.prototype.toBlob=function(callback){callback(null);};
+  choose('upload-image',next.file); await idle(); assert.deepEqual(art(),exact); assert.equal(count(),priorCount);
+  w.HTMLCanvasElement.prototype.toBlob=encode;
+  const tooMany={...recipe,passes:Array.from({length:65},()=>recipe.passes[0])};
+  choose('load-recipe',new Blob([JSON.stringify(tooMany)])); await idle(); assert.deepEqual(art(),exact);
+  choose('load-recipe',{size:129*1024*1024}); await idle(); assert.match($('message').textContent,/128 MiB/); assert.deepEqual(art(),exact);
+  console.log('Controller: upload, preparation, cumulative passes, RGBA history, branching, compare/export, self-contained replay, atomic failures, limits, resizing and cancellation passed.');
+  w.close();
+}
+main().catch(error=>{console.error(error);w.close();process.exitCode=1;});

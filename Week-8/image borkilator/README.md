@@ -1,120 +1,92 @@
-# Afterimage — Experiment 05
+# borkilator
 
-A local instrument for generating asymmetric ink-like images and interrupting them through deliberate, cumulative signal passes. Built for high-resolution slide backgrounds, with ambiguity and suggested form as the visual starting point.
+**Upload an image. Set the distortion. Borkilate. Repeat.**
 
-Project location: `Week-8/image borker` (moved from `Week-6/Experiments/experiment-05`).
+borkilator is a browser-based instrument for making images strange. It takes an image you supply and treats its pixels as a signal that can be stretched, displaced, sorted, patterned, crushed, or interrupted with noise. Each click of **borkilate** applies a deliberate pass to the current result, allowing small interventions to accumulate into more substantial transformations.
 
-## Open
+The project explores computation as a participant in human expression. Its inspiration includes glitch art and the creative misuse of audio equipment: distortion can become expressive material rather than an error to eliminate. Controls intentionally reach pronounced extremes, including clipping, breakup, flooding, and loss of recognizable composition.
 
-Open **`index.html`** in a modern browser. No installation, account, network connection, or build step is needed. A first wet-wash source renders automatically; subsequent generation and manipulation happen only when you press the relevant button.
+The current version works with color and transparency, preserves the original for comparison, and provides history, branching, and PNG export. Processing happens locally in your browser; selecting an image does not send it to a server.
 
-Everything is processed locally. The reference photographs and glitch images informed the direction; none are embedded, uploaded, or required to run it.
+## Try it
 
-## Work
+Open [index.html](index.html) in a modern browser. No account, installation, or build step is needed to use the application.
 
-1. **Source:** choose Wet wash or Dry transfer as the material. Choose Explore for changing structural combinations, or select a particular structure. Adjust coverage, form scale, bleed, ink load, and paper/pigment texture.
-2. **Generate source:** render a new study with a fresh seed by default. Keep this seed holds a composition while you refine its parameters. Typing a seed or using its circular-arrow button holds that chosen seed for the next render. Opening a saved recipe or restoring history also holds its seed. Uncheck Keep this seed to resume exploration. Previous studies remain in the session history.
-3. **Signal:** prepare distortions using sliders or numeric percentages. Dragged, Fractured, and Encoded are settings starting points; selecting one does not apply it.
-4. **Apply pass:** process the current image. Change settings or apply again to accumulate another pass on the result.
-5. **Inspect:** compare Original and Current, switch Fit / 100% to inspect native detail, use Undo / Redo, or select any history thumbnail. A new pass from an earlier state creates another direction and keeps later images in History.
-6. **Export PNG:** download the current result at its actual pixel dimensions, without interface elements or text. When comparing Original, export and Apply pass still use the current working result; the comparison message makes this explicit.
+1. **Upload image:** select a still PNG, JPEG, or WebP. Your image begins as an untouched study.
+2. **Prepare Signal settings:** move sliders, enter percentages, or try the Dragged, Fractured, and Encoded presets. Changing settings does not render an effect. Clear resets the prepared effects; it does not undo an image.
+3. **Borkilate:** apply the prepared effects. Adjust and repeat, or apply the same settings again to build on the result.
+4. **Compare and explore:** switch between Original and Current, inspect at Fit or 100%, and use Undo / Redo. Select an earlier History state and borkilate from there to create a different direction while retaining later results.
+5. **Keep your work:** Export PNG saves the current result. Save settings preserves the starting image and applied passes in a file that Open settings can reconstruct later.
 
-There are no brushes, selections, masks to paint, or tools for editing a chosen part of an image. Distortion settings act on the whole image; the process determines where differences emerge.
+Uploading another image starts a new study and retains both earlier session history and the prepared Signal settings. Those settings affect the new image only after you click borkilate. While viewing Original, borkilate and Export PNG still operate on the current working result.
 
-## Source materials
+The interaction is based on whole-image conditions and successive passes. There are no brushes, selections, or tools for editing a chosen region.
 
-- **Wet wash:** translucent pigment deposition, variable edge softness, concentrated boundaries, pooling, and paper fibers.
-- **Dry transfer:** denser pigment, dragged gaps, and broken coverage from paper and pigment texture.
+## What the Signal controls do
 
-Material and structure are independent. Both materials can use any of these source structures:
-
-| Structure | Starting imagery |
+| Control | Visible effect |
 | --- | --- |
-| Pools & blooms | Overlapping, irregular ink masses. |
-| Archipelago | Dispersed islands with varied sizes and density. |
-| Currents | Elongated, turbulent fields and flowing patches. |
-| Filaments | Branching-looking ridges and fine, interrupted networks. |
-| Sediment | Distorted layers, bands, and contour-like strata. |
-| Ribbons | Curved trails, looping gestures, and broad sweeps. |
-| Membranes | Cellular boundaries, voids, and connected chambers. |
-| Impressions | Irregular block-like deposits and press fragments. |
-| Spatter | Scattered drops and constellations of marks. |
+| Vertical pull | Stretches column fragments into vertical traces and smears. |
+| Band shift | Moves horizontal bands sideways, wrapping displaced content. |
+| Data slip | Rearranges blocks through the image's sequence of pixels. |
+| Pixel sort | Orders column segments from light to dark, carrying each pixel's color and transparency together. |
+| Digital weave | Introduces interrupted checks, bars, and digital patterns. |
+| Tone crush | Reduces tonal steps and increases contrast toward clipping. |
+| Signal noise | Adds seeded brightness noise, from slight grain to overpowering static. |
+| Fragment scale | Changes the size of fragments and patterns, from individual pixels to large areas. |
+| Pattern seed | Controls repeatable placement of the distortion pattern. |
+| Pass mix | Blends the input and processed result: 0 preserves input, 75 uses the full effect, and higher values overdrive the difference. |
 
-**Explore** chooses and blends two structures from the seed, changing their orientation, placement, dimensions, and interference. Generate changes that seed by default, so successive clicks explore new compositions without requiring a separate reroll. Held seeds and saved settings remain reproducible.
+Combined effects run in a fixed order: band shift/data slip, vertical pull, pixel sort, weave/crush/noise, then pass mix. Spatial effects move complete color-and-alpha pixels; tonal effects preserve transparency. A useful way to learn is to try one effect at a time, then use Undo to compare different strengths from the same starting image.
 
-All five source sliders now have deliberately broad spans: coverage reaches sparse traces through flooding; form scale reaches tiny fragments through shapes larger than the frame; bleed reaches hard boundaries through strong turbulence and diffusion; ink load reaches near-invisible pigment through saturated black; and texture reaches smooth material through coarse grain, breakup, and torn-looking coverage. Blank, crowded, clipped, or unruly results at extreme settings are part of the experiment.
+## Images, saving, and practical limits
 
-The materials are artistic approximations. Broad shapes use a continuous pigment field; full-resolution deposition adds grain, fibers, and dry-transfer breakup. The result is not a physically calibrated fluid simulation. No mirroring is used.
+- **Image files:** still PNG, JPEG, and WebP, up to 100 MiB. Animated images are rejected.
+- **Dimensions:** native size and aspect ratio are retained, with no automatic enlargement or cropping. Above 8192 pixels per side or 16,777,216 pixels total, the application offers proportional reduction or cancellation. Your file on disk is unchanged.
+- **Export:** PNG at the working image's actual dimensions, including transparency. The preview checkerboard and interface are excluded. Slide-background use motivated high-resolution processing, but an uploaded image is not automatically converted to 4K.
+- **Saved work:** self-contained version-3 JSON includes a normalized PNG of the starting image, its filename, dimensions, and applied passes. It reopens without the original external file. Pending control changes are not included. The saved-file limit is 128 MiB.
+- **Session history:** up to 24 states within an approximate 192 MiB compressed-image budget, with up to 64 passes per study. Older states may be trimmed. The active study's original remains available for comparison.
 
-## Signal controls
+**Save or export before refreshing or closing the tab.** Session history is not automatic disk or cloud storage. Large images also need uncompressed working memory, so practical capacity depends on the device. Invalid imports, cancelled resizing, and processing or replay failures are handled without replacing the current study.
 
-| Control | Operation |
-| --- | --- |
-| Vertical pull | Compress column fragments into traces that can stretch to the frame edges. |
-| Band shift | Move bands from minor offsets through large, wrapping displacements. |
-| Data slip | Offset blocks in the sequence of pixel values, reaching rearrangements across the entire image. |
-| Pixel sort | Reorder short segments through complete columns from light to dark. |
-| Digital weave | Introduce interrupted checks and bars, up to near-total pattern replacement. |
-| Tone crush | Reduce tonal steps and push contrast, reaching a clipped black/white threshold. |
-| Signal noise | Add a trace of grain through overpowering, clipped static. |
-| Fragment scale | Change bands, columns, and patterns from individual pixels through substantial fractions of the frame. |
-| Pass mix | 0 preserves the input; 75 uses the full processed result; 75–100 overdrives the difference, reaching clipping and possible tonal inversion. |
-| Pattern seed | Reproduce the placement of a distortion pattern. Choose a new seed for a different placement. |
+## Assignment background and iterations
 
-Effects run in this order: band shift/data slip, vertical pull, pixel sort, digital weave/tone crush/noise, then pass mix. No-op passes do not add history entries. Tone quantization or sorting can eventually stabilize; an already-stable operation need not keep changing on every repetition.
+The project began with a practical problem: finding suitable background images for a PComp presentation. Image searches and stock libraries often produced unsuitable dimensions, insufficient resolution, or watermarked results. Making images became an alternative, and then an opportunity to experiment with deliberately disrupting them.
 
-## Resolution and keeping work
+Originally developed as `Week-6/Experiments/experiment-05`, the project was called **Afterimage**. Early versions generated asymmetric monochrome wet-wash and dry-transfer imagery, emphasizing ambiguity, suggested form, ink, and paper texture. Rorschach imagery informed interpretation rather than a requirement for symmetry. Signal controls then introduced cumulative digital distortions.
 
-- Default: **3840 × 2160 pixels, 16:9**. HD, square, portrait, and custom sizes are available under Output size.
-- Generation, every pass, and history snapshots retain the chosen output dimensions. The preview is scaled for display; export does not enlarge a small preview. Change output dimensions before generating a source.
-- Custom dimensions: 64–8192 pixels per side, up to 16,777,216 pixels total.
-- **Save settings** downloads a JSON recipe containing the current source, dimensions, and all applied passes. **Open settings** replays that recipe and reconstructs its history. Pending, unapplied control changes are not part of the saved image recipe.
-- New recipes use version 2, recording the rendering model for the source and each pass. Version-1 recipes still replay using their original source and effect behavior. New effects can be applied to an old study, saved, and replayed with both models preserved.
-- Session history exists in the current tab. It retains up to 24 recent states, with an approximate 192 MiB budget for compressed image blobs. Older entries are trimmed when needed; the active state's untouched source remains available for comparison. Undo is available while its parent state remains in History.
-- **Export images and save settings before closing or refreshing the tab.** The app has no cloud or automatic disk storage.
-- The same recipe is deterministic in the tested engine. Extremely small floating-point differences across JavaScript implementations may affect individual pixels; lossless PNG export preserves the exact result you have.
+The next iteration expanded generation to nine source structures, introduced fresh compositions on successive generations, and widened parameter ranges after feedback that the imagery was too repetitive and the effects too restrained. The project subsequently moved into Week-8 as a candidate for the assignment to revise a project or build a useful tool, accompanied by a compact process record.
 
-## Files
+For the Week-8 revision, the procedural version was archived and the Source workflow was replaced by image upload. Signal processing was extended to color and transparency while preserving deliberate passes, history, comparison, and export. The current name is **borkilator**, and the action button is **borkilate**. Broader visual branding remains future work.
 
-`index.html` and `style.css` provide the interface. `app.js` manages the controls, history, comparison, settings replay, and export. `engine.js` generates and manipulates grayscale pixel data. When served over HTTP, `worker.js` runs the engine in a background worker; opening the local HTML file uses a cooperative main-thread fallback. Both use the same engine.
+The process combines human direction, reference selection, evaluation, and decisions with AI-assisted planning, implementation, testing, and documentation through Codex. The supporting records distinguish requested intent, actions taken, automated evidence, and user feedback rather than treating those as interchangeable.
 
-`documentation.md` records intent, execution, fulfillment, and the feedback that guides this experiment. `samples/` retains the first version's 4K studies. `samples/iteration-02/` contains the expanded version's 4K studies, wet/dry variety sheets, and individual previews of all nine structures.
+## Background files and process records
 
-## Validation
+- **[documentation.md](documentation.md):** the ongoing project conversation log, organized by intention, execution, and fulfillment. It records the conceptual direction, corrections, implementation decisions, validation limits, and the move from procedural generation to uploads. Entries 7–16 establish the original workflow; 17–19 cover early implementations and feedback; 21–25 cover relocation, archiving, uploads, and naming.
+- **[Homework Notes.zip](Homework%20Notes.zip):** an exported Week-8 assignment record containing a Markdown document and supporting screenshots. It includes assignment links, personal background, the audio-distortion analogy, prompts and planning choices, before/after imagery, observations from using the upload version, and proposed next steps. Some links inside the export retain the earlier `image borker` folder name; use this README's local links for the current files.
+- **[Starting-place overview video](borker%20starting%20place%20overview.mov):** a walkthrough of the earlier procedural version, referenced in the homework notes as the starting point for the revision. It documents that version rather than the current upload interface.
+- **[Archived application](archive/2026-11-07_15-47-32/index.html):** the preserved procedural version before the upload changes. Its [README](archive/2026-11-07_15-47-32/README.md) explains the earlier workflow, and a [SHA-256 manifest](archive/2026-11-07_15-47-32.manifest.json) records the backup's file hashes. Use this version to open old version-1/2 procedural settings files.
+- **[Sample images](samples/) and [iteration-02 notes](samples/iteration-02/README.md):** historical output from the procedural iterations, including 4K studies, source-variety comparisons, and parameter-extreme examples.
+- **[AGENTS.md](AGENTS.md):** working guidance for future coding assistance, including the established interaction constraints and responsibility to maintain the process log.
 
-The rendering tests have no dependencies:
+The homework notes propose further work: making the empty image area clickable for upload, adding a “cosmic particle” effect, introducing an overall “borkilation” slider, and simplifying interface details. These are ideas for subsequent iterations, not current features. The naming change described there has been completed.
 
-```sh
-node --check engine.js
-node --check app.js
-node --check worker.js
-node tests/engine.cjs
-node tests/variety.cjs
-```
+## Development and verification
 
-Generate and verify the 4K sample PNGs:
+The application is buildless HTML/CSS/JavaScript. [app.js](app.js) manages upload, controls, history, save/reopen, and export; [engine.js](engine.js) performs pixel processing. When served over HTTP, [worker.js](worker.js) runs Signal processing in the background. Opening the local HTML uses a cooperative main-thread fallback with the same engine. Earlier procedural engine functions remain for regression comparison.
 
-```sh
-node tests/engine.cjs --samples
-node tests/variety.cjs --samples
-```
-
-Optional controller tests use the development-only `jsdom` dependency:
+Node.js is needed only for development checks. The optional controller harness uses the development-only `jsdom` dependency.
 
 ```sh
 npm install
-npm run test:workflow
+npm test
+npm run test:legacy-engine
+node --check app.js
+node --check engine.js
+node --check worker.js
 ```
 
-The controller harness uses in-memory substitutes for Canvas and browser image encoding. It verifies explicit rendering, cumulative passes, exact history restoration, branching, comparison, export selection, settings replay, dimension changes, worker messages, fresh/held/manual seeds, structure choices, and old/new recipe replay. Rendering tests create real PNGs and check their dimensions. Variety checks compare broad image structure rather than grain alone, exercise control endpoints, and verify the exact version-1 pixel digests captured before this iteration. These tests do not establish browser layout or native Canvas/download behavior.
+The checks cover RGBA effects, grayscale compatibility, deterministic processing, preservation of input, worker agreement, upload and save/reopen workflows, history and branching, size limits, cancellation, and failure recovery. A full-resolution 3840 × 2160 RGBA pass has also been checked.
 
-Browser preview was unavailable during implementation: the execution sandbox blocked a local server, and the browser policy blocked local-file navigation. Generated source, glitch, and variety samples were visually inspected directly. The user subsequently described the first version as a great start and provided the variety/range feedback behind iteration 2. The revised interface remains for user review.
-
-## Influences
-
-The Week-4 looping patterns, aggregation, particle, and fractal experiments provide the broader context of computing as an expressive medium. The user's ink/paper and monochrome glitch references guide this experiment's visual direction. Procedural watercolor research helped inform the overlapping pigment approach:
-
-- [Tyler Hobbs: A Guide to Simulating Watercolor Paint with Generative Art](https://www.tylerxhobbs.com/words/a-guide-to-simulating-watercolor-paint-with-generative-art)
-- [Curtis et al.: Computer-Generated Watercolor](https://grail.cs.washington.edu/wp-content/uploads/2015/08/curtis-1997-cgw.pdf)
-
-The implementation is original project code; it does not import either reference's source code.
+Controller tests use simulated Canvas/PNG APIs. Automated checks do not establish native browser decoding, orientation, resizing quality, layout, PNG encoding, or download behavior. Live browser QA during implementation was blocked by the environment's restriction on starting a local preview server. The homework notes separately record the user's successful upload/distortion example and usability observations; they do not establish comprehensive browser coverage.

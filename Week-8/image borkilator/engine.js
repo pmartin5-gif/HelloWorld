@@ -226,6 +226,109 @@
     progress(1, 'Pass ready');
     return current;
   }
+  function validateUploadSize(w, h) {
+    if (!Number.isInteger(w) || !Number.isInteger(h) || w < 1 || h < 1 || w > 8192 || h > 8192 || w * h > 16777216) throw new Error('Images must be 1–8192 pixels per side and at most 16,777,216 pixels total.');
+  }
+  async function distortRGBA(input, width, height, settings, progress = () => {}) {
+    validateUploadSize(width, height);
+    if (input.length !== width * height * 4) throw new Error('Image dimensions do not match its pixel data.');
+    const s = signalSettings(settings), wide = true;
+    const pixelCount = width * height;
+    const copy = (out, dest, from, src) => { for (let c = 0; c < 4; c++) out[dest * 4 + c] = from[src * 4 + c]; };
+    if (!s.mix || !['pull', 'shift', 'slip', 'sort', 'weave', 'crush', 'grain'].some(k => s[k] > 0)) return new Uint8ClampedArray(input);
+    let current = new Uint8ClampedArray(input);
+    const span = Math.max(wide ? 1 : 2, Math.round(width * (wide ? .00025 + Math.pow(s.scale, 3) * .48 : .001 + s.scale * .021)));
+    const wrap = (v, n) => ((v % n) + n) % n;
+    if (s.shift || s.slip) {
+      const out = new Uint8ClampedArray(current), rows = Math.max(wide ? 1 : 2, Math.round(height * (wide ? .0005 + Math.pow(s.scale, 3) * .60 : .003 + s.scale * .06)));
+      for (let y = 0; y < height; y++) {
+        const band = Math.floor(y / rows), r = hash(band, 0, s.seed);
+        const shift = r < s.shift * (wide ? 1 : .83) ? Math.round((hash(band, 1, s.seed) - .5) * width * (wide ? 3.9 : .65) * s.shift) : 0;
+        for (let x = 0; x < width; x++) {
+          let q = y * width + wrap(x + shift, width);
+          const block = Math.floor(q / (span * 19));
+          if (s.slip && hash(block, 7, s.seed) < s.slip * (wide ? 1 : .35)) {
+            const r = hash(block, 9, s.seed) - .5;
+            q = wrap(q + Math.floor(wide ? r * pixelCount * (.003 + .997 * s.slip * s.slip) : r * width * (2 + 28 * s.slip)), pixelCount);
+          }
+          copy(out, y * width + x, current, q);
+        }
+        if (y % 128 === 0) { progress(.04 + .18 * y / height, 'Displacing the signal'); await pause(); }
+      }
+      current = out;
+    }
+    if (s.pull) {
+      const out = new Uint8ClampedArray(current);
+      for (let x = 0; x < width; x++) {
+        const group = Math.floor(x / span), selection = hash(group, 11, s.seed);
+        if (selection > (wide ? s.pull : .12 + s.pull * .86)) continue;
+        const anchor = Math.floor(hash(group, 12, s.seed) * height * .85);
+        const length = Math.floor(height * (wide ? .025 + hash(group, 13, s.seed) * 3 : .08 + hash(group, 13, s.seed) * .85) * s.pull);
+        const direction = hash(group, 14, s.seed) > .35 ? 1 : -1;
+        const compression = wide ? .00002 + Math.pow(1 - s.pull, 6) * .75 : .008 + Math.pow(1 - s.pull, 3) * .35;
+        for (let d = 0; d < length; d++) {
+          const y = anchor + d * direction;
+          if (y < 0 || y >= height) break;
+          const sy = clamp(Math.floor(anchor + d * direction * compression), 0, height - 1);
+          copy(out, y * width + x, current, sy * width + x);
+        }
+        if (x % 128 === 0) { progress(.24 + .17 * x / width, 'Pulling vertical traces'); await pause(); }
+      }
+      current = out;
+    }
+    if (s.sort) {
+      const out = new Uint8ClampedArray(current);
+      for (let x = 0; x < width; x++) {
+        if (hash(Math.floor(x / Math.max(1, span >> 2)), 30, s.seed) > (wide ? s.sort : .1 + s.sort * .85)) continue;
+        const start = Math.floor(hash(Math.floor(x / span), 32, s.seed) * height * (wide ? (1 - s.sort) : .32));
+        const end = Math.min(height, start + Math.floor(height * (wide ? .003 + s.sort * .997 : .12 + s.sort * .86)));
+        const rows = [];
+        for (let y = start; y < end; y++) rows.push(y);
+        const brightness = y => { const p = (y * width + x) * 4; return .2126 * current[p] + .7152 * current[p + 1] + .0722 * current[p + 2]; };
+        rows.sort((a, b) => brightness(b) - brightness(a));
+        for (let i = 0; i < rows.length; i++) copy(out, (start + i) * width + x, current, rows[i] * width + x);
+        if (x % 128 === 0) { progress(.43 + .18 * x / width, 'Sorting tonal information'); await pause(); }
+      }
+      current = out;
+    }
+    if (s.weave || s.crush || s.grain) {
+      const cell = Math.max(wide ? 1 : 2, Math.round(wide ? width * (.00025 + Math.pow(s.scale, 3) * .07) : width / 960 * (1 + s.scale * 4)));
+      const levels = Math.max(2, Math.round(256 * Math.pow(1 - s.crush, 4)));
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const p = (y * width + x) * 4;
+          for (let channel = 0; channel < 3; channel++) {
+          let value = current[p + channel];
+          if (s.weave) {
+            const column = Math.floor(x / (span * 2));
+            const chunk = Math.floor(y / (span * 5));
+            if (hash(column, 40, s.seed) < s.weave * (wide ? 1 : .72) && hash(column, chunk, s.seed + 41) > (wide ? .19 * (1 - s.weave) : .19)) {
+              const bitX = Math.floor(x / cell), bitY = Math.floor(y / cell);
+              const motif = hash(column, chunk, s.seed + 42);
+              const bit = motif > .56 ? (bitX + bitY) % 2 : (bitY % 4 > 1 ? 1 : bitX % 3 === 0 ? 1 : 0);
+              const pattern = bit ? 241 : 13;
+              value = lerp(value, pattern, wide ? s.weave : .3 + s.weave * .7);
+            }
+          }
+          if (s.crush) value = Math.round(clamp((value - 128) * (1 + s.crush * (wide ? 15 : .9)) + 128, 0, 255) / 255 * (levels - 1)) / (levels - 1) * 255;
+          if (s.grain) value += (hash(x, y, s.seed + 60) - .5) * s.grain * (wide ? 1100 : 110);
+          current[p + channel] = value;
+          }
+        }
+        if (y % 96 === 0) { progress(.63 + .25 * y / height, 'Encoding fragments'); await pause(); }
+      }
+    }
+    // At maximum mix, feedback can overshoot. Legacy recipes retain their exact blend.
+    const mix = wide ? s.mix <= .75 ? s.mix / .75 : 1 + (s.mix - .75) * 8 : s.mix;
+    for (let p = 0; p < current.length; p += 4) {
+      const a = input[p + 3] / 255, b = current[p + 3] / 255;
+      const alpha = clamp(lerp(a, b, mix));
+      for (let c = 0; c < 3; c++) current[p + c] = alpha ? clamp(lerp(input[p + c] * a, current[p + c] * b, mix), 0, alpha * 255) / alpha : 0;
+      current[p + 3] = alpha * 255;
+    }
+    progress(1, 'Pass ready');
+    return current;
+  }
   const structures = {
     blooms: 'Pools & blooms', islands: 'Archipelago', currents: 'Currents',
     filaments: 'Filaments', strata: 'Sediment', ribbons: 'Ribbons',
@@ -403,7 +506,7 @@
     validateSize(width, height);
     return settings?.model === 1 ? generateV1(width, height, settings, progress) : generateV2(width, height, settings, progress);
   }
-  const api = { generate, distort, random, validateSize, sourceSettings, signalSettings, structures, sourceProfile, describeSource };
+  const api = { distortRGBA, validateUploadSize, generate, distort, random, validateSize, sourceSettings, signalSettings, structures, sourceProfile, describeSource };
   root.InkEngine = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
 })(typeof self !== 'undefined' ? self : globalThis);

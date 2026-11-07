@@ -191,3 +191,47 @@ Preserved the earlier rendering behavior for saved version-1 recipes. New versio
 **Execution:** Moved the complete folder from `Week-6/Experiments/experiment-05` to `Week-8/image borker`. Verified every file against its pre-move SHA-256 digest before making documentation updates. Updated the README location and standing project guidance to reflect the user's requested destination. Preserved the historical log entries and application behavior.
 
 **Fulfillment:** The folder exists at `Week-8/image borker`, and the previous folder no longer exists. All files were preserved by the move. No Git commit or publication was performed.
+
+## 22. Note the user's folder rename
+
+**Intent:** Recognize that the user changed the containing folder's name.
+
+**Execution:** Inspected Week-8 and confirmed that the project now resides in `Week-8/image borkilator`. Updated the current location in README and AGENTS guidance, retaining entry 21 as a historical account of the earlier move.
+
+**Fulfillment:** The user's rename is recorded, and `Week-8/image borkilator` is the working location for subsequent project work.
+
+## 23. Archive the current version
+
+**Intent:** Preserve a record of the current version in a new folder named `archive`.
+
+**Execution:** Created `archive/2026-11-07_15-47-32` inside `Week-8/image borkilator` and copied all 46 current project files, including code, documentation, tests, samples, hidden files, and the overview video. Excluded the archive directory itself to prevent recursive backups. Compared every copied file's SHA-256 digest with its original and saved a sibling `2026-11-07_15-47-32.manifest.json` integrity manifest. The snapshot preserves documentation as it stood before this entry.
+
+**Fulfillment:** The dated backup exists, and all 46 files match their originals. The working application remains in place. No Git commit or publication was performed.
+
+## 24. Replace procedural Source with image uploads
+
+**Intent:** Retire the entire Source settings workflow and let users manipulate their own images through Signal, maintaining the platform's other components. The user worked through the workflow choices in Plan mode and explicitly authorized implementation afterward.
+
+**Execution:** Carried forward the cumulative global-pass workflow from entries 12–13 and the preservation requirements from entries 15–16, superseding procedural-generation requirements in entries 14, 17, and 18 for the active application. Followed the Sites skill's local-only workflow. Replaced Source/Signal tabs with a compact Upload image control above Signal. Added local still PNG/JPEG/WebP import, native dimensions and orientation-aware browser decoding, preserved color and transparency, checkerboard preview, a 100 MiB file limit, and proportional resize confirmation above 8192 pixels per side or 16,777,216 total pixels. Animated formats are rejected. Each successful upload starts an untouched study and retains prepared Signal settings and earlier session history.
+
+Extended Signal and its worker to RGBA pixels: spatial operations move complete pixels, sorting uses luminance, tonal effects preserve alpha, and pass mix blends premultiplied color and alpha. Preserved presets, ranges, seeds, explicit accumulation, no-op behavior, history/branches, comparison, zoom, and transparent native-size PNG export. Save/Open settings now use self-contained version-3 JSON with the normalized starting PNG and passes, capped at 128 MiB. Version-1/2 procedural saves direct users to the archive. File decoding, replay, and snapshot encoding stage before committing visible studies so failures preserve existing work. Updated README, standing guidance, package scripts, and tests; installed cached development-only jsdom dependencies offline. Procedural engine functions and samples remain solely as historical/regression reference, without an active Source workflow.
+
+**Fulfillment:** Implementation is complete. Syntax checks and the current engine/controller suite passed, including opaque grayscale parity with version-2 Signal behavior, RGBA effects, alpha retention, determinism, sorting conservation, tiny/narrow dimensions, worker parity, upload preparation, cumulative passes, exact mocked history restoration, branching, Original/current export selection, self-contained replay, malformed/legacy saves, file and pass limits, animation rejection, resize acceptance/cancellation, no-op handling, and injected replay/encoding failures. A real 3840 × 2160 RGBA engine pass retained dimensions and alpha. Earlier engine/variety regression suites also passed. All 46 archived files still match the existing SHA-256 manifest; no archive files were edited.
+
+Live browser QA remains unverified: the local preview server failed to bind with an environment PermissionError. No alternate surface or workaround was attempted. jsdom's mocked Canvas/PNG APIs do not establish native browser orientation, resizing interpolation, responsive layout, transparent PNG encoding, or download behavior. These limitations are recorded in README. No Git commit or publication was performed. Artistic usefulness and the revised workflow await user review.
+
+## 25. Rename the visible branding to borkilator
+
+**Intent:** Make quick name and label changes: replace Afterimage branding with borkilator and rename the Apply pass button to borkilate. Defer broader colors, typography, and layout work.
+
+**Execution:** Updated the visible wordmark, monogram, browser title, image/signal descriptor, button label, related interface instructions, download filename prefix, package name, and current project documentation. Retained the internal `afterimage` saved-file application identifier so existing version-3 saves continue opening. Preserved historical log entries and the archive. Followed the established local-only Sites workflow.
+
+**Fulfillment:** The requested labels are updated. Existing controller workflow checks and JavaScript syntax validation passed. No changes to effects, colors, typography, or layout were made. Live browser review remains subject to the preview-server restriction recorded in entry 24; no browser verification is claimed.
+
+## 26. Expand the project README
+
+**Intent:** Populate README with an overview of what borkilator does, available assignment background and iteration history, and links explaining supporting files such as documentation.md and Homework Notes.zip.
+
+**Execution:** Reviewed current guidance, README, the relevant history in entries 1–19 and 21–25, and the Markdown document inside Homework Notes.zip without extracting or changing it. Rewrote README around the current upload/Signal workflow, controls, preservation and export, practical limits, the PComp slide-background motivation, the Week-8 revision assignment, human/AI contributions, and the progression from Afterimage to borkilator. Added relative links and explanations for the process log, homework ZIP, earlier overview video, archive and integrity manifest, sample imagery, and working guidance. Distinguished proposed next steps in the notes from implemented features, and user-reported examples from automated or comprehensive browser verification. Noted the older folder links retained inside the exported notes.
+
+**Fulfillment:** README now provides the requested project overview and background. Every local Markdown link target was checked and exists. The application, archived version, homework ZIP, and historical log entries were not changed. The usefulness of the revised README awaits user review.
