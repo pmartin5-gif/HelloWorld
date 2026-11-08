@@ -66,7 +66,17 @@ async function main() {
   w.eval(fs.readFileSync(path.join(root,'app.js'),'utf8'));
   assert.equal(count(),0); assert.equal($('apply').disabled,true); assert.equal($('source-panel'),null);
   assert.equal($('signal-panel').hidden,false);
-  const first=imageFile(); choose('upload-image',first.file); await idle();
+  let pickerClicks=0;
+  $('upload-image').addEventListener('click',()=>{pickerClicks++;});
+  assert.equal($('empty').tagName,'BUTTON','empty pane must have native keyboard activation');
+  click('empty'); assert.equal(pickerClicks,1); assert.equal(count(),0,'picker cancellation leaves workspace empty');
+  click('viewport'); assert.equal(pickerClicks,2,'empty pane margins also open the picker');
+  const first=imageFile(); choose('upload-image',first.file);
+  assert.equal($('empty').disabled,true,'empty upload action disabled while busy');
+  click('viewport'); assert.equal(pickerClicks,2,'busy pane must not reopen picker');
+  await idle();
+  assert.equal($('empty').hidden,true);
+  click('viewport'); assert.equal(pickerClicks,2,'loaded image pane must not reopen picker');
   assert.equal(count(),1); assert.deepEqual(art(),first.rgba); assert.equal($('study-title').textContent,'color.png');
   const original=art(); adjust('signal','shift',80); adjust('signal','pull',0); adjust('signal','mix',75);
   assert.deepEqual(art(),original,'settings must prepare only');
@@ -116,7 +126,32 @@ async function main() {
   const tooMany={...recipe,passes:Array.from({length:65},()=>recipe.passes[0])};
   choose('load-recipe',new Blob([JSON.stringify(tooMany)])); await idle(); assert.deepEqual(art(),exact);
   choose('load-recipe',{size:129*1024*1024}); await idle(); assert.match($('message').textContent,/128 MiB/); assert.deepEqual(art(),exact);
-  console.log('Controller: upload, preparation, cumulative passes, RGBA history, branching, compare/export, self-contained replay, atomic failures, limits, resizing and cancellation passed.');
+  // Old v3 passes without the new field still replay and restore the control to zero.
+  const older=JSON.parse(await saved.text()); older.passes.forEach(pass=>delete pass.cosmic);
+  choose('load-recipe',new Blob([JSON.stringify(older)])); await idle();
+  assert.deepEqual(art(),branch); assert.equal($('signal-cosmic').value,'0');
+  choose('upload-image',first.file); await idle(); d.querySelector('[data-preset="clear"]').click();
+  assert.equal($('signal-cosmic').value,'0');
+  const particleOriginal=art(); adjust('signal','cosmic',100); adjust('signal','mix',75);
+  assert.equal($('signal-cosmic-value').value,'100'); assert.deepEqual(art(),particleOriginal,'cosmic slider prepares only');
+  click('apply'); await idle(); const cosmicFull=art(); assert.notDeepEqual(cosmicFull,particleOriginal,'cosmic alone must be treated as an effect');
+  click('undo'); await idle(); assert.deepEqual(art(),particleOriginal);
+  click('redo'); await idle(); assert.deepEqual(art(),cosmicFull); assert.equal($('signal-cosmic').value,'100');
+  click('undo'); await idle(); adjust('signal','cosmic',50); click('apply'); await idle(); const cosmicBranch=art();
+  assert.equal($('redo').disabled,true);
+  click('save-recipe'); await idle(); const cosmicSave=downloads.at(-1).blob, cosmicRecipe=JSON.parse(await cosmicSave.text());
+  assert.equal(cosmicRecipe.passes.at(-1).cosmic,.5);
+  choose('load-recipe',cosmicSave); await idle(); assert.deepEqual(art(),cosmicBranch); assert.equal($('signal-cosmic').value,'50');
+  for(const cosmic of [-.1,1.1,null,'0.5']) {
+    const invalid=structuredClone(cosmicRecipe); invalid.passes[0].cosmic=cosmic;
+    const total=count(); choose('load-recipe',new Blob([JSON.stringify(invalid)])); await idle();
+    assert.match($('message').textContent,/Invalid cosmic/); assert.deepEqual(art(),cosmicBranch); assert.equal(count(),total);
+  }
+  for(const name of ['dragged','fractured','encoded','clear']) {
+    adjust('signal','cosmic',40); d.querySelector(`[data-preset="${name}"]`).click();
+    assert.equal($('signal-cosmic').value,'0'); assert.deepEqual(art(),cosmicBranch);
+  }
+  console.log('Controller: upload, preparation, cumulative passes, RGBA history, branching, compare/export, self-contained replay, atomic failures, limits, resizing, cosmic-only passes, cosmic history/replay, older v3 imports and cancellation passed.');
   w.close();
 }
 main().catch(error=>{console.error(error);w.close();process.exitCode=1;});

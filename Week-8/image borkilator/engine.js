@@ -235,7 +235,7 @@
     const s = signalSettings(settings), wide = true;
     const pixelCount = width * height;
     const copy = (out, dest, from, src) => { for (let c = 0; c < 4; c++) out[dest * 4 + c] = from[src * 4 + c]; };
-    if (!s.mix || !['pull', 'shift', 'slip', 'sort', 'weave', 'crush', 'grain'].some(k => s[k] > 0)) return new Uint8ClampedArray(input);
+    if (!s.mix || !['pull', 'shift', 'slip', 'sort', 'weave', 'crush', 'grain', 'cosmic'].some(k => s[k] > 0)) return new Uint8ClampedArray(input);
     let current = new Uint8ClampedArray(input);
     const span = Math.max(wide ? 1 : 2, Math.round(width * (wide ? .00025 + Math.pow(s.scale, 3) * .48 : .001 + s.scale * .021)));
     const wrap = (v, n) => ((v % n) + n) % n;
@@ -318,6 +318,19 @@
         if (y % 96 === 0) { progress(.63 + .25 * y / height, 'Encoding fragments'); await pause(); }
       }
     }
+    // A seeded hit replaces one whole RGB channel, leaving alpha untouched.
+    // Separate hash domains keep coverage, channel choice and value independent.
+    if (s.cosmic) {
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          if (s.cosmic === 1 || hash(x, y, s.seed ^ 0x713a5f29) < s.cosmic) {
+            const channel = Math.min(2, Math.floor(hash(x, y, s.seed ^ 0x2b8d619f) * 3));
+            current[(y * width + x) * 4 + channel] = Math.min(255, Math.floor(hash(x, y, s.seed ^ 0x5e91c347) * 256));
+          }
+        }
+        if (y % 96 === 0) { progress(.89 + .06 * y / height, 'Cosmic particle hits'); await pause(); }
+      }
+    }
     // At maximum mix, feedback can overshoot. Legacy recipes retain their exact blend.
     const mix = wide ? s.mix <= .75 ? s.mix / .75 : 1 + (s.mix - .75) * 8 : s.mix;
     for (let p = 0; p < current.length; p += 4) {
@@ -342,7 +355,8 @@
   function signalSettings(s = {}) {
     const model = s.model === 1 ? 1 : 2, base = legacySignalSettings(s);
     if (model === 2 && s.mix === undefined) base.mix = .60;
-    return { ...base, model };
+    const cosmic = Number.isFinite(s.cosmic) ? clamp(s.cosmic) : 0;
+    return { ...base, model, cosmic };
   }
   function sourceProfile(settings) {
     const s = sourceSettings(settings), rand = random(s.seed ^ 0x4a7b23cd), keys = Object.keys(structures);

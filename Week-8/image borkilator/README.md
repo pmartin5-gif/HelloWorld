@@ -12,7 +12,7 @@ The current version works with color and transparency, preserves the original fo
 
 Open [index.html](index.html) in a modern browser. No account, installation, or build step is needed to use the application.
 
-1. **Upload image:** select a still PNG, JPEG, or WebP. Your image begins as an untouched study.
+1. **Upload image:** click the empty image pane or use the Upload image control to select a still PNG, JPEG, or WebP. The pane also supports keyboard focus and Enter / Space. Your image begins as an untouched study.
 2. **Prepare Signal settings:** move sliders, enter percentages, or try the Dragged, Fractured, and Encoded presets. Changing settings does not render an effect. Clear resets the prepared effects; it does not undo an image.
 3. **Borkilate:** apply the prepared effects. Adjust and repeat, or apply the same settings again to build on the result.
 4. **Compare and explore:** switch between Original and Current, inspect at Fit or 100%, and use Undo / Redo. Select an earlier History state and borkilate from there to create a different direction while retaining later results.
@@ -33,11 +33,16 @@ The interaction is based on whole-image conditions and successive passes. There 
 | Digital weave | Introduces interrupted checks, bars, and digital patterns. |
 | Tone crush | Reduces tonal steps and increases contrast toward clipping. |
 | Signal noise | Adds seeded brightness noise, from slight grain to overpowering static. |
+| Cosmic particle | Targets a percentage of pixels and replaces one randomly chosen RGB channel in each with a random value from 0–255. |
 | Fragment scale | Changes the size of fragments and patterns, from individual pixels to large areas. |
 | Pattern seed | Controls repeatable placement of the distortion pattern. |
 | Pass mix | Blends the input and processed result: 0 preserves input, 75 uses the full effect, and higher values overdrive the difference. |
 
-Combined effects run in a fixed order: band shift/data slip, vertical pull, pixel sort, weave/crush/noise, then pass mix. Spatial effects move complete color-and-alpha pixels; tonal effects preserve transparency. A useful way to learn is to try one effect at a time, then use Undo to compare different strengths from the same starting image.
+Combined effects run in a fixed order: band shift/data slip, vertical pull, pixel sort, weave/crush/noise, Cosmic particle, then pass mix. Spatial effects move complete color-and-alpha pixels; tonal effects preserve transparency. A useful way to learn is to try one effect at a time, then use Undo to compare different strengths from the same starting image.
+
+**Cosmic particle** starts at 0%. Its percentage controls the chance of each pixel being targeted, not how strongly it changes. A 25% setting targets approximately one quarter of the pixels; 100% targets every pixel. Each hit changes only one chosen red, green, or blue channel before Pass mix; the other channels and transparency are preserved. A random replacement can equal the current value, and transparent pixels can hide changes.
+
+The effect is inspired by particle-induced corruption of stored data, rather than a physical simulation of a chip. Pattern seed makes the hit locations, channel choices, and values repeatable. Increasing coverage with the same seed retains earlier hits. Repeating identical settings can settle into an unchanged result; choose a new Pattern seed for different hits. To inspect the effect alone, choose Clear, set Cosmic particle, set Pass mix to 75, and click borkilate. Presets and Clear reset Cosmic particle to zero. Existing version-3 saves without this field reopen with the effect disabled.
 
 ## Images, saving, and practical limits
 
@@ -70,7 +75,7 @@ The process combines human direction, reference selection, evaluation, and decis
 - **[Sample images](samples/) and [iteration-02 notes](samples/iteration-02/README.md):** historical output from the procedural iterations, including 4K studies, source-variety comparisons, and parameter-extreme examples.
 - **[AGENTS.md](AGENTS.md):** working guidance for future coding assistance, including the established interaction constraints and responsibility to maintain the process log.
 
-The homework notes propose further work: making the empty image area clickable for upload, adding a “cosmic particle” effect, introducing an overall “borkilation” slider, and simplifying interface details. These are ideas for subsequent iterations, not current features. The naming change described there has been completed.
+The homework notes propose further work: introducing an overall “borkilation” slider and simplifying interface details. These are ideas for subsequent iterations, not current features. The naming change, clickable empty-pane upload, and Cosmic particle effect described there have been completed.
 
 ## Development and verification
 
@@ -87,6 +92,6 @@ node --check engine.js
 node --check worker.js
 ```
 
-The checks cover RGBA effects, grayscale compatibility, deterministic processing, preservation of input, worker agreement, upload and save/reopen workflows, history and branching, size limits, cancellation, and failure recovery. A full-resolution 3840 × 2160 RGBA pass has also been checked.
+The checks cover RGBA effects, grayscale compatibility, deterministic processing, Cosmic particle coverage and one-channel changes, compatibility with pre-effect version-3 pixel digests, preservation of input, worker agreement, upload and save/reopen workflows, history and branching, size limits, cancellation, and failure recovery. A full-resolution 3840 × 2160 RGBA pass has also been checked.
 
 Controller tests use simulated Canvas/PNG APIs. Automated checks do not establish native browser decoding, orientation, resizing quality, layout, PNG encoding, or download behavior. Live browser QA during implementation was blocked by the environment's restriction on starting a local preview server. The homework notes separately record the user's successful upload/distortion example and usability observations; they do not establish comprehensive browser coverage.

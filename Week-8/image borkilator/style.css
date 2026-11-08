@@ -15,3 +15,8 @@ input[type=range]::-moz-range-track{height:3px;background:linear-gradient(to rig
 .slider-note{font:8px var(--mono);line-height:1.5;color:var(--muted);margin:5px 0 0}
 
 .upload-section{padding:25px 0 20px;border-bottom:1px solid var(--line)}.upload-section .button{width:100%;margin-top:15px}.upload-section>p:last-child{font-size:10px;color:var(--muted);line-height:1.7}.image-wrap canvas{background:repeating-conic-gradient(#aaa 0% 25%,#ddd 0% 50%) 0 0/20px 20px}.studio-topline h2{overflow-wrap:anywhere}dialog{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:5px;max-width:min(460px,90vw);padding:25px}dialog::backdrop{background:#0009}dialog p{line-height:1.6}.resize-actions{display:flex;justify-content:flex-end;gap:20px;margin-top:20px}
+
+/* The empty preview is also an accessible upload action. */
+button.empty-state{width:100%;height:100%;border:0;background:transparent;font:inherit;cursor:pointer}
+button.empty-state:hover:not(:disabled){background:#ffffff04}
+.empty-state>.empty-title{display:block;font:22px/1.4 Georgia,serif;color:#c0c8b3;margin:1em 0}

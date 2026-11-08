@@ -1,0 +1,30 @@
+{
+  "width": 80,
+  "height": 70,
+  "input": "(i * 37) % 256",
+  "cases": [
+    {
+      "settings": {},
+      "sha256": "11ad520dd04fba6b7e5e8ff420e861bdc1b0f5165c7fdda920f8ceddbc624ac1"
+    },
+    {
+      "settings": {
+        "pull": 0,
+        "shift": 0.7,
+        "sort": 0.8,
+        "grain": 0.2,
+        "mix": 0.75
+      },
+      "sha256": "77e6f3aed0f14eb3056677204ea227668d0a44dea3387914681713bd97f9e1f4"
+    },
+    {
+      "settings": {
+        "weave": 0.9,
+        "crush": 0.7,
+        "grain": 0.3,
+        "mix": 1
+      },
+      "sha256": "c53832e6e04b864fa76b1c722e14d8064c6a60a11197f830ebe990d74625dd21"
+    }
+  ]
+}

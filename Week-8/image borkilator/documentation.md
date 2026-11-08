@@ -235,3 +235,39 @@ Live browser QA remains unverified: the local preview server failed to bind with
 **Execution:** Reviewed current guidance, README, the relevant history in entries 1–19 and 21–25, and the Markdown document inside Homework Notes.zip without extracting or changing it. Rewrote README around the current upload/Signal workflow, controls, preservation and export, practical limits, the PComp slide-background motivation, the Week-8 revision assignment, human/AI contributions, and the progression from Afterimage to borkilator. Added relative links and explanations for the process log, homework ZIP, earlier overview video, archive and integrity manifest, sample imagery, and working guidance. Distinguished proposed next steps in the notes from implemented features, and user-reported examples from automated or comprehensive browser verification. Noted the older folder links retained inside the exported notes.
 
 **Fulfillment:** README now provides the requested project overview and background. Every local Markdown link target was checked and exists. The application, archived version, homework ZIP, and historical log entries were not changed. The usefulness of the revised README awaits user review.
+
+## 27. Resume development
+
+**Intent:** Pick up work on borkilator after the previous session.
+
+**Execution:** Reviewed current project guidance, entries 24–26, README's proposed next steps, and the working-tree status. Recovered the stopping point: upload-based RGBA Signal workflow, borkilator naming, and expanded README are complete. Presented the remaining ideas recorded in the homework notes for the user to choose from.
+
+**Fulfillment:** Project context is recovered. No application behavior changed; the next development request remains for the user to specify.
+
+## 28. Make the empty image pane an upload action
+
+**Intent:** Allow clicking the empty image pane to upload an image in addition to the existing Upload image control, with instructions that explain the interaction.
+
+**Execution:** Consulted entries 24 and 26–27 and the usability observation recorded in Homework Notes.zip. Replaced the passive empty-state content with a native, full-size button reading “Click here to upload an image.” Its helper text lists PNG, JPEG, and WebP. The empty viewport, including its margins, opens the same file picker as the existing upload control; native button semantics provide Enter/Space activation and visible keyboard focus. The action is disabled during processing and stops being available once an image is loaded. Updated README to describe both entry points and mark this proposed improvement complete. Followed the established local-only Sites workflow and left the archive untouched.
+
+**Fulfillment:** JavaScript syntax and the existing controller workflow suite passed, with added checks for empty-button semantics, both pane and margin activation, cancellation, busy-state suppression, and no picker activation on a loaded image. Existing upload, history, saved-work, and failure-recovery checks passed. Native browser file-picker interaction and visual layout remain unverified under the previously recorded preview restriction. User review remains pending.
+
+## 29. Add Cosmic particle coverage
+
+**Intent:** Explore the user's cosmic-particle analogy and add a slider that increases the percentage of pixels affected. Following discussion of RGB values versus bits and physical simulation, the user selected replacement of one randomly chosen RGB channel's whole value per hit and authorized the implementation plan.
+
+**Execution:** Reviewed established guidance and entries 24–28. Explained that raster images can be traversed by row/column loops and that particle-induced single-event upsets can change stored bits; replacing a whole color-channel byte is an artistic model of data corruption, rather than a semiconductor physics simulation. Background references: [MDN ImageData](https://developer.mozilla.org/en-US/docs/Web/API/ImageData/data) and [NASA single-event effects](https://www.nasa.gov/science-research/nasas-set-mission-to-study-satellite-protection-is-ready-for-launch/).
+
+Added Cosmic particle as a 0–100% Signal slider and numeric field, initially zero. Each pixel has the selected probability of a hit; a hit selects R, G, or B and replaces its value with a random integer from 0–255, preserving the other channels and alpha. Separate seeded hash domains select coverage, channel, and replacement value. Pattern seed makes results reproducible and increased coverage retains earlier hits. The effect runs after other Signal operations and before the existing Pass mix/overdrive stage. A replacement may equal its previous value, and identical repeated settings can stabilize. Presets and Clear reset coverage to zero.
+
+Integrated the field with history and version-3 saved settings. Missing coverage in older version-3 passes defaults to zero, while malformed provided values are rejected. Captured pre-change RGBA pixel digests before editing the engine and checked both omitted and explicit-zero coverage against them. Added engine and controller tests and updated README and standing project guidance, using the established local-only Sites workflow.
+
+**Fulfillment:** Syntax checks, current engine/controller tests, and earlier engine/variety regression checks passed. Tests cover zero/full/intermediate coverage, one-channel changes, all RGB channels and byte values, unchanged alpha/input, seeded determinism and variation, nested coverage, effect order, mix/overdrive, worker agreement, cosmic-only passes, preparation without rendering, history/branches, save/reopen, preset resets, malformed values, and exact compatibility with captured pre-effect version-3 digests. All 46 archived files still match their existing hashes. Native browser visual review remains unverified under the preview restriction recorded in entry 24; no new browser verification is claimed. No Git commit or publication was performed. Artistic usefulness awaits user review.
+
+## 30. Pause with Cosmic particle strength unresolved
+
+**Intent:** The user found Cosmic particle too subtle at 100% and requested that the maximum affect all pixels, then asked to stop and resume later.
+
+**Execution:** Inspected coverage and mixing without changing application behavior. Confirmed that 100% already targets every pixel but replaces only one RGB channel per pixel; random replacements can equal the original value. An opaque 256 × 256 test image showed visible changes to approximately 99.57% of pixels at both default mix and full mix. Asked whether a stronger maximum should force larger changes within one channel or randomize all three RGB channels. The user paused before choosing.
+
+**Fulfillment:** Work is paused at the user's request. No range or algorithm change was made. On resuming, revisit the desired visual strength and settle the one-channel versus all-channel behavior before implementation. Preserve saved-recipe replay when changing the effect.

@@ -11,17 +11,18 @@
     ['sort', 'Pixel sort', 0, 'Reorder column segments from light to dark.'],
     ['weave', 'Digital weave', 0, 'Introduce interrupted columns of checks and encoded-looking bars.'],
     ['crush', 'Tone crush', 0, 'Reduce tonal steps and push contrast.'],
-    ['grain', 'Signal noise', 0, 'From a trace of grain to overwhelming, clipped static.']
+    ['grain', 'Signal noise', 0, 'From a trace of grain to overwhelming, clipped static.'],
+    ['cosmic', 'Cosmic particle', 0, 'Percentage of pixels targeted. Each hit replaces one random RGB channel; transparency is preserved.']
   ];
   const shapeFields = [
     ['scale', 'Fragment scale', 35, 'From individual pixels to fragments occupying much of the frame.'],
     ['mix', 'Pass mix', 60, '0: original. 75: full processed result. Above 75: overdrive with tonal clipping and possible inversion.']
   ];
   const presets = {
-    dragged: { pull: .67, shift: .06, slip: 0, sort: .36, weave: 0, crush: .08, grain: .08, scale: .24, mix: .70 },
-    fractured: { pull: .12, shift: .53, slip: .42, sort: .14, weave: .08, crush: .24, grain: .08, scale: .42, mix: .72 },
-    encoded: { pull: .14, shift: .12, slip: .06, sort: 0, weave: .71, crush: .48, grain: 0, scale: .3, mix: .68 },
-    clear: { pull: 0, shift: 0, slip: 0, sort: 0, weave: 0, crush: 0, grain: 0, scale: .35, mix: .60 }
+    dragged: { cosmic: 0, pull: .67, shift: .06, slip: 0, sort: .36, weave: 0, crush: .08, grain: .08, scale: .24, mix: .70 },
+    fractured: { cosmic: 0, pull: .12, shift: .53, slip: .42, sort: .14, weave: .08, crush: .24, grain: .08, scale: .42, mix: .72 },
+    encoded: { cosmic: 0, pull: .14, shift: .12, slip: .06, sort: 0, weave: .71, crush: .48, grain: 0, scale: .3, mix: .68 },
+    clear: { cosmic: 0, pull: 0, shift: 0, slip: 0, sort: 0, weave: 0, crush: 0, grain: 0, scale: .35, mix: .60 }
   };
   function message(text, error = false) { $('message').textContent = text; $('message').classList.toggle('error', error); }
   function makeSliders(container, prefix, fields) {
@@ -63,6 +64,7 @@
     }
   }
   function writeSignal(settings) {
+    settings = engine.signalSettings(settings);
     writeFields('signal', [...signalFields, ...shapeFields], settings); $('signal-seed').value = settings.seed;
     document.querySelectorAll('[data-preset]').forEach(el => el.classList.remove('selected'));
   }
@@ -337,6 +339,7 @@
     if (typeof recipe.filename !== 'string' || recipe.filename.length > 1024 || typeof recipe.image !== 'string' || !/^data:image\/png;base64,[A-Za-z0-9+/]+={0,2}$/.test(recipe.image)) throw new Error('This settings file has invalid starting-image data.');
     for (const settings of recipe.passes) {
       if (!settings || settings.model !== 2 || !Number.isInteger(settings.seed) || settings.seed < 0 || settings.seed > 4294967295) throw new Error('This settings file has an invalid pattern seed or rendering model.');
+      if (!Object.hasOwn(settings, 'cosmic')) settings.cosmic = 0;
       for (const [key] of [...signalFields, ...shapeFields]) if (!Number.isFinite(settings[key]) || settings[key] < 0 || settings[key] > 1) throw new Error(`Invalid ${key} setting.`);
     }
     return recipe;
@@ -367,6 +370,9 @@
     } catch (error) { message(`Could not open settings: ${error.message} Your current study is preserved.`, true); }
     finally { busy(false); $('load-recipe').value = ''; }
   }
+  $('viewport').addEventListener('click', () => {
+    if (!state.busy && !state.active && !$('empty').hidden) $('upload-image').click();
+  });
   $('upload-image').addEventListener('change', e => upload(e.target.files[0]));
   $('apply').addEventListener('click', apply);
   $('export').addEventListener('click', exportPNG); $('save-recipe').addEventListener('click', saveRecipe);
