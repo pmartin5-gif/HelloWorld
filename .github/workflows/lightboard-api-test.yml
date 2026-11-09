@@ -1,0 +1,40 @@
+name: Lightboard API connection test
+
+# Manual diagnostic only: one metadata lookup and, if that succeeds, one generation.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lightboard-api-test
+  cancel-in-progress: false
+
+jobs:
+  test-api:
+    if: ${{ github.event.repository.private == false }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    defaults:
+      run:
+        working-directory: Week-8/LightBoard_Prompter
+    steps:
+      - name: Check out only the diagnostic scripts
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /Week-8/LightBoard_Prompter/test_gemini_api.py
+            /Week-8/LightBoard_Prompter/check_api_connection.py
+
+      - name: Verify authenticated model lookup
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python3 test_gemini_api.py --actions-secret --check-key
+
+      - name: Test one small generation
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python3 test_gemini_api.py --actions-secret
