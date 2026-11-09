@@ -1,0 +1,2 @@
+# Third-party sources are preserved byte-for-byte from the working installation.
+cloud/vendor/** -whitespace

@@ -1,0 +1,23 @@
+{
+  "verified_date": "2026-11-09",
+  "scope": "Isolated local macOS compile; GitHub Linux build not yet run",
+  "baseline_source_matches_uploaded_checkpoint": true,
+  "application_bytes": 290944,
+  "application_slot_bytes": 1310720,
+  "application_headroom_bytes": 1019776,
+  "static_dram_bytes_reported": 21984,
+  "core": "esp32:esp32@2.0.17",
+  "arduino_cli": "1.5.1",
+  "libraries": {
+    "PxMatrix_LED_MATRIX_library": "1.8.2",
+    "Adafruit_GFX_Library": "1.13.0",
+    "Adafruit_BusIO": "1.17.4"
+  },
+  "source_sha256": "d90e1b58d47ad841c7ef6c737afac802da1e34e0a4810e43ca7ae7e05173bb46",
+  "build_lock_sha256": "d49bcc12704f6748ea380a560a38de7163998a4419b51e1cf00b35458f24cd5e",
+  "firmware_sha256": "6e1332070d2cf428bd56a83f2f0755e781128f1a29f433c4fce585f584d5c3eb",
+  "model_api_used": false,
+  "uploaded_to_board": false,
+  "cloud_workflow_published": false,
+  "cloud_build_run": false
+}
