@@ -1,0 +1,44 @@
+{
+  "build": {
+    "attempt": "1",
+    "run_id": "42746766266"
+  },
+  "channel": "delivery-test",
+  "current": {
+    "bytes": 291200,
+    "ota_enabled": false,
+    "release_tag": "lightboard-test-42746766266-1",
+    "sha256": "8b52fb73915d67a3cca7b99381f521eb58a707e6bbf26db2136ba4d153d39d44",
+    "source_sha256": "42bc5202bebe334916eb57aeb14d592050621dc1a6e19ffc5997889029cb96ac",
+    "url": "https://github.com/pmartin5-gif/HelloWorld/releases/download/lightboard-test-42746766266-1/firmware.bin",
+    "version": "candidate-42bc5202bebe3349-8b52fb73915d67a3"
+  },
+  "fqbn": "esp32:esp32:esp32:UploadSpeed=921600,CPUFreq=240,FlashFreq=80,FlashMode=qio,FlashSize=4M,PartitionScheme=default,DebugLevel=none,PSRAM=disabled,LoopCore=1,EventsCore=1,EraseFlash=none,JTAGAdapter=default",
+  "generation": {
+    "model_request_in_this_run": false,
+    "response_sha256": "ca9f5d73467bb02aab6278c8db4c03d5d643c960e5f2ea7221cea7d6263f1171",
+    "run_id": "42735010470"
+  },
+  "ota_enabled": false,
+  "previous": {
+    "bytes": 290960,
+    "ota_enabled": false,
+    "release_tag": "lightboard-test-42746766266-1",
+    "sha256": "17b1fc274ab7598d79f08a83eaa13d556c389ff945edc8094b8b632100757454",
+    "source_sha256": "d90e1b58d47ad841c7ef6c737afac802da1e34e0a4810e43ca7ae7e05173bb46",
+    "url": "https://github.com/pmartin5-gif/HelloWorld/releases/download/lightboard-test-42746766266-1/recovery.bin",
+    "version": "baseline-d90e1b58d47ad841-17b1fc274ab7598d"
+  },
+  "previous_role": "pinned baseline for USB recovery",
+  "repository": "pmartin5-gif/HelloWorld",
+  "schema_version": 1,
+  "usb_recovery": {
+    "bytes": 290960,
+    "ota_enabled": false,
+    "release_tag": "lightboard-test-42746766266-1",
+    "sha256": "17b1fc274ab7598d79f08a83eaa13d556c389ff945edc8094b8b632100757454",
+    "source_sha256": "d90e1b58d47ad841c7ef6c737afac802da1e34e0a4810e43ca7ae7e05173bb46",
+    "url": "https://github.com/pmartin5-gif/HelloWorld/releases/download/lightboard-test-42746766266-1/recovery.bin",
+    "version": "baseline-d90e1b58d47ad841-17b1fc274ab7598d"
+  }
+}
