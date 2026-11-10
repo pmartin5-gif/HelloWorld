@@ -1,4 +1,6 @@
 """Offline checks for the review-only API client. No real requests."""
+import base64
+import contextlib
 import io
 import json
 import os
@@ -98,6 +100,29 @@ class CandidateTests(unittest.TestCase):
         self.assertIn("scale its red, green, and blue channels together", prompt)
         self.assertIn("Do not change the panel-wide hardware brightness", prompt)
         self.assertNotIn("{{creative_prompt}}", prompt)
+
+    def test_diagnostic_transport_preserves_source_without_raw_workflow_commands(self):
+        root = Path(__file__).resolve().parents[1]
+        source = 'void restState(unsigned long now) { /* ::add-mask::untrusted */ }'
+        opener = MagicMock()
+        opener.open.return_value = self.response(source)
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / 'generation.json'
+            args = ['generate_candidate.py', '--actions-secret', '--log-result',
+                    '--brief', str(root / 'generationBrief.md'),
+                    '--prompt-file', str(root / 'experiments/flash-lite/2026-11-09/overflowing-heart/creative-prompt.txt'),
+                    '--output', str(output)]
+            log = io.StringIO()
+            with patch.object(sys, 'argv', args), patch.dict(os.environ, {'GITHUB_ACTIONS': 'true', 'GEMINI_API_KEY': 'AQ-offline-test-key'}, clear=True), patch.object(client.urllib.request, 'build_opener', return_value=opener), contextlib.redirect_stdout(log):
+                self.assertEqual(client.main(), 0)
+            chunks = [line.split(' ', 1)[1] for line in log.getvalue().splitlines() if line.startswith('LIGHTBOARD_CANDIDATE_DATA ')]
+            recovered = json.loads(base64.b64decode(''.join(chunks)))
+            self.assertEqual(recovered, json.loads(output.read_text()))
+            self.assertEqual(recovered['response_text'], source)
+            self.assertNotIn('::add-mask::', log.getvalue())
+            self.assertNotIn('AQ-offline-test-key', log.getvalue())
+            self.assertNotIn('AQ-offline-test-key', output.read_text())
+            opener.open.assert_called_once()
 
 
 if __name__ == "__main__":

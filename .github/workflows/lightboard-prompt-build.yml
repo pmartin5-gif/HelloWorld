@@ -68,7 +68,7 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: >-
-          python3 generate_candidate.py --actions-secret
+          python3 generate_candidate.py --actions-secret --log-result
           --prompt-file .build/generated/creative-prompt.txt
           --output .build/generated/generation.json
 

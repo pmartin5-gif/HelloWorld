@@ -101,12 +101,13 @@ def validate_function(candidate):
     for occurrence in re.finditer(r"\bdisplay\b", body):
         method = re.match(r"display\s*\.\s*(\w+)\s*\(", body[occurrence.start():])
         if not method or method[1] not in DRAWING_METHODS:
-            raise ValueError("Only supported drawing calls may access display")
+            name = method[1] if method else "alias or non-call access"
+            raise ValueError(f"Unsupported display access: {name}")
     lambdas = set(re.findall(r"\bauto\s+(\w+)\s*=\s*\[", body))
     # Skip the single function signature. Calls may only be drawing, math, or local lambdas.
     for name in re.findall(r"\b([A-Za-z_]\w*)\s*\(", body[body.index("{") + 1:]):
         if name not in PURE_CALLS | DRAWING_METHODS | lambdas:
-            raise ValueError("Candidate calls an unsupported function")
+            raise ValueError(f"Candidate calls an unsupported function: {name}")
     if re.search(r"\bfor\s*\(\s*;|\bwhile\s*\(\s*(?:true|[1-9]\d*)\s*\)", body):
         raise ValueError("An unconditional loop is not allowed")
     return candidate[start:end]

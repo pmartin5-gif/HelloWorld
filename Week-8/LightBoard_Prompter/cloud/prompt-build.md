@@ -28,7 +28,7 @@ The parser derives from the existing local helper. These checks do not formally 
 4. Wait for **Compile against the pinned foundation** to pass. No preview or creative-approval step is present.
 5. If enabled, download `lightboard-candidate-<run>-<attempt>` and verify `SHA256SUMS`. Retention is one day.
 
-The repository/workflow is public. Saved downloads include source and the submitted prompt in `generation.json`. Keep credentials out of prompts and firmware. [GitHub's input-handling guidance](https://docs.github.com/en/actions/concepts/security/script-injections) and [Actions billing documentation](https://docs.github.com/en/billing/concepts/product-billing/github-actions) explain safe prompt handling and the distinction between free public runners and storage billing.
+The repository/workflow is public. The exact generation record is retained as base64 JSON in job logs, including when validation later fails; downloads also include it as `generation.json`. The encoded format prevents generated text from becoming workflow commands. The client checks for the actual key before any output. Keep credentials out of prompts and firmware. [GitHub's input-handling guidance](https://docs.github.com/en/actions/concepts/security/script-injections) and [Actions billing documentation](https://docs.github.com/en/billing/concepts/product-billing/github-actions) explain safe prompt handling and the distinction between free public runners and storage billing.
 
 ## Bundle
 
@@ -49,6 +49,6 @@ This reads the installed toolchain and preserved libraries and writes isolated o
 
 ## Current checkpoint
 
-The integrated pipeline passed a local compile using the archived heart function: 292,064-byte application, no new API call or device operation. Unit tests cover editing boundaries, response binding, failure isolation, slot limits, and bundle checksums. The first integrated cloud run is pending publication through the user's existing SSH route. The GitHub connection rejected Git-tree writes with HTTP 403; the assistant shell cannot reach GitHub.
+The integrated pipeline passed a local compile using the archived heart function: 292,064-byte application, no new API call or device operation. The first integrated cloud run, [42733551597](https://github.com/pmartin5-gif/HelloWorld/actions/runs/42733551597), then generated a response in 5.018 seconds but validation rejected an unsupported function call. Compilation and download were skipped correctly. That revision did not preserve rejected source or name the call, so its cause cannot be diagnosed from the log. The follow-up retains the encoded response in job logs and identifies unsupported calls; it does not change the allowed calls or bypass validation. Tests cover diagnostic recovery and rejection details. Publish this diagnostic fix through the existing SSH route before another integrated test. No retry has run. The GitHub connection rejected Git-tree writes with HTTP 403; the assistant shell cannot reach GitHub.
 
 Next come cloud verification, board-accessible publication, separately provisioned Wi-Fi/OTA support, and email intake with a durable queue. Creative tuning can happen later.

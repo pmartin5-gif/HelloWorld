@@ -63,6 +63,10 @@ class SceneTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "hash mismatch"):
                 scene.load_generation(path)
 
+    def test_rejection_names_the_unsupported_call(self):
+        with self.assertRaisesRegex(ValueError, 'unsupported function: unsupportedCall'):
+            scene.validate_function('void restState(unsigned long now) { unsupportedCall(); }')
+
 
 class BuildTests(unittest.TestCase):
     def setUp(self):
