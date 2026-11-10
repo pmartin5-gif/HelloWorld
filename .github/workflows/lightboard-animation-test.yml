@@ -1,0 +1,40 @@
+name: Lightboard animation test
+
+# Review-only, fixed generic prompt. Verify the no-billing project allowance first.
+# One model request. Generated code is logged for review, never executed here.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lightboard-api-test
+  cancel-in-progress: false
+
+jobs:
+  generate-review-candidate:
+    if: ${{ github.event.repository.private == false }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    defaults:
+      run:
+        working-directory: Week-8/LightBoard_Prompter
+    steps:
+      - name: Check out the brief and fixed review prompt
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /Week-8/LightBoard_Prompter/generate_candidate.py
+            /Week-8/LightBoard_Prompter/generationBrief.md
+            /Week-8/LightBoard_Prompter/experiments/flash-lite/2026-11-09/overflowing-heart/creative-prompt.txt
+
+      - name: Generate one animation for review
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: >-
+          python3 generate_candidate.py --actions-secret --log-result
+          --prompt-file experiments/flash-lite/2026-11-09/overflowing-heart/creative-prompt.txt
+          --output /tmp/lightboard-candidate.json
