@@ -3,6 +3,15 @@ name: Lightboard API connection test
 # Manual diagnostic only: one metadata lookup and, if that succeeds, one generation.
 on:
   workflow_dispatch:
+    inputs:
+      model:
+        description: 'Model for this single test; verify its free allowance before running'
+        type: choice
+        required: true
+        default: gemini-3.5-flash-lite
+        options:
+          - gemini-3.5-flash-lite
+          - gemini-3.8-flash
 
 permissions:
   contents: read
@@ -16,6 +25,8 @@ jobs:
     if: ${{ github.event.repository.private == false }}
     runs-on: ubuntu-24.04
     timeout-minutes: 4
+    env:
+      TEST_MODEL: ${{ inputs.model }}
     defaults:
       run:
         working-directory: Week-8/LightBoard_Prompter
@@ -32,9 +43,9 @@ jobs:
       - name: Verify authenticated model lookup
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python3 test_gemini_api.py --actions-secret --check-key
+        run: python3 test_gemini_api.py --actions-secret --check-key --model "$TEST_MODEL"
 
       - name: Test one small generation
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python3 test_gemini_api.py --actions-secret
+        run: python3 test_gemini_api.py --actions-secret --model "$TEST_MODEL"

@@ -15,6 +15,11 @@ import urllib.request
 
 from check_api_connection import explain
 
+THINKING_LEVELS = {
+    "gemini-3.8-flash": "low",
+    "gemini-3.5-flash-lite": "minimal",
+}
+
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -25,6 +30,10 @@ def main():
     parser.add_argument(
         "--actions-secret", action="store_true",
         help="In GitHub Actions only, read GEMINI_API_KEY instead of the Mac's private file",
+    )
+    parser.add_argument(
+        "--model", choices=tuple(THINKING_LEVELS), default="gemini-3.8-flash",
+        help="Explicit model for this one request; no automatic model switching",
     )
     args = parser.parse_args()
     if args.actions_secret:
@@ -51,13 +60,13 @@ def main():
         "contents": [{"parts": [{"text": "Reply with exactly: LIGHTBOARD_API_OK"}]}],
         "generationConfig": {
             "maxOutputTokens": 512,
-            "thinkingConfig": {"thinkingLevel": "low"},
+            "thinkingConfig": {"thinkingLevel": THINKING_LEVELS[args.model]},
         },
     }
-    model_url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash"
+    model_url = f"https://generativelanguage.googleapis.com/v1beta/models/{args.model}"
     if args.check_key:
         request = urllib.request.Request(model_url, headers={"x-goog-api-key": key}, method="GET")
-        print("Checking model information with the saved key. No generation or retries.", flush=True)
+        print(f"Checking {args.model} information with the saved key. No generation or retries.", flush=True)
         timeout = 20
     else:
         request = urllib.request.Request(
@@ -66,7 +75,7 @@ def main():
             headers={"Content-Type": "application/json", "x-goog-api-key": key},
             method="POST",
         )
-        print("Sending one request to Gemini 3.8 Flash with low thinking. Allow up to two minutes.", flush=True)
+        print(f"Sending one request to {args.model} with {THINKING_LEVELS[args.model]} thinking. Allow up to two minutes.", flush=True)
         print("No retries or paid fallback.", flush=True)
         timeout = 120
     # Refuse redirects rather than forwarding a credential to another location.
@@ -99,7 +108,7 @@ def main():
         return 1
 
     if args.check_key:
-        if data.get("name") == "models/gemini-3.8-flash":
+        if data.get("name") == f"models/{args.model}":
             print("PASS: MODEL_INFO_OK — the API returned model information using the saved key.")
             print("Generation is still unverified. No generation request was sent.")
             return 0
@@ -114,7 +123,7 @@ def main():
         if not part.get("thought", False)
     ).strip()
     if reply == "LIGHTBOARD_API_OK":
-        print("PASS: LIGHTBOARD_API_OK — the key and model completed the API test.")
+        print(f"PASS: LIGHTBOARD_API_OK — {args.model} completed the API test.")
         return 0
     print("HTTP success, but the expected test reply was not returned.")
     print("Finish reasons:", ", ".join(str(c.get("finishReason", "unknown")) for c in candidates) or "no candidates")

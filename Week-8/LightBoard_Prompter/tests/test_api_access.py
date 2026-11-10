@@ -1,6 +1,6 @@
 """Credential-source and fail-closed checks; all HTTP requests are mocked."""
 
-from contextlib import redirect_stdout
+from contextlib import redirect_stdout, redirect_stderr
 import io
 import json
 import os
@@ -50,6 +50,7 @@ class ApiAccessTests(unittest.TestCase):
         opener.return_value.open.assert_called_once()
         request = opener.return_value.open.call_args.args[0]
         self.assertEqual(request.get_header("X-goog-api-key"), "local-test-placeholder")
+        self.assertEqual(json.loads(request.data)["generationConfig"]["thinkingConfig"]["thinkingLevel"], "low")
         self.assertNotIn("local-test-placeholder", text)
         self.assertNotIn("unrelated-placeholder", text)
 
@@ -73,6 +74,36 @@ class ApiAccessTests(unittest.TestCase):
         self.assertNotIn("local-test-placeholder", text)
         self.assertIn("[REDACTED]", text)
         opener.return_value.open.assert_called_once()
+
+    def test_lite_selection_uses_one_explicit_model_with_supported_thinking(self):
+        result, _, opener, _ = self.invoke(["--model", "gemini-3.5-flash-lite"], {},
+            {"candidates": [{"content": {"parts": [{"text": "LIGHTBOARD_API_OK"}]}}]})
+        self.assertEqual(result, 0)
+        opener.return_value.open.assert_called_once()
+        request = opener.return_value.open.call_args.args[0]
+        self.assertTrue(request.full_url.endswith("/models/gemini-3.5-flash-lite:generateContent"))
+        self.assertEqual(json.loads(request.data)["generationConfig"]["thinkingConfig"]["thinkingLevel"], "minimal")
+
+    def test_lite_metadata_matches_the_selected_model_without_generation(self):
+        result, text, opener, _ = self.invoke(["--model", "gemini-3.5-flash-lite", "--check-key"], {},
+            {"name": "models/gemini-3.5-flash-lite"})
+        self.assertEqual(result, 0)
+        request = opener.return_value.open.call_args.args[0]
+        self.assertEqual(request.get_method(), "GET")
+        self.assertIsNone(request.data)
+        self.assertTrue(request.full_url.endswith("/models/gemini-3.5-flash-lite"))
+        self.assertIn("MODEL_INFO_OK", text)
+
+    def test_unreviewed_model_is_rejected_before_key_or_network_access(self):
+        with patch.object(sys, "argv", ["test_gemini_api.py", "--model", "unreviewed-model"]), \
+             patch.object(client.Path, "read_text") as file_read, \
+             patch.object(client.urllib.request, "build_opener") as opener, \
+             redirect_stderr(io.StringIO()):
+            with self.assertRaises(SystemExit) as result:
+                client.main()
+        self.assertEqual(result.exception.code, 2)
+        file_read.assert_not_called()
+        opener.assert_not_called()
 
 
 if __name__ == "__main__":
