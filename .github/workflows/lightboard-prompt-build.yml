@@ -1,0 +1,94 @@
+name: Lightboard prompt build
+
+# Manual infrastructure milestone. No visual approval, publication, or device upload.
+on:
+  workflow_dispatch:
+    inputs:
+      prompt:
+        description: 'Creative prompt for the Lightboard (public workflow; maximum 2000 characters)'
+        type: string
+        required: true
+        default: An overflowing heart that keeps giving
+      save_firmware:
+        description: 'Save a 1-day download ONLY after checking free storage and the $0 spending stop'
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lightboard-api-test
+  cancel-in-progress: false
+
+jobs:
+  generate-and-compile:
+    if: ${{ github.event.repository.private == false }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: Week-8/LightBoard_Prompter
+    steps:
+      - name: Check out only Lightboard inputs
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /Week-8/LightBoard_Prompter/cloud/
+            /Week-8/LightBoard_Prompter/generate_candidate.py
+            /Week-8/LightBoard_Prompter/generationBrief.md
+
+      - name: Verify the pinned foundation and libraries
+        run: python3 cloud/build.py --verify-only
+
+      - name: Install the pinned Arduino CLI
+        uses: arduino/setup-arduino-cli@81d310742121c928ea9c8bbd407b4217b432ae02 # v2
+        with:
+          version: '1.5.1'
+
+      - name: Save the submitted prompt as data
+        env:
+          CREATIVE_PROMPT: ${{ inputs.prompt }}
+        run: |
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+          prompt = os.environ['CREATIVE_PROMPT'].strip()
+          if not 1 <= len(prompt) <= 2000:
+              raise SystemExit('STOP: Enter a prompt between 1 and 2000 characters.')
+          folder = Path('.build/generated')
+          folder.mkdir(parents=True, exist_ok=True)
+          (folder / 'creative-prompt.txt').write_text(prompt + '\n')
+          PY
+
+      - name: Generate one restState using the saved brief
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: >-
+          python3 generate_candidate.py --actions-secret
+          --prompt-file .build/generated/creative-prompt.txt
+          --output .build/generated/generation.json
+
+      - name: Validate the generated function
+        run: >-
+          python3 cloud/scene.py --record .build/generated/generation.json
+          --output .build/generated/restState.cpp
+
+      - name: Compile against the pinned foundation
+        run: >-
+          python3 cloud/build.py --install-core
+          --candidate .build/generated/restState.cpp
+          --generation-record .build/generated/generation.json
+
+      - name: Save the compiled firmware bundle
+        if: ${{ success() && inputs.save_firmware }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: lightboard-candidate-${{ github.run_id }}-${{ github.run_attempt }}
+          path: Week-8/LightBoard_Prompter/.build/candidate-artifact/
+          if-no-files-found: error
+          retention-days: 1
+          include-hidden-files: false

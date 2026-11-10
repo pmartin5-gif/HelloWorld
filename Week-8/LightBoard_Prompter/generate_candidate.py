@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate one review-only animation candidate; never compile or deploy it."""
+"""Generate one animation candidate for validation and compilation; never deploy it."""
 
 import argparse
 import base64
@@ -121,7 +121,7 @@ def main():
     key = load_key(args.actions_secret)
     if key in prompt:
         raise ValueError("Prompt contains a credential; no request sent")
-    print(f"Sending one review-only animation request to {MODEL}. No retry or fallback.", flush=True)
+    print(f"Sending one animation request to {MODEL}. No retry or fallback.", flush=True)
     result = generate(key, prompt)
     result.update(
         creative_prompt=creative,
@@ -142,7 +142,7 @@ def main():
         for start in range(0, len(transport), 3000):
             print("LIGHTBOARD_CANDIDATE_DATA " + transport[start:start + 3000])
         print("LIGHTBOARD_CANDIDATE_END")
-    print(f"PASS: CANDIDATE_RECEIVED — {result['generation_seconds']}s; validation, preview, and compilation still required.")
+    print(f"PASS: CANDIDATE_RECEIVED — {result['generation_seconds']}s; validation and compilation still required.")
     return 0
 
 
