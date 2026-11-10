@@ -193,6 +193,9 @@ def main():
             if generation:
                 report["model"] = generation["model"]
                 report["generation_response_sha256"] = generation["response_sha256"]
+                report["generation_run_id"] = generation.get("run_id")
+                report["generation_commit"] = generation.get("commit")
+                report["model_request_in_this_run"] = bool(generation.get("run_id")) and generation["run_id"] == os.environ.get("GITHUB_RUN_ID")
                 (pending / "generation.json").write_text(json.dumps(generation, indent=2) + "\n")
             manifest = {
                 "schema_version": 1,

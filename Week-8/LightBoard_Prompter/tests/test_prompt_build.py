@@ -67,6 +67,43 @@ class SceneTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'unsupported function: unsupportedCall'):
             scene.validate_function('void restState(unsigned long now) { unsupportedCall(); }')
 
+    def test_exact_recovered_cloud_response_accepts_numeric_rand(self):
+        path = Path(__file__).resolve().parents[1] / 'experiments/flash-lite/2026-11-09/cloud-run-42735010470/generation.json'
+        record, function = scene.load_generation(path)
+        self.assertEqual(record['run_id'], '42735010470')
+        self.assertIn('rand()', function)
+        self.assertIn('display.drawPixel', function)
+        self.assertEqual(record['response_sha256'], scene.digest(record['response_text'].encode()))
+
+    def test_reuse_copies_exact_response_and_preserves_origin(self):
+        root = Path(__file__).resolve().parents[1]
+        record = root / 'experiments/flash-lite/2026-11-09/cloud-run-42735010470/generation.json'
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory) / 'generation.json'
+            prompt = Path(directory) / 'prompt.txt'
+            prompt.write_text('An overflowing heart that keeps giving\n')
+            scene.reuse_generation(record, target, prompt, root / 'generationBrief.md')
+            self.assertEqual(record.read_bytes(), target.read_bytes())
+            self.assertEqual(json.loads(target.read_text())['run_id'], '42735010470')
+            with self.assertRaises(FileExistsError):
+                scene.reuse_generation(record, target, prompt, root / 'generationBrief.md')
+
+    def test_reuse_rejects_mismatched_prompt_or_brief(self):
+        root = Path(__file__).resolve().parents[1]
+        record = root / 'experiments/flash-lite/2026-11-09/cloud-run-42735010470/generation.json'
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory) / 'generation.json'
+            prompt = Path(directory) / 'prompt.txt'
+            prompt.write_text('a different prompt')
+            with self.assertRaisesRegex(ValueError, 'different prompt'):
+                scene.reuse_generation(record, target, prompt, root / 'generationBrief.md')
+            prompt.write_text('An overflowing heart that keeps giving')
+            brief = Path(directory) / 'brief.md'
+            brief.write_text('a changed brief')
+            with self.assertRaisesRegex(ValueError, 'different brief'):
+                scene.reuse_generation(record, target, prompt, brief)
+            self.assertFalse(target.exists())
+
 
 class BuildTests(unittest.TestCase):
     def setUp(self):
@@ -142,6 +179,7 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(saved, data)
         self.assertTrue(report["model_api_used"])
         self.assertEqual(report["generation_response_sha256"], data["response_sha256"])
+        self.assertFalse(report["model_request_in_this_run"])
 
     def test_failed_compile_retains_log_without_eligible_bundle(self):
         def failed(command, capture=False):

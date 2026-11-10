@@ -73,7 +73,8 @@ def protected_hash(source):
 
 
 DRAWING_METHODS = set("fillScreen drawPixel drawLine drawFastHLine drawFastVLine drawRect fillRect drawRoundRect fillRoundRect drawCircle fillCircle drawTriangle fillTriangle drawBitmap color565 width height".split())
-PURE_CALLS = set("if for while switch return sizeof alignof static_cast int float double bool char short long unsigned signed uint8_t uint16_t uint32_t int8_t int16_t int32_t min max abs constrain map random sin sinf cos cosf tan tanf atan2 atan2f sqrt sqrtf pow powf floor floorf ceil ceilf round roundf fabs fabsf fmod fmodf fmin fminf fmax fmaxf exp expf log logf".split())
+# Arduino.h includes stdlib.h; rand() is a numeric PRNG, like the already allowed random().
+PURE_CALLS = set("if for while switch return sizeof alignof static_cast int float double bool char short long unsigned signed uint8_t uint16_t uint32_t int8_t int16_t int32_t min max abs constrain map random rand sin sinf cos cosf tan tanf atan2 atan2f sqrt sqrtf pow powf floor floorf ceil ceilf round roundf fabs fabsf fmod fmodf fmin fminf fmax fmaxf exp expf log logf".split())
 
 
 def validate_function(candidate):
@@ -133,14 +134,35 @@ def load_generation(path):
     return record, validate_function(text)
 
 
+def reuse_generation(record_path, output_path, prompt_path, brief_path):
+    """Rebuild a saved response without a model call; reject a different prompt/brief."""
+    record, _ = load_generation(record_path)
+    if record.get("creative_prompt") != Path(prompt_path).read_text().strip():
+        raise ValueError("Saved generation belongs to a different prompt; no API request sent")
+    if record.get("brief_sha256") != digest(Path(brief_path).read_bytes()):
+        raise ValueError("Saved generation used a different brief; no API request sent")
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    with output_path.open("xb") as output:
+        output.write(Path(record_path).read_bytes())
+
+
 if __name__ == "__main__":
     import argparse
     import sys
     parser = argparse.ArgumentParser(description="Validate one generated restState for the pinned build")
     parser.add_argument("--record", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--reuse-record", action="store_true", help="Copy the exact saved record instead of extracting its function; never calls an API")
+    parser.add_argument("--prompt-file", type=Path)
+    parser.add_argument("--brief", type=Path)
     args = parser.parse_args()
     try:
+        if args.reuse_record:
+            if not args.prompt_file or not args.brief:
+                raise ValueError("Reusing a response requires its matching prompt and brief")
+            reuse_generation(args.record, args.output, args.prompt_file, args.brief)
+            print("PASS: SAVED_GENERATION_REUSED — no API request; validation and compilation still required.")
+            sys.exit(0)
         _, function = load_generation(args.record)
         args.output.parent.mkdir(parents=True, exist_ok=True)
         with args.output.open("x") as output:
