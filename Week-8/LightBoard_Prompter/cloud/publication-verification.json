@@ -1,0 +1,48 @@
+{
+  "status": "prepared and locally verified; workflow publication and real release test pending",
+  "workflow": ".github/workflows/lightboard-publication-test.yml",
+  "offline_tests_passed": 49,
+  "workflow_yaml_parsed": true,
+  "manual_trigger_only": true,
+  "publication_default": false,
+  "public_repository_and_main_required": true,
+  "runner": "ubuntu-24.04",
+  "actions_artifact_or_cache_storage": false,
+  "release_assets": [
+    "firmware.bin",
+    "recovery.bin",
+    "manifest.json",
+    "SHA256SUMS"
+  ],
+  "proposed_feed_url": "https://raw.githubusercontent.com/pmartin5-gif/HelloWorld/lightboard-feed/manifest.json",
+  "feed_branch_observed_before_test": "not present",
+  "local_real_compile": {
+    "scope": "isolated macOS compile and package preparation; synthetic run ID 1",
+    "baseline_bytes": 290944,
+    "candidate_bytes": 291216,
+    "baseline_sha256": "1fbea1e420024a76858c74ba56138373c905783e19db120d0e89fe870cdaf87a",
+    "candidate_sha256": "5acf4a00f638ca9709b0136dad173f9a23fc69419abf4bec6d4015644d76a10e",
+    "original_generation_run_id": "42735010470",
+    "original_response_sha256": "ca9f5d73467bb02aab6278c8db4c03d5d643c960e5f2ea7221cea7d6263f1171",
+    "checksums_verified": true,
+    "saved_key_absent": true,
+    "pinned_input_files_verified": 84,
+    "path": ".build/publication-local-check/"
+  },
+  "cloud_publication_test": "not dispatched",
+  "public_downloads_verified": false,
+  "esp32_https_compatibility_verified": false,
+  "previous_version_failure_tests": "offline tests passed; live failure/recovery not tested",
+  "new_model_requests": 0,
+  "billing_changes": false,
+  "live_source_unchanged": true,
+  "device_operation": false,
+  "ota_enabled": false,
+  "sources": [
+    "https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases",
+    "https://docs.github.com/en/billing/concepts/product-billing/github-actions",
+    "https://docs.github.com/en/rest/releases/releases",
+    "https://docs.github.com/en/rest/releases/assets",
+    "https://docs.github.com/en/rest/repos/contents"
+  ]
+}

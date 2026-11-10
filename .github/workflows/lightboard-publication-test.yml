@@ -1,0 +1,90 @@
+name: Lightboard publication test
+
+# Delivery infrastructure only. No model API, email, serial access, or device update.
+on:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: 'Publish public test firmware, recovery image, and Lightboard feed (no OTA/device update)'
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lightboard-api-test
+  cancel-in-progress: false
+
+jobs:
+  compile-and-prepare:
+    if: ${{ github.repository == 'pmartin5-gif/HelloWorld' && github.event.repository.private == false && github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    # Publication needs repository write access; no persistent credential or personal token.
+    permissions:
+      contents: write
+    defaults:
+      run:
+        working-directory: Week-8/LightBoard_Prompter
+    steps:
+      - name: Check out only Lightboard build and saved-response inputs
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /Week-8/LightBoard_Prompter/cloud/
+            /Week-8/LightBoard_Prompter/generationBrief.md
+            /Week-8/LightBoard_Prompter/experiments/flash-lite/2026-11-09/cloud-run-42735010470/generation.json
+
+      - name: Verify the pinned foundation and libraries
+        run: python3 cloud/build.py --verify-only
+
+      - name: Install the pinned Arduino CLI
+        uses: arduino/setup-arduino-cli@81d310742121c928ea9c8bbd407b4217b432ae02 # v2
+        with:
+          version: '1.5.1'
+
+      - name: Compile the preserved baseline for USB recovery
+        run: python3 cloud/build.py --install-core
+
+      - name: Reuse and validate the saved generation without an API request
+        run: |
+          mkdir -p .build/publication-input
+          printf '%s\n' 'An overflowing heart that keeps giving' > .build/publication-input/prompt.txt
+          python3 cloud/scene.py --reuse-record --record experiments/flash-lite/2026-11-09/cloud-run-42735010470/generation.json --output .build/publication-input/generation.json --prompt-file .build/publication-input/prompt.txt --brief generationBrief.md
+          python3 cloud/scene.py --record .build/publication-input/generation.json --output .build/publication-input/restState.cpp
+
+      - name: Compile the exact saved function against the pinned foundation
+        run: >-
+          python3 cloud/build.py --candidate .build/publication-input/restState.cpp
+          --generation-record .build/publication-input/generation.json
+
+      - name: Prepare allowlisted firmware and manifests
+        run: >-
+          python3 cloud/publish.py --candidate .build/candidate-artifact
+          --baseline .build/artifact --output .build/publication
+
+      - name: Publish and anonymously verify delivery test
+        if: ${{ success() && inputs.publish }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 cloud/publish.py --publish --output .build/publication
+
+      - name: Record the scope of the completed check
+        if: ${{ success() }}
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          manifest = json.loads(Path('.build/publication/manifest.json').read_text())
+          print(json.dumps(manifest, indent=2))
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
+              summary.write('## Lightboard delivery test\n\n')
+              summary.write('Saved response compiled; zero model requests. No device update or OTA support.\n\n')
+              summary.write('Candidate: ' + str(manifest['current']['bytes']) + ' bytes.\n\n')
+              summary.write('Recovery: ' + str(manifest['usb_recovery']['bytes']) + ' bytes.\n\n')
+              summary.write('No Actions artifact or cache was stored. Inspect the publication step for public URL verification.\n')
+          PY
