@@ -9,9 +9,9 @@
   "observed_api_keys": 0,
   "api_free_tier_and_account_limits_verified": false,
   "new_billing_enabled": false,
-  "new_key_created": false,
+  "new_key_created": true,
   "baseline_source_sha256": "62a964cbf16e390510c83e7f61aafa70120916cb6086af9d6727ae45bc6b7be2",
-  "status": "Playground and local checks complete; approved API setup blocked by project-creation rejection; user account choice and creative review pending",
+  "status": "Lite generation source recovered; rand false positive fixed; unchanged source compiled locally; saved-response Linux build pending publication",
   "cases": [
     {
       "id": "lighthouse",
@@ -19,7 +19,7 @@
       "status": "local technical checks passed after model corrections",
       "correction_count": 1,
       "results_file": "experiments/model-verification/2026-11-06/lighthouse/verification-results.json",
-      "visual_review": "Recognizable tower and sea, but the beam is dim and disappears in most sampled frames. Muted scenery departs from the bold, saturated brief. Human creative approval pending."
+      "visual_review": "Recognizable tower and sea, but the beam is dim and disappears in most sampled frames. Muted scenery departs from the bold, saturated brief. User accepted sample on November 9 for further prototyping; future brief adds expressive per-pixel brightness."
     },
     {
       "id": "overflowing-heart",
@@ -27,7 +27,7 @@
       "status": "local technical checks passed after model corrections",
       "correction_count": 1,
       "results_file": "experiments/model-verification/2026-11-06/overflowing-heart/verification-results.json",
-      "visual_review": "Readable saturated heart with a pulse and outward particles against black space. Strongest match in this small sample. Human creative approval pending."
+      "visual_review": "Readable saturated heart with a pulse and outward particles against black space. Strongest match in this small sample. User accepted sample on November 9 for further prototyping; future brief adds expressive per-pixel brightness."
     },
     {
       "id": "unresolved-figure",
@@ -35,7 +35,7 @@
       "status": "local technical checks passed after model corrections",
       "correction_count": 2,
       "results_file": "experiments/model-verification/2026-11-06/unresolved-figure/verification-results.json",
-      "visual_review": "Reaching, waiting, and bracing are visible, and the mood remains unresolved. Thin strokes and a tiny head may be weak on the physical panel. Human creative approval pending."
+      "visual_review": "Reaching, waiting, and bracing are visible, and the mood remains unresolved. Thin strokes and a tiny head may be weak on the physical panel. User accepted sample on November 9 for further prototyping; future brief adds expressive per-pixel brightness."
     }
   ],
   "cost_policy": "No paid billing, upgrades, paid keys, paid tools, or paid fallback. Stop on a payment requirement.",
@@ -48,15 +48,207 @@
   "live_source_unchanged_at_end": true,
   "approved_project_name": "lightboard-prompter",
   "api_project_creation_attempted": true,
-  "api_project_creation_status": "rejected by Google AI Studio",
+  "api_project_creation_status": "succeeded in user-selected personal account on 2026-11-09",
   "api_project_creation_error": "Failed to create project, Project creation is disabled. Please try again later.",
-  "api_project_created": false,
-  "api_account_context": "Existing signed-in SVA Google account",
+  "api_project_created": true,
+  "api_account_context": "User-selected personal Google account",
   "api_creation_cause": "Not established by the error message; could be account policy or service availability.",
-  "api_setup_next_decision": "User asked whether to try a personal Google account or stay with SVA and resolve the restriction.",
-  "work_status": "paused_by_user",
+  "api_setup_next_decision": "Free API access verified; prioritize integrated infrastructure without a creative-review gate.",
+  "work_status": "resumed_step5_rand_fix_local_compile_passed_cloud_pending",
   "paused_date": "2026-11-06",
   "resume_note": "RESUME.md",
-  "next_step": "After the user resumes, resolve the choice of personal Google account versus SVA for the approved no-billing project/key setup.",
-  "background_work_scheduled": false
+  "next_step": "Publish 1cd37ca, then enable reuse_saved_generation for one cloud compiler check without a new model request.",
+  "background_work_scheduled": false,
+  "resumed_date": "2026-11-09",
+  "api_project_creation_retry_date": "2026-11-09",
+  "api_project_creation_retry_status": "Same rejection; no project or key created",
+  "api_project_id": "gen-lang-client-0021216944",
+  "api_project_number": "373128400761",
+  "api_key_storage_path": "/Users/pmartin5/.config/lightboard-prompter/gemini-api-key.txt",
+  "api_key_file_permissions": "600",
+  "api_observed_billing_tier": "Free tier",
+  "api_read_only_check": {
+    "date": "2026-11-09",
+    "status": "no HTTP response; API hostname could not resolve in shell",
+    "generation_requested": false
+  },
+  "api_model_quotas": {
+    "observed_date": "2026-11-09",
+    "project_id": "gen-lang-client-0021216944",
+    "model": "gemini-3.8-flash",
+    "requests_per_minute": 5,
+    "tokens_per_minute": 250000,
+    "requests_per_day": 20,
+    "source": "AI Studio Rate Limit page with lightboard-prompter selected and All models on"
+  },
+  "api_project_free_tier_observed": true,
+  "user_run_api_check": {
+    "date": "2026-11-09",
+    "status": "HTTP 503",
+    "message": "This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.",
+    "generation_succeeded": false,
+    "automatic_retries": false,
+    "next_action": "Wait a few minutes, then one manual retry; defer if capacity error persists."
+  },
+  "user_terminal_connection_diagnostic": {
+    "date": "2026-11-09",
+    "python_version": "3.14.7",
+    "python_executable": "/Users/pmartin5/miniconda3/bin/python3",
+    "dns": "PASS",
+    "unauthenticated_https_status": 403,
+    "key_or_model_validated": false
+  },
+  "latest_user_transcript": {
+    "date": "2026-11-09",
+    "completed_requests_visible": 2,
+    "completed_statuses": [
+      503,
+      503
+    ],
+    "final_request_status": "TimeoutError; no HTTP response received",
+    "generation_succeeded": false,
+    "underlying_timeout_cause": "Not established"
+  },
+  "api_testing_status": "Flash-Lite cloud API generation passed; original 3.8 Flash generation failures remain unresolved.",
+  "creative_review": {
+    "date": "2026-11-09",
+    "accepted_for_further_prototyping": true,
+    "requested_change": "Allow brightness changes of individual pixels as an expressive element alongside color.",
+    "current_generation_brief": "generationBrief.md",
+    "revised_brief_tested": false,
+    "historical_prompts_unchanged": true,
+    "further_review_required": false,
+    "user_direction": "Animation quality can be tweaked later; focus on infrastructure."
+  },
+  "baseline_build": {
+    "local_compile": "passed",
+    "local_application_bytes": 290944,
+    "commit": "3ee1965",
+    "push_status": "Confirmed on GitHub main: 3ee19650b076cd55b72841ac07a6fb6a33d14da2",
+    "github_run_status": "success",
+    "artifact_download_status": "downloaded locally and verified",
+    "model_used": false,
+    "board_upload_performed": false,
+    "user_push_status": "HTTPS authentication failed; normal account passwords unsupported",
+    "ssh_authentication": "User confirmed success as pmartin5-gif",
+    "github_run_id": 42720712106,
+    "github_job_id": 129513672507,
+    "github_run_url": "https://github.com/pmartin5-gif/HelloWorld/actions/runs/42720712106",
+    "save_firmware": true,
+    "spending_stop_rechecked": true,
+    "free_artifact_storage_rechecked": true,
+    "github_duration_seconds": 53,
+    "cloud_application_bytes": 290960,
+    "cloud_static_dram_bytes": 21984,
+    "artifact_id": 13720520896,
+    "artifact_local_path": ".build/cloud-run-42720712106/firmware.zip",
+    "archive_digest_verified": true,
+    "file_checksums_verified": true,
+    "source_and_build_lock_verified": true,
+    "verification_record": "cloud/github-verification.json"
+  },
+  "latest_api_generation_result": {
+    "date": "2026-11-09",
+    "model": "gemini-3.5-flash-lite",
+    "status": "LIGHTBOARD_API_OK",
+    "generation_succeeded": true,
+    "run_id": 42727547923,
+    "generation_seconds_approx": 4.04
+  },
+  "authenticated_metadata_check": {
+    "date": "2026-11-09",
+    "status": "MODEL_INFO_OK reported by user",
+    "generation_requested": false
+  },
+  "next_generation_test": {
+    "model": "gemini-3.8-flash",
+    "thinking_level": "low",
+    "timeout_seconds": 120,
+    "automatic_retries": false,
+    "status": "User reported TimeoutError before HTTP response"
+  },
+  "cloud_api_diagnostic": {
+    "commit": "4c63bf8",
+    "published": true,
+    "workflow": ".github/workflows/lightboard-api-test.yml",
+    "local_mock_tests_passed": 5,
+    "secret_destination": "pmartin5-gif/HelloWorld repository Actions secret GEMINI_API_KEY",
+    "secret_transfer_approval": "Explicitly approved by user on 2026-11-09",
+    "repository_secret_created": true,
+    "secret_value_entered": true,
+    "dispatched": true,
+    "generation_requests_per_run": 1,
+    "automatic_retries": false,
+    "artifact_storage": false,
+    "published_commit": "4c63bf81af5d4abb0fd17bac4f993a23dfd44dee",
+    "free_tier_rechecked": true,
+    "secret_name": "GEMINI_API_KEY",
+    "secret_creation_verified": "GitHub displayed Repository secret added and the named secret in its inventory",
+    "run_id": 42724339342,
+    "run_url": "https://github.com/pmartin5-gif/HelloWorld/actions/runs/42724339342",
+    "status": "completed",
+    "job_id": 129525988360,
+    "conclusion": "failure",
+    "metadata_lookup": "MODEL_INFO_OK",
+    "generation_result": "TimeoutError before HTTP response",
+    "generation_timeout_seconds": 120,
+    "generation_requests": 1,
+    "reruns": 0,
+    "verification_record": "cloud/api-verification.json"
+  },
+  "flash_lite_test": {
+    "model": "gemini-3.5-flash-lite",
+    "user_authorized": true,
+    "commit": "691f82728d098d8f08d0a7c7007f3a3f1e7ab4b8",
+    "status": "success",
+    "generation_requests_sent": 1,
+    "local_mock_tests_passed": 8,
+    "thinking_level": "minimal",
+    "observed_free_project_limits": {
+      "requests_per_minute": 15,
+      "tokens_per_minute": 250000,
+      "requests_per_day": 500
+    },
+    "verification_record": "cloud/api-lite-verification.json",
+    "run_id": 42727547923,
+    "job_id": 129536952110,
+    "run_url": "https://github.com/pmartin5-gif/HelloWorld/actions/runs/42727547923",
+    "metadata_result": "MODEL_INFO_OK",
+    "generation_result": "LIGHTBOARD_API_OK",
+    "generation_seconds_approx": 4.04,
+    "workflow_duration_seconds": 13,
+    "creative_output_reviewed": false,
+    "board_operation": false,
+    "billing_settings_changed": false,
+    "creative_review_required": false
+  },
+  "flash_lite_animation_test": {
+    "status": "superseded by integrated manual prompt-build workflow; no review-only request sent",
+    "commit": "21ccf289a49382b325ff21c2a510bdecefd5857d",
+    "generation_requests_sent": 0,
+    "verification_record": "experiments/flash-lite/2026-11-09/overflowing-heart/verification.json",
+    "offline_tests_passed": 8
+  },
+  "prompt_build": {
+    "workflow": ".github/workflows/lightboard-prompt-build.yml",
+    "implementation_model": "gemini-3.5-flash-lite",
+    "local_compile": "passed using archived function; no new API request",
+    "offline_tests_passed": 32,
+    "creative_review_required": false,
+    "cloud_status": "first run failed validation; generation passed; compile/download skipped",
+    "verification_record": "cloud/prompt-build-verification.json",
+    "run_id": 42733551597,
+    "run_url": "https://github.com/pmartin5-gif/HelloWorld/actions/runs/42733551597",
+    "generation_requests": 1,
+    "generation_seconds": 5.018,
+    "validation_error": "Candidate calls an unsupported function",
+    "candidate_source_retained": true,
+    "diagnostic_fix_commit": "d67f3a64c5ae59172ffa6af54da5171843307ae6",
+    "reruns": 0,
+    "latest_cloud_run_id": 42735010470,
+    "latest_cloud_validation_error": "rand",
+    "rand_fix_commit": "1cd37ca11d14b83ecc6eebe76d69919c2ecb0f78",
+    "local_recovered_compile": "passed; 291216-byte image, no additional API request",
+    "next_cloud_mode": "reuse_saved_generation=true; no API request"
+  }
 }

@@ -9,7 +9,12 @@
   "firmware_bytes": 292064,
   "seconds": 22.282,
   "live_source_unchanged": true,
-  "visual_review": "Readable saturated heart with a pulse and outward particles against black space. Strongest match in this small sample. Human creative approval pending.",
+  "visual_review": "Readable saturated heart with a pulse and outward particles against black space. Strongest match in this small sample. User accepted sample on November 9 for further prototyping; future brief adds expressive per-pixel brightness.",
   "physical_panel_test": "not performed",
-  "candidate_sha256": "b33124676957e43655124dfad93809a5a821d36f4dece71900eac935ebda796c"
+  "candidate_sha256": "b33124676957e43655124dfad93809a5a821d36f4dece71900eac935ebda796c",
+  "user_creative_acceptance": {
+    "date": "2026-11-09",
+    "accepted_for_further_prototyping": true,
+    "future_prompt_change": "Expressive brightness changes for individual pixels."
+  }
 }

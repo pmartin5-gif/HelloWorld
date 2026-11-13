@@ -1,6 +1,6 @@
 # Lightboard baseline cloud build
 
-**Prepared:** November 9, 2026
+**Verified:** November 9, 2026
 
 This is Step 4: compile a known working scene on GitHub. It needs no Lightboard, USB connection, model key, or Gemini request. It has no upload, OTA, email, release-publication, or deployment step.
 
@@ -12,7 +12,7 @@ This is Step 4: compile a known working scene on GitHub. It needs no Lightboard,
 - The exact installed PxMatrix 1.8.2, Adafruit GFX 1.13.0, and Adafruit BusIO 1.17.4 sources, with their licenses, under `vendor/`. PxMatrix 1.8.2 was not in the locally cached library index, so this build uses its preserved source rather than selecting a different version.
 - A SHA-256 inventory in `build-lock.json`, checked before and after compilation.
 
-`local-verification.json` records the isolated Mac build. It passed with a 290,944-byte application binary and 21,984 bytes of static DRAM. The 1,310,720-byte application slot leaves 1,019,776 bytes of image headroom. This is a build measurement, not runtime heap or a physical flash-capacity measurement. Linux output may differ because of host/toolchain build details. The GitHub Linux build has not yet run.
+`local-verification.json` records the isolated Mac build. It passed with a 290,944-byte application binary and 21,984 bytes of static DRAM. The 1,310,720-byte application slot leaves 1,019,776 bytes of image headroom. This is a build measurement, not runtime heap or a physical flash-capacity measurement. Linux output may differ because of host/toolchain build details. The first GitHub Linux build subsequently passed in 53 seconds: application 290,960 bytes, static DRAM 21,984 bytes. Its archive digest, file checksums, source hash, dependency lock, and commit all verified after download. See `github-verification.json` and [the successful run](https://github.com/pmartin5-gif/HelloWorld/actions/runs/42720712106).
 
 The revised creative prompt lives in `../generationBrief.md`. This baseline-only build does not regenerate a scene or test the revised per-pixel brightness instructions.
 
@@ -74,8 +74,14 @@ For the GitHub runner, `--install-core` installs the pinned core into the build'
 - [x] Confirm repository visibility, observed free storage, and the existing spending stop.
 - [x] Preserve and verify the uploaded baseline and dependencies.
 - [x] Compile the isolated copy locally and verify the resulting checksums.
-- [ ] Publish the reviewed workflow/build files to the default branch.
-- [ ] Observe a successful GitHub Linux run.
-- [ ] Download and verify the cloud-generated firmware.
+- [x] Published the reviewed workflow/build files to main in commit `3ee1965`.
+- [x] Observed successful GitHub Linux run `42720712106` (53 seconds).
+- [x] Downloaded cloud artifact `13720520896` and verified the archive/file checksums and source/build metadata.
 
-Step 5 still requires a successful free Gemini API generation test. Earlier model-demand errors and a timeout have not completed that test.
+The subsequent free Flash-Lite API diagnostic passed. Step 5's integrated prompt-to-firmware implementation is described in [prompt-build.md](prompt-build.md). After diagnosing the `rand()` validator false positive, fix `1cd37ca` was published. [Saved-response run 42742746935](https://github.com/pmartin5-gif/HelloWorld/actions/runs/42742746935) passed reuse, validation, and pinned cloud compilation: **291,200-byte application**, all 84 pinned inputs verified, generation skipped. No artifact was uploaded; report/checksum inspection remains deferred. The user deferred creative review, which is not a prerequisite.
+
+## Saved cloud result
+
+The local ZIP is `../.build/cloud-run-42720712106/firmware.zip`. Its extracted files and `build-report.json` are under `../.build/cloud-run-42720712106/firmware/`; the job log and success screenshot are saved alongside them. These files are ignored by Git. `github-verification.json` is the durable verification record. The one-day GitHub artifact expires November 10, 2026, at 23:29 UTC; the local copy remains available.
+
+The first run produced a nonblocking notice that the pinned Arduino setup action declares Node 20. GitHub executed it successfully on Node 24. No dependency or firmware change was needed for this run.

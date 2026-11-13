@@ -1,22 +1,1407 @@
-:root{color-scheme:dark;--bg:#191b19;--panel:#20221f;--line:#353831;--muted:#a0a399;--text:#e7e9df;--accent:#d4e5a4;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;--sans:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px var(--sans)}button,input,select{font:inherit}button,label,summary,input,select{-webkit-tap-highlight-color:transparent}button{cursor:pointer}button:disabled{cursor:default;opacity:.35}button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,.file-label:focus-within{outline:2px solid var(--accent);outline-offset:4px}button{color:inherit}button:hover:not(:disabled){filter:brightness(1.15)}[hidden]{display:none!important}.masthead{height:105px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding:0 38px;gap:20px}.identity{display:flex;align-items:center;gap:19px}.brand-mark{font:italic 63px Georgia,serif;line-height:1;letter-spacing:-18px;width:55px;padding-right:12px}.brand-mark span{color:var(--accent);font-style:normal;font-weight:normal}.identity h1{font-size:27px;letter-spacing:-1.2px;font-weight:500;margin:0 0 7px}.brand-dot{color:var(--accent)}.identity p,.eyebrow{font:9px var(--mono);letter-spacing:1.8px;margin:0;color:var(--muted)}.identity p span{margin:0 8px;color:#6c7263}.header-actions{display:flex;align-items:center;gap:22px}.button{border:1px solid var(--line);padding:13px 19px;border-radius:4px;display:inline-flex;justify-content:center;align-items:center;gap:14px;font-size:12px;font-weight:500}.export{background:var(--accent);color:#23291b;border-color:var(--accent);padding:13px 20px}.export>span{font-size:20px;line-height:15px}.text-button{border:0;background:none;color:#c4c8bb;font-size:11px;padding:7px 0;white-space:nowrap}.text-button>span{margin-left:6px}.file-label{cursor:pointer;font-size:11px;color:#c4c8bb}.file-label input{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}.workbench{display:grid;grid-template-columns:286px minmax(0,1fr);min-height:calc(100vh - 105px)}.controls{background:var(--panel);border-right:1px solid var(--line);padding:0 24px;display:flex;flex-direction:column}.tab-list{display:flex;border-bottom:1px solid var(--line);height:61px;gap:24px;flex-shrink:0}.tab-list button{border:0;border-bottom:2px solid transparent;background:none;padding:0 0 0 3px;flex:1;font-size:12px;text-align:left;color:var(--muted)}.tab-list button span{font:9px var(--mono);margin-right:8px;opacity:.6}.tab-list button[aria-selected=true]{color:var(--accent);border-color:var(--accent)}.panel-intro{padding:25px 0 22px}.panel-intro .eyebrow{font-size:8px;letter-spacing:1.3px}.panel-intro h2{font-size:20px;font-weight:400;letter-spacing:-.6px;margin:12px 0 9px}.panel-intro>p:last-child{color:var(--muted);font-size:10px;line-height:1.6;margin:0}.modes{padding:0;border:0;margin:0 0 23px;min-width:0}.modes legend,.field-label{font-size:11px;font-weight:500;margin:0 0 10px;padding:0;color:#d5d9cb}.mode-choice{position:relative;display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:4px;padding:10px;margin-bottom:7px;cursor:pointer}.mode-choice:has(input:checked){border-color:#839364;background:#282d23}.mode-choice:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:3px}.mode-choice input{position:absolute;opacity:0;width:1px;height:1px}.mode-choice>span:nth-of-type(2){font-size:11px}.mode-choice small{display:block;font-size:9px;color:var(--muted);margin-top:4px}.mode-image{width:36px;height:36px;flex-shrink:0;background:#e9e8e0;overflow:hidden;position:relative}.wet-icon:before{content:"";position:absolute;inset:5px 2px 6px 6px;border-radius:60% 35% 57% 23%;background:#4c4c46;box-shadow:-4px 4px 0 #8b8b82,3px -2px 0 #b3b3a8;transform:rotate(-18deg)}.dry-icon:before{content:"";position:absolute;inset:5px 4px;background:repeating-linear-gradient(174deg,#30332d 0px,#30332d 2px,#a7a79c 3px,#33362f 4px,#efeee8 5px,#34362e 6px);transform:skew(-9deg);opacity:.9}.radio-dot{margin-left:auto;width:10px;height:10px;border-radius:50%;border:1px solid #72776b}.mode-choice:has(input:checked) .radio-dot{border:3px solid var(--accent)}.slider{margin:0 0 17px}.slider-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:10px}.slider-top label{font-size:11px;color:#d2d6c9;cursor:help}.value-input{background:none;border:0;border-bottom:1px solid transparent;color:#adb89c;font:10px var(--mono);text-align:right;width:40px;padding:0 0 2px;appearance:textfield}.value-input::-webkit-inner-spin-button{appearance:none}.value-input:focus{border-bottom-color:var(--accent)}input[type=range]{appearance:none;-webkit-appearance:none;width:100%;height:3px;background:linear-gradient(to right,#a7b586 var(--fill,50%),#43473d var(--fill,50%));border-radius:0;margin:0;display:block;cursor:pointer;accent-color:var(--accent)}input[type=range]::-webkit-slider-thumb{appearance:none;width:9px;height:9px;border-radius:50%;background:var(--accent);border:0}input[type=range]::-moz-range-thumb{width:9px;height:9px;border-radius:50%;background:var(--accent);border:0}.field{margin:22px 0}.field>label{display:block;font-size:11px;margin-bottom:9px}.hint{display:block;font-size:9px;color:var(--muted);margin-top:5px}.input-row{display:flex;gap:6px}input[type=number]:not(.value-input),select{background:#1a1d18;border:1px solid var(--line);border-radius:3px;color:#d2d8c6;padding:9px;font:11px var(--mono);width:100%;min-width:0}.square-button{border:1px solid var(--line);background:#282c24;border-radius:3px;width:36px;flex-shrink:0;font-size:20px;color:var(--accent)}.output-settings{border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:22px;font-size:10px}.output-settings summary{cursor:pointer;display:flex;justify-content:space-between;padding:15px 0;gap:10px}.output-settings summary>span:last-child{color:var(--muted);font:9px var(--mono)}.output-settings summary>span:first-child:before{content:"+";margin-right:9px;color:var(--accent)}.output-settings[open] summary>span:first-child:before{content:"−"}.details-content{padding:0 0 14px}.details-content>label{display:block;font-size:10px;margin-bottom:8px}.details-content select{font-size:10px}.details-content p{color:var(--muted);font-size:9px;line-height:1.6;margin-bottom:0}.dimension-fields{display:flex;align-items:flex-end;gap:7px;margin-top:10px}.dimension-fields label{min-width:0;font-size:9px;color:var(--muted)}.dimension-fields input{margin-top:5px}.dimension-fields>span{padding-bottom:10px}.panel-action{padding:19px 0 23px}.panel-action>.button{width:100%}.primary{background:var(--accent);border-color:var(--accent);color:#23291b;padding:12px}.primary>span{font-size:19px;line-height:15px}.panel-action>p:last-child{color:var(--muted);font-size:9px;line-height:1.7;margin:10px 0 0}.pending-note{color:#b6c79a;font:9px var(--mono);margin:0 0 10px;line-height:1.5}.control-footer{font:7px var(--mono);letter-spacing:1px;color:#8b9281;border-top:1px solid var(--line);padding:17px 0;margin-top:auto;white-space:nowrap}.tiny-dot{display:inline-block;height:4px;width:4px;background:#b2c28a;border-radius:50%;vertical-align:middle;margin-right:5px}.studio{padding:28px 34px 0;min-width:0}.studio-topline{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;gap:20px}.studio-topline .eyebrow{font-size:8px}.studio-topline h2{font:400 24px Georgia,"Times New Roman",serif;letter-spacing:-.4px;margin:10px 0 0;color:#e2e4d8}.state-chip{font:9px var(--mono);letter-spacing:1px;border:1px solid #464e3b;border-radius:3px;color:#b0bf94;padding:7px 10px;white-space:nowrap}.viewer-toolbar{display:flex;align-items:center;justify-content:space-between;min-height:37px;margin-bottom:10px}.view-switch{display:flex;gap:2px}.view-switch button{background:none;border:1px solid transparent;border-radius:3px;font-size:10px;color:var(--muted);padding:6px 10px}.view-switch button.active{border-color:var(--line);background:#292d25;color:#e3e8d7}.viewer-tools{display:flex;gap:16px;align-items:center}.viewer-tools .text-button{font-size:15px}.viewer-tools .text-button span{font-size:10px;margin-left:3px}.toolbar-rule{height:13px;width:1px;background:var(--line)}.zoom-button{background:none;border:0;font:10px var(--mono);padding:6px 0;color:#c2cbb3;min-width:50px}.zoom-button span{margin-left:8px}.viewport{position:relative;background:#121411;border:1px solid #34382e;min-height:300px;height:clamp(340px,calc((100vw - 356px) * .5625),650px);overflow:auto;display:flex;align-items:center;justify-content:center;padding:24px;scrollbar-color:#4b5142 #191c17}.image-wrap{width:100%;height:100%;display:flex;justify-content:center;align-items:center;flex-shrink:0}.image-wrap canvas{display:block;max-width:100%;max-height:100%;width:auto;height:auto;box-shadow:0 10px 40px #0004}.viewport.actual-size{display:block;padding:20px}.viewport.actual-size .image-wrap{width:max-content;height:max-content}.viewport.actual-size canvas{max-width:none;max-height:none;width:auto;height:auto}.empty-state{text-align:center;padding:35px;color:#919985}.empty-state .empty-glyph{font:95px Georgia,serif;display:block;color:#536047;line-height:1}.empty-state>p{font:22px/1.4 Georgia,serif;color:#c0c8b3}.empty-state>small{font:9px var(--mono)}.render-overlay{position:absolute;inset:0;background:#151a137d;backdrop-filter:blur(3px);display:flex;justify-content:center;align-items:center;z-index:2}.render-card{background:#22271eea;border:1px solid #4a553d;box-shadow:0 10px 45px #0006;padding:24px 30px;width:275px;text-align:center;border-radius:4px}.render-card p{font-size:12px;margin:15px 0}.render-spinner{display:inline-block;width:18px;height:18px;border:1px solid #596848;border-right-color:var(--accent);border-radius:50%;animation:spin 1.2s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}progress{display:block;width:100%;height:3px;border:none;background:#3c4532;accent-color:var(--accent)}progress::-webkit-progress-bar{background:#3c4532}progress::-webkit-progress-value{background:var(--accent)}.render-card>span:last-child{font:9px var(--mono);color:#a5b48e;display:block;margin-top:10px}.image-caption{font:8px var(--mono);letter-spacing:1px;color:#969f88;display:flex;justify-content:space-between;gap:14px;padding:14px 0}.caption-separator{margin:0 10px;color:#5c6551}.message{min-height:35px;font-size:10px;color:#a6af99;border-bottom:1px solid var(--line);padding:4px 0 14px;line-height:1.5}.message.error{color:#f1b798}.history{padding:20px 0 23px}.history-heading{display:flex;align-items:center;gap:16px;margin-bottom:17px}.history-heading h3{font-size:11px;font-weight:500;margin:0;white-space:nowrap}.history-heading h3 span{font:9px var(--mono);margin-left:8px;color:#99ab7b}.history-heading p{margin:0;color:#8e9881;font-size:9px}.session-note{font:7px var(--mono);letter-spacing:1px;color:#8e9881;margin-left:auto;white-space:nowrap}.history-list{display:flex;overflow-x:auto;gap:12px;min-height:95px;padding:3px 2px 9px;scrollbar-color:#4b5142 #191c17}.history-empty{font-size:10px;color:#747f68;margin:auto}.history-item{position:relative;width:128px;flex-shrink:0;border:1px solid var(--line);background:#242820;padding:4px;text-align:left;border-radius:3px}.history-item[aria-current=true]{border-color:var(--accent)}.history-item img{width:118px;height:66px;object-fit:contain;background:#141711;display:block}.history-label{font:9px var(--mono);display:flex;justify-content:space-between;color:#bbc5ad;padding:8px 3px 4px;gap:4px}.history-item[aria-current=true] .history-label{color:var(--accent)}.studio-footer{border-top:1px solid var(--line);padding:17px 0;display:flex;justify-content:space-between;gap:20px;font:7px var(--mono);letter-spacing:1.2px;color:#7d896e}.studio-footer b{font-weight:400;color:#a1b47e;margin:0 6px}.preset-section{margin:0 0 22px}.presets{display:grid;grid-template-columns:1fr 1fr;gap:6px}.presets button{border:1px solid #414735;border-radius:3px;background:#272d22;font-size:10px;padding:8px;color:#bfcdb0}.presets button.selected{border-color:#a6bd7d;color:var(--accent)}.signal-meta{border-top:1px solid var(--line);padding-top:18px}.signal-meta .seed-field{margin-bottom:0}.signal-meta+.panel-action{padding-top:21px}
-@media(min-width:1600px){.masthead{padding-left:45px;padding-right:45px}.workbench{grid-template-columns:312px minmax(0,1fr)}.controls{padding:0 30px}.studio{padding:34px 45px 0}.viewport{height:clamp(450px,calc((100vw - 450px) * .5625),820px)}}
-@media(max-width:1050px){.masthead{padding:0 23px}.header-actions{gap:16px}.workbench{grid-template-columns:260px minmax(0,1fr)}.controls{padding:0 18px}.studio{padding:25px 22px 0}.viewport{padding:12px;height:clamp(300px,calc((100vw - 304px) * .5625),580px)}.history-heading p{display:none}.studio-footer{font-size:6px;letter-spacing:.7px}.studio-footer b{margin:0 2px}.image-caption{font-size:7px;letter-spacing:.3px}.caption-separator{margin:0 5px}}
-@media(max-width:700px){.masthead{height:auto;min-height:95px;align-items:center;flex-wrap:wrap;padding:18px 20px;gap:17px}.identity h1{font-size:24px}.identity p{font-size:7px;letter-spacing:1.3px}.identity{gap:13px}.brand-mark{font-size:50px;width:43px;letter-spacing:-15px}.header-actions{gap:13px;width:100%;justify-content:flex-end}.header-actions .export{padding:10px 14px;font-size:11px}.header-actions .text-button,.file-label{font-size:10px}.workbench{display:flex;flex-direction:column}.controls{order:2;border-right:0;border-top:1px solid var(--line);padding:0 24px}.studio{order:1;padding:23px 18px 0}.studio-topline{margin-bottom:14px}.studio-topline h2{font-size:22px}.viewport{height:clamp(245px,61vw,400px);min-height:245px;padding:12px}.studio-footer{display:none}.history{padding:15px 0 12px}.history-heading{margin-bottom:9px}.history-item{width:107px}.history-item img{width:97px;height:55px}.history-list{min-height:78px}.tab-list{height:56px}.panel-intro{padding:20px 0}.modes{display:flex;gap:9px;flex-wrap:wrap}.modes legend{width:100%}.mode-choice{flex:1;padding:10px 8px;gap:8px}.mode-choice small{font-size:8px}.mode-image{width:28px;height:32px}.radio-dot{width:9px;height:9px;flex-shrink:0}.slider-group{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}.slider{margin-bottom:22px}.control-footer{padding:19px 0}.panel-action{padding-bottom:22px}.panel-action>p:last-child br{display:none}.viewer-tools{gap:11px}.image-caption{font-size:6px;letter-spacing:.2px}.image-caption .caption-separator{margin:0 3px}.session-note{font-size:6px}.signal-meta{display:grid;grid-template-columns:1fr 1fr;gap:24px}.signal-meta .field{margin-top:0}.history-label{font-size:8px}}
-@media(prefers-reduced-motion:reduce){.render-spinner{animation:none;border-right-color:var(--accent)}}
+/*
+ * BORKILATOR | THE VISUAL SCORE
+ *
+ * INTRODUCTION
+ * CSS determines how the instrument looks and fits different screens. It does not
+ * alter artwork pixels, effect settings, export dimensions, or history. A selector
+ * names which HTML elements a rule matches; declarations inside braces set properties
+ * on those elements.
+ *
+ * Read this file in order: the cascade combines matching rules, with later rules
+ * breaking ties of equal specificity. Some source-era styles remain without matching
+ * controls in today’s HTML. They are labeled here rather than removed or presented as
+ * current features. Later refinements are kept in their existing order so appearance
+ * stays the same.
+ *
+ * READING THIS FILE
+ * Search for "CHAPTER " followed by an ID to land on its heading, rather than its
+ * table-of-contents entry. IDs stay useful when added comments change line numbers.
+ * These are explanatory comments: the executable code still runs.
+ *
+ * ANNOTATED TABLE OF CONTENTS
+ * BORK-CSS-01 — Set the visual vocabulary. Define shared colors, fonts, sizing, focus,
+ * and hidden states
+ * BORK-CSS-02 — Style the masthead. Arrange identity and persistent file actions
+ * BORK-CSS-03 — Make common controls recognizable. Share button, link-like action, and
+ * file-picker styles
+ * BORK-CSS-04 — Arrange the workbench. Build the two-column layout and control-panel
+ * framing
+ * BORK-CSS-05 — Recognize historical material controls. Keep earlier wet/dry source
+ * styles distinct from active controls
+ * BORK-CSS-06 — Style generated sliders. Coordinate labels, numeric fields, range
+ * tracks, and thumb variants
+ * BORK-CSS-07 — Style parameter fields. Lay out seeds, selects, and the pattern button
+ * BORK-CSS-08 — Recognize historical output controls. Retain collapsed output-
+ * dimension styles from the procedural UI
+ * BORK-CSS-09 — Emphasize deliberate action. Style borkilate, pending text, and the
+ * sidebar footer
+ * BORK-CSS-10 — Frame the studio tools. Style titles, state labels, comparison, undo,
+ * redo, and zoom
+ * BORK-CSS-11 — Fit or inspect the raster. Scale only the preview and enable actual-
+ * size scrolling
+ * BORK-CSS-12 — Show processing activity. Place the overlay, spinner, stage text, and
+ * progress meter
+ * BORK-CSS-13 — Explain and remember the image. Style captions, status messages, and
+ * the history strip
+ * BORK-CSS-14 — Close the studio and offer presets. Style footer reminders and named
+ * settings bundles
+ * BORK-CSS-15 — Adapt wide and medium layouts. Adjust spacing and columns at two
+ * viewport breakpoints
+ * BORK-CSS-16 — Adapt mobile and motion preferences. Stack the image and controls;
+ * honor reduced motion
+ * BORK-CSS-17 — Refine control targets. Widen slider hit areas and retain source-era
+ * helper styles
+ * BORK-CSS-18 — Welcome uploads and transparency. Style upload copy, checkerboard, and
+ * resize dialog
+ * BORK-CSS-19 — Make the empty preview clickable. Extend the native upload button
+ * across the empty image area
+ *
+ * A few reading aids: .name matches a class; #name would match an ID; :root is the
+ * document root; > means direct child; a space means descendant. :disabled and :focus-
+ * visible match states; ::before creates a decorative pseudo-element. var(--name)
+ * reads a custom property. px is a CSS screen unit, not an export pixel count; vw/vh
+ * follow viewport size. Flex and Grid arrange elements. @media applies rules only when
+ * its condition matches. For this pass the existing rules have been expanded onto
+ * lines without changing their declarations or order.
+ */
 
+/*
+ * CHAPTER BORK-CSS-01 | Set the visual vocabulary
+ *
+ * The root supplies a restrained dark palette, accent, and two font stacks. Custom
+ * properties are shared by descendants. color-scheme asks native controls to use an
+ * appropriate dark presentation.
+ */
+:root {
+  color-scheme:dark;
+  --bg:#191b19;
+  --panel:#20221f;
+  --line:#353831;
+  --muted:#a0a399;
+  --text:#e7e9df;
+  --accent:#d4e5a4;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif
+}
+/*
+ * border-box makes declared widths include padding/borders, simplifying columns and
+ * thumbnail sizing.
+ */
+* {
+  box-sizing:border-box
+}
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font:14px var(--sans)
+}
+button,input,select {
+  font:inherit
+}
+button,label,summary,input,select {
+  -webkit-tap-highlight-color:transparent
+}
+button {
+  cursor:pointer
+}
+button:disabled {
+  cursor:default;
+  opacity:.35
+}
+/*
+ * A visible accent outline supports keyboard navigation. The file label also
+ * highlights when its visually hidden input receives focus.
+ */
+button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,.file-label:focus-within {
+  outline:2px solid var(--accent);
+  outline-offset:4px
+}
+button {
+  color:inherit
+}
+button:hover:not(:disabled) {
+  filter:brightness(1.15)
+}
+/*
+ * The hidden attribute must win even against layout display rules. !important ensures
+ * hidden canvases and overlays do not occupy space.
+ */
+[hidden] {
+  display:none!important
+}
+/*
+ * CHAPTER BORK-CSS-02 | Style the masthead
+ *
+ * The header uses Flexbox to keep identity and file actions aligned. Gap separates
+ * items; the bottom border makes a visual boundary. Letter spacing and typography
+ * establish hierarchy without becoming part of the exported image.
+ */
+.masthead {
+  height:105px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-bottom:1px solid var(--line);
+  padding:0 38px;
+  gap:20px
+}
+.identity {
+  display:flex;
+  align-items:center;
+  gap:19px
+}
+.brand-mark {
+  font:italic 63px Georgia,serif;
+  line-height:1;
+  letter-spacing:-18px;
+  width:55px;
+  padding-right:12px
+}
+.brand-mark span {
+  color:var(--accent);
+  font-style:normal;
+  font-weight:normal
+}
+.identity h1 {
+  font-size:27px;
+  letter-spacing:-1.2px;
+  font-weight:500;
+  margin:0 0 7px
+}
+.brand-dot {
+  color:var(--accent)
+}
+.identity p,.eyebrow {
+  font:9px var(--mono);
+  letter-spacing:1.8px;
+  margin:0;
+  color:var(--muted)
+}
+.identity p span {
+  margin:0 8px;
+  color:#6c7263
+}
+.header-actions {
+  display:flex;
+  align-items:center;
+  gap:22px
+}
+/*
+ * CHAPTER BORK-CSS-03 | Make common controls recognizable
+ *
+ * A shared .button foundation supplies border, spacing, and alignment. More specific
+ * classes such as .export and .primary set action emphasis. Link-like text buttons
+ * and label-wrapped file inputs remain native interactive elements.
+ */
+.button {
+  border:1px solid var(--line);
+  padding:13px 19px;
+  border-radius:4px;
+  display:inline-flex;
+  justify-content:center;
+  align-items:center;
+  gap:14px;
+  font-size:12px;
+  font-weight:500
+}
+.export {
+  background:var(--accent);
+  color:#23291b;
+  border-color:var(--accent);
+  padding:13px 20px
+}
+.export>span {
+  font-size:20px;
+  line-height:15px
+}
+.text-button {
+  border:0;
+  background:none;
+  color:#c4c8bb;
+  font-size:11px;
+  padding:7px 0;
+  white-space:nowrap
+}
+.text-button>span {
+  margin-left:6px
+}
+.file-label {
+  cursor:pointer;
+  font-size:11px;
+  color:#c4c8bb
+}
+/*
+ * The native input is visually reduced and transparent, not removed with display:none.
+ * Its enclosing label remains the visible picker control.
+ */
+.file-label input {
+  position:absolute;
+  width:1px;
+  height:1px;
+  opacity:0;
+  overflow:hidden
+}
+/*
+ * CHAPTER BORK-CSS-04 | Arrange the workbench
+ *
+ * Grid fixes the sidebar width and gives the studio the remaining room.
+ * minmax(0,1fr) permits the studio to shrink instead of forcing horizontal overflow.
+ * The sidebar uses a vertical flex layout so its footer can sit below the controls.
+ */
+.workbench {
+  display:grid;
+  grid-template-columns:286px minmax(0,1fr);
+  min-height:calc(100vh - 105px)
+}
+.controls {
+  background:var(--panel);
+  border-right:1px solid var(--line);
+  padding:0 24px;
+  display:flex;
+  flex-direction:column
+}
+/*
+ * These tab styles are retained from Source/Signal switching. The current upload UI no
+ * longer renders the tab list.
+ */
+.tab-list {
+  display:flex;
+  border-bottom:1px solid var(--line);
+  height:61px;
+  gap:24px;
+  flex-shrink:0
+}
+.tab-list button {
+  border:0;
+  border-bottom:2px solid transparent;
+  background:none;
+  padding:0 0 0 3px;
+  flex:1;
+  font-size:12px;
+  text-align:left;
+  color:var(--muted)
+}
+.tab-list button span {
+  font:9px var(--mono);
+  margin-right:8px;
+  opacity:.6
+}
+.tab-list button[aria-selected=true] {
+  color:var(--accent);
+  border-color:var(--accent)
+}
+.panel-intro {
+  padding:25px 0 22px
+}
+.panel-intro .eyebrow {
+  font-size:8px;
+  letter-spacing:1.3px
+}
+.panel-intro h2 {
+  font-size:20px;
+  font-weight:400;
+  letter-spacing:-.6px;
+  margin:12px 0 9px
+}
+.panel-intro>p:last-child {
+  color:var(--muted);
+  font-size:10px;
+  line-height:1.6;
+  margin:0
+}
+/*
+ * CHAPTER BORK-CSS-05 | Recognize historical material controls
+ *
+ * These wet/dry radio-card rules belong to the earlier procedural-source interface.
+ * The current index.html has no .modes or .mode-choice controls. :has(input:checked)
+ * styled a selected material card; pseudo-elements supplied illustrative material
+ * icons, not generated artwork.
+ */
+.modes {
+  padding:0;
+  border:0;
+  margin:0 0 23px;
+  min-width:0
+}
+.modes legend,.field-label {
+  font-size:11px;
+  font-weight:500;
+  margin:0 0 10px;
+  padding:0;
+  color:#d5d9cb
+}
+.mode-choice {
+  position:relative;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:10px;
+  margin-bottom:7px;
+  cursor:pointer
+}
+.mode-choice:has(input:checked) {
+  border-color:#839364;
+  background:#282d23
+}
+.mode-choice:has(input:focus-visible) {
+  outline:2px solid var(--accent);
+  outline-offset:3px
+}
+.mode-choice input {
+  position:absolute;
+  opacity:0;
+  width:1px;
+  height:1px
+}
+.mode-choice>span:nth-of-type(2) {
+  font-size:11px
+}
+.mode-choice small {
+  display:block;
+  font-size:9px;
+  color:var(--muted);
+  margin-top:4px
+}
+.mode-image {
+  width:36px;
+  height:36px;
+  flex-shrink:0;
+  background:#e9e8e0;
+  overflow:hidden;
+  position:relative
+}
+.wet-icon:before {
+  content:"";
+  position:absolute;
+  inset:5px 2px 6px 6px;
+  border-radius:60% 35% 57% 23%;
+  background:#4c4c46;
+  box-shadow:-4px 4px 0 #8b8b82,3px -2px 0 #b3b3a8;
+  transform:rotate(-18deg)
+}
+.dry-icon:before {
+  content:"";
+  position:absolute;
+  inset:5px 4px;
+  background:repeating-linear-gradient(174deg,#30332d 0px,#30332d 2px,#a7a79c 3px,#33362f 4px,#efeee8 5px,#34362e 6px);
+  transform:skew(-9deg);
+  opacity:.9
+}
+.radio-dot {
+  margin-left:auto;
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  border:1px solid #72776b
+}
+.mode-choice:has(input:checked) .radio-dot {
+  border:3px solid var(--accent)
+}
+/*
+ * CHAPTER BORK-CSS-06 | Style generated sliders
+ *
+ * These selectors style the slider elements generated by makeSliders in app.js.
+ * Labels and number fields share a row, while the range track occupies the available
+ * width. Later rules in chapter 17 enlarge the hit area while preserving a thin
+ * visual track.
+ */
+.slider {
+  margin:0 0 17px
+}
+.slider-top {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:8px;
+  gap:10px
+}
+.slider-top label {
+  font-size:11px;
+  color:#d2d6c9;
+  cursor:help
+}
+/*
+ * appearance:textfield and the following vendor thumb/spinner rules suppress browser-
+ * specific decoration. Focus gives the numeric percentage a visible underline.
+ */
+.value-input {
+  background:none;
+  border:0;
+  border-bottom:1px solid transparent;
+  color:#adb89c;
+  font:10px var(--mono);
+  text-align:right;
+  width:40px;
+  padding:0 0 2px;
+  appearance:textfield
+}
+.value-input::-webkit-inner-spin-button {
+  appearance:none
+}
+.value-input:focus {
+  border-bottom-color:var(--accent)
+}
+input[type=range] {
+  appearance:none;
+  -webkit-appearance:none;
+  width:100%;
+  height:3px;
+  background:linear-gradient(to right,#a7b586 var(--fill,50%),#43473d var(--fill,50%));
+  border-radius:0;
+  margin:0;
+  display:block;
+  cursor:pointer;
+  accent-color:var(--accent)
+}
+/*
+ * WebKit/Blink and Firefox expose different range pseudo-elements. Parallel rules give
+ * both a small accent thumb; no JavaScript slider library is used.
+ */
+input[type=range]::-webkit-slider-thumb {
+  appearance:none;
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:var(--accent);
+  border:0
+}
+input[type=range]::-moz-range-thumb {
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:var(--accent);
+  border:0
+}
+/*
+ * CHAPTER BORK-CSS-07 | Style parameter fields
+ *
+ * The generic .field group spaces labeled inputs. .input-row keeps a numeric seed
+ * and reroll button together; min-width:0 permits shrinking. Native number inputs
+ * and selects share a dark treatment. No CSS rule chooses or validates a seed.
+ */
+.field {
+  margin:22px 0
+}
+.field>label {
+  display:block;
+  font-size:11px;
+  margin-bottom:9px
+}
+.hint {
+  display:block;
+  font-size:9px;
+  color:var(--muted);
+  margin-top:5px
+}
+.input-row {
+  display:flex;
+  gap:6px
+}
+input[type=number]:not(.value-input),select {
+  background:#1a1d18;
+  border:1px solid var(--line);
+  border-radius:3px;
+  color:#d2d8c6;
+  padding:9px;
+  font:11px var(--mono);
+  width:100%;
+  min-width:0
+}
+.square-button {
+  border:1px solid var(--line);
+  background:#282c24;
+  border-radius:3px;
+  width:36px;
+  flex-shrink:0;
+  font-size:20px;
+  color:var(--accent)
+}
+/*
+ * CHAPTER BORK-CSS-08 | Recognize historical output controls
+ *
+ * The old procedural UI offered output dimensions in a disclosure. These selectors
+ * remain but are not present in the upload interface. They do not resize an uploaded
+ * image; today’s accepted dimensions come from decoding and explicit proportional-
+ * reduction consent in app.js.
+ */
+.output-settings {
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  margin-top:22px;
+  font-size:10px
+}
+.output-settings summary {
+  cursor:pointer;
+  display:flex;
+  justify-content:space-between;
+  padding:15px 0;
+  gap:10px
+}
+.output-settings summary>span:last-child {
+  color:var(--muted);
+  font:9px var(--mono)
+}
+.output-settings summary>span:first-child:before {
+  content:"+";
+  margin-right:9px;
+  color:var(--accent)
+}
+.output-settings[open] summary>span:first-child:before {
+  content:"−"
+}
+.details-content {
+  padding:0 0 14px
+}
+.details-content>label {
+  display:block;
+  font-size:10px;
+  margin-bottom:8px
+}
+.details-content select {
+  font-size:10px
+}
+.details-content p {
+  color:var(--muted);
+  font-size:9px;
+  line-height:1.6;
+  margin-bottom:0
+}
+.dimension-fields {
+  display:flex;
+  align-items:flex-end;
+  gap:7px;
+  margin-top:10px
+}
+.dimension-fields label {
+  min-width:0;
+  font-size:9px;
+  color:var(--muted)
+}
+.dimension-fields input {
+  margin-top:5px
+}
+.dimension-fields>span {
+  padding-bottom:10px
+}
+/*
+ * CHAPTER BORK-CSS-09 | Emphasize deliberate action
+ *
+ * The full-width primary action makes each explicit pass easy to find. Pending text
+ * reports prepared settings; ordinary explanatory text reinforces accumulation. The
+ * sidebar footer’s margin-top:auto uses remaining flex space rather than a fixed
+ * screen position.
+ */
+.panel-action {
+  padding:19px 0 23px
+}
+.panel-action>.button {
+  width:100%
+}
+.primary {
+  background:var(--accent);
+  border-color:var(--accent);
+  color:#23291b;
+  padding:12px
+}
+.primary>span {
+  font-size:19px;
+  line-height:15px
+}
+.panel-action>p:last-child {
+  color:var(--muted);
+  font-size:9px;
+  line-height:1.7;
+  margin:10px 0 0
+}
+.pending-note {
+  color:#b6c79a;
+  font:9px var(--mono);
+  margin:0 0 10px;
+  line-height:1.5
+}
+.control-footer {
+  font:7px var(--mono);
+  letter-spacing:1px;
+  color:#8b9281;
+  border-top:1px solid var(--line);
+  padding:17px 0;
+  margin-top:auto;
+  white-space:nowrap
+}
+.tiny-dot {
+  display:inline-block;
+  height:4px;
+  width:4px;
+  background:#b2c28a;
+  border-radius:50%;
+  vertical-align:middle;
+  margin-right:5px
+}
+/*
+ * CHAPTER BORK-CSS-10 | Frame the studio tools
+ *
+ * The studio can shrink within its grid column. Flex layouts keep the title and
+ * state chip, then comparison and view tools, aligned. .active marks the visible
+ * comparison choice; disabled availability is handled separately by controller
+ * attributes.
+ */
+.studio {
+  padding:28px 34px 0;
+  min-width:0
+}
+.studio-topline {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:25px;
+  gap:20px
+}
+.studio-topline .eyebrow {
+  font-size:8px
+}
+.studio-topline h2 {
+  font:400 24px Georgia,"Times New Roman",serif;
+  letter-spacing:-.4px;
+  margin:10px 0 0;
+  color:#e2e4d8
+}
+.state-chip {
+  font:9px var(--mono);
+  letter-spacing:1px;
+  border:1px solid #464e3b;
+  border-radius:3px;
+  color:#b0bf94;
+  padding:7px 10px;
+  white-space:nowrap
+}
+.viewer-toolbar {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  min-height:37px;
+  margin-bottom:10px
+}
+.view-switch {
+  display:flex;
+  gap:2px
+}
+.view-switch button {
+  background:none;
+  border:1px solid transparent;
+  border-radius:3px;
+  font-size:10px;
+  color:var(--muted);
+  padding:6px 10px
+}
+.view-switch button.active {
+  border-color:var(--line);
+  background:#292d25;
+  color:#e3e8d7
+}
+.viewer-tools {
+  display:flex;
+  gap:16px;
+  align-items:center
+}
+.viewer-tools .text-button {
+  font-size:15px
+}
+.viewer-tools .text-button span {
+  font-size:10px;
+  margin-left:3px
+}
+.toolbar-rule {
+  height:13px;
+  width:1px;
+  background:var(--line)
+}
+.zoom-button {
+  background:none;
+  border:0;
+  font:10px var(--mono);
+  padding:6px 0;
+  color:#c2cbb3;
+  min-width:50px
+}
+.zoom-button span {
+  margin-left:8px
+}
+/*
+ * CHAPTER BORK-CSS-11 | Fit or inspect the raster
+ *
+ * The viewport is a framed, scrollable viewing region. Its normal flex layout
+ * centers the image; canvas max-width/max-height fit the preview without stretching
+ * its aspect ratio. The .actual-size class removes those maxima and allows scrolling
+ * at native CSS dimensions. Stored pixels remain untouched.
+ */
+.viewport {
+  position:relative;
+  background:#121411;
+  border:1px solid #34382e;
+  min-height:300px;
+  height:clamp(340px,calc((100vw - 356px) * .5625),650px);
+  overflow:auto;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  scrollbar-color:#4b5142 #191c17
+}
+.image-wrap {
+  width:100%;
+  height:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-shrink:0
+}
+.image-wrap canvas {
+  display:block;
+  max-width:100%;
+  max-height:100%;
+  width:auto;
+  height:auto;
+  box-shadow:0 10px 40px #0004
+}
+/*
+ * The controller toggles actual-size. max-content makes the wrapper large enough for
+ * the native image; the outer viewport handles overflow.
+ */
+.viewport.actual-size {
+  display:block;
+  padding:20px
+}
+.viewport.actual-size .image-wrap {
+  width:max-content;
+  height:max-content
+}
+.viewport.actual-size canvas {
+  max-width:none;
+  max-height:none;
+  width:auto;
+  height:auto
+}
+/*
+ * These general empty-state styles predate its conversion to a button. The final
+ * chapter refines the button version later in the cascade.
+ */
+.empty-state {
+  text-align:center;
+  padding:35px;
+  color:#919985
+}
+.empty-state .empty-glyph {
+  font:95px Georgia,serif;
+  display:block;
+  color:#536047;
+  line-height:1
+}
+.empty-state>p {
+  font:22px/1.4 Georgia,serif;
+  color:#c0c8b3
+}
+.empty-state>small {
+  font:9px var(--mono)
+}
+/*
+ * CHAPTER BORK-CSS-12 | Show processing activity
+ *
+ * An absolutely positioned layer covers the relatively positioned viewport during
+ * work. inset:0 spans its box; z-index places it over the preview. The spinner and
+ * progress meter communicate activity. The global hidden rule removes this layer
+ * completely until the controller shows it.
+ */
+.render-overlay {
+  position:absolute;
+  inset:0;
+  background:#151a137d;
+  backdrop-filter:blur(3px);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:2
+}
+.render-card {
+  background:#22271eea;
+  border:1px solid #4a553d;
+  box-shadow:0 10px 45px #0006;
+  padding:24px 30px;
+  width:275px;
+  text-align:center;
+  border-radius:4px
+}
+.render-card p {
+  font-size:12px;
+  margin:15px 0
+}
+.render-spinner {
+  display:inline-block;
+  width:18px;
+  height:18px;
+  border:1px solid #596848;
+  border-right-color:var(--accent);
+  border-radius:50%;
+  animation:spin 1.2s linear infinite
+}
+/*
+ * The spinner animates a decorative border through one rotation. This is interface
+ * feedback, not animation or evolution of the image.
+ */
+@keyframes spin {
+  to {
+    transform:rotate(360deg)
+  }
+}
+progress {
+  display:block;
+  width:100%;
+  height:3px;
+  border:none;
+  background:#3c4532;
+  accent-color:var(--accent)
+}
+progress::-webkit-progress-bar {
+  background:#3c4532
+}
+progress::-webkit-progress-value {
+  background:var(--accent)
+}
+.render-card>span:last-child {
+  font:9px var(--mono);
+  color:#a5b48e;
+  display:block;
+  margin-top:10px
+}
+/*
+ * CHAPTER BORK-CSS-13 | Explain and remember the image
+ *
+ * Caption and status text explain dimensions and state. .message.error changes
+ * report color. The history strip scrolls horizontally; buttons have fixed thumbnail
+ * footprints. aria-current=true gives the active snapshot an accent border, matching
+ * the controller’s state.
+ */
+.image-caption {
+  font:8px var(--mono);
+  letter-spacing:1px;
+  color:#969f88;
+  display:flex;
+  justify-content:space-between;
+  gap:14px;
+  padding:14px 0
+}
+.caption-separator {
+  margin:0 10px;
+  color:#5c6551
+}
+.message {
+  min-height:35px;
+  font-size:10px;
+  color:#a6af99;
+  border-bottom:1px solid var(--line);
+  padding:4px 0 14px;
+  line-height:1.5
+}
+.message.error {
+  color:#f1b798
+}
+.history {
+  padding:20px 0 23px
+}
+.history-heading {
+  display:flex;
+  align-items:center;
+  gap:16px;
+  margin-bottom:17px
+}
+.history-heading h3 {
+  font-size:11px;
+  font-weight:500;
+  margin:0;
+  white-space:nowrap
+}
+.history-heading h3 span {
+  font:9px var(--mono);
+  margin-left:8px;
+  color:#99ab7b
+}
+.history-heading p {
+  margin:0;
+  color:#8e9881;
+  font-size:9px
+}
+.session-note {
+  font:7px var(--mono);
+  letter-spacing:1px;
+  color:#8e9881;
+  margin-left:auto;
+  white-space:nowrap
+}
+.history-list {
+  display:flex;
+  overflow-x:auto;
+  gap:12px;
+  min-height:95px;
+  padding:3px 2px 9px;
+  scrollbar-color:#4b5142 #191c17
+}
+.history-empty {
+  font-size:10px;
+  color:#747f68;
+  margin:auto
+}
+.history-item {
+  position:relative;
+  width:128px;
+  flex-shrink:0;
+  border:1px solid var(--line);
+  background:#242820;
+  padding:4px;
+  text-align:left;
+  border-radius:3px
+}
+.history-item[aria-current=true] {
+  border-color:var(--accent)
+}
+/*
+ * object-fit:contain keeps thumbnails uncropped inside uniform navigation boxes. The
+ * saved full-resolution PNG is separate from this JPEG preview.
+ */
+.history-item img {
+  width:118px;
+  height:66px;
+  object-fit:contain;
+  background:#141711;
+  display:block
+}
+.history-label {
+  font:9px var(--mono);
+  display:flex;
+  justify-content:space-between;
+  color:#bbc5ad;
+  padding:8px 3px 4px;
+  gap:4px
+}
+.history-item[aria-current=true] .history-label {
+  color:var(--accent)
+}
+/*
+ * CHAPTER BORK-CSS-14 | Close the studio and offer presets
+ *
+ * The footer restates the artistic loop. Preset buttons use Grid for compact rows;
+ * selected is only a visual class for the prepared bundle. .signal-meta separates
+ * shape controls and seed from the effect list.
+ */
+.studio-footer {
+  border-top:1px solid var(--line);
+  padding:17px 0;
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  font:7px var(--mono);
+  letter-spacing:1.2px;
+  color:#7d896e
+}
+.studio-footer b {
+  font-weight:400;
+  color:#a1b47e;
+  margin:0 6px
+}
+.preset-section {
+  margin:0 0 22px
+}
+.presets {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px
+}
+.presets button {
+  border:1px solid #414735;
+  border-radius:3px;
+  background:#272d22;
+  font-size:10px;
+  padding:8px;
+  color:#bfcdb0
+}
+.presets button.selected {
+  border-color:#a6bd7d;
+  color:var(--accent)
+}
+.signal-meta {
+  border-top:1px solid var(--line);
+  padding-top:18px
+}
+.signal-meta .seed-field {
+  margin-bottom:0
+}
+.signal-meta+.panel-action {
+  padding-top:21px
+}
+/*
+ * CHAPTER BORK-CSS-15 | Adapt wide and medium layouts
+ *
+ * Wide windows gain a little sidebar width and more studio space. The medium-screen
+ * block that follows tightens spacing and hides secondary text. These are screen-
+ * width decisions, independent of the image’s actual native dimensions.
+ */
+@media(min-width:1600px) {
+  .masthead {
+    padding-left:45px;
+    padding-right:45px
+  }
+  .workbench {
+    grid-template-columns:312px minmax(0,1fr)
+  }
+  .controls {
+    padding:0 30px
+  }
+  .studio {
+    padding:34px 45px 0
+  }
+  .viewport {
+    height:clamp(450px,calc((100vw - 450px) * .5625),820px)
+  }
+}
+@media(max-width:1050px) {
+  .masthead {
+    padding:0 23px
+  }
+  .header-actions {
+    gap:16px
+  }
+  .workbench {
+    grid-template-columns:260px minmax(0,1fr)
+  }
+  .controls {
+    padding:0 18px
+  }
+  .studio {
+    padding:25px 22px 0
+  }
+  .viewport {
+    padding:12px;
+    height:clamp(300px,calc((100vw - 304px) * .5625),580px)
+  }
+  .history-heading p {
+    display:none
+  }
+  .studio-footer {
+    font-size:6px;
+    letter-spacing:.7px
+  }
+  .studio-footer b {
+    margin:0 2px
+  }
+  .image-caption {
+    font-size:7px;
+    letter-spacing:.3px
+  }
+  .caption-separator {
+    margin:0 5px
+  }
+}
+/*
+ * CHAPTER BORK-CSS-16 | Adapt mobile and motion preferences
+ *
+ * On small screens the workbench becomes a vertical flex layout. order puts the
+ * studio before the controls for easier inspection, while slider groups use two
+ * columns. Some decorative/supporting copy is hidden to save space. The following
+ * reduced-motion query stops spinner rotation.
+ */
+@media(max-width:700px) {
+  .masthead {
+    height:auto;
+    min-height:95px;
+    align-items:center;
+    flex-wrap:wrap;
+    padding:18px 20px;
+    gap:17px
+  }
+  .identity h1 {
+    font-size:24px
+  }
+  .identity p {
+    font-size:7px;
+    letter-spacing:1.3px
+  }
+  .identity {
+    gap:13px
+  }
+  .brand-mark {
+    font-size:50px;
+    width:43px;
+    letter-spacing:-15px
+  }
+  .header-actions {
+    gap:13px;
+    width:100%;
+    justify-content:flex-end
+  }
+  .header-actions .export {
+    padding:10px 14px;
+    font-size:11px
+  }
+  .header-actions .text-button,.file-label {
+    font-size:10px
+  }
+  .workbench {
+    display:flex;
+    flex-direction:column
+  }
+  .controls {
+    order:2;
+    border-right:0;
+    border-top:1px solid var(--line);
+    padding:0 24px
+  }
+  .studio {
+    order:1;
+    padding:23px 18px 0
+  }
+  .studio-topline {
+    margin-bottom:14px
+  }
+  .studio-topline h2 {
+    font-size:22px
+  }
+  .viewport {
+    height:clamp(245px,61vw,400px);
+    min-height:245px;
+    padding:12px
+  }
+  .studio-footer {
+    display:none
+  }
+  .history {
+    padding:15px 0 12px
+  }
+  .history-heading {
+    margin-bottom:9px
+  }
+  .history-item {
+    width:107px
+  }
+  .history-item img {
+    width:97px;
+    height:55px
+  }
+  .history-list {
+    min-height:78px
+  }
+  .tab-list {
+    height:56px
+  }
+  .panel-intro {
+    padding:20px 0
+  }
+  .modes {
+    display:flex;
+    gap:9px;
+    flex-wrap:wrap
+  }
+  .modes legend {
+    width:100%
+  }
+  .mode-choice {
+    flex:1;
+    padding:10px 8px;
+    gap:8px
+  }
+  .mode-choice small {
+    font-size:8px
+  }
+  .mode-image {
+    width:28px;
+    height:32px
+  }
+  .radio-dot {
+    width:9px;
+    height:9px;
+    flex-shrink:0
+  }
+  .slider-group {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:0 24px
+  }
+  .slider {
+    margin-bottom:22px
+  }
+  .control-footer {
+    padding:19px 0
+  }
+  .panel-action {
+    padding-bottom:22px
+  }
+  .panel-action>p:last-child br {
+    display:none
+  }
+  .viewer-tools {
+    gap:11px
+  }
+  .image-caption {
+    font-size:6px;
+    letter-spacing:.2px
+  }
+  .image-caption .caption-separator {
+    margin:0 3px
+  }
+  .session-note {
+    font-size:6px
+  }
+  .signal-meta {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:24px
+  }
+  .signal-meta .field {
+    margin-top:0
+  }
+  .history-label {
+    font-size:8px
+  }
+}
+/*
+ * An operating-system/browser motion preference disables only decorative spinner
+ * rotation. Rendering and progress messages still work.
+ */
+@media(prefers-reduced-motion:reduce) {
+  .render-spinner {
+    animation:none;
+    border-right-color:var(--accent)
+  }
+}
 /* Keep the fine visual track, with a comfortable pointer target. */
-input[type=range]{height:17px;background:transparent}
-input[type=range]::-webkit-slider-runnable-track{height:3px;background:linear-gradient(to right,#a7b586 var(--fill,50%),#43473d var(--fill,50%))}
-input[type=range]::-webkit-slider-thumb{margin-top:-3px}
-input[type=range]::-moz-range-track{height:3px;background:linear-gradient(to right,#a7b586 var(--fill,50%),#43473d var(--fill,50%))}
-.structure-field{margin-top:0;margin-bottom:24px}
-.seed-field .seed-lock{display:flex;align-items:center;gap:8px;font-size:9px;color:var(--muted);line-height:1.5;margin-top:11px;cursor:pointer}
-.seed-lock input{accent-color:var(--accent);margin:0;width:12px;height:12px;flex-shrink:0}
-.slider-note{font:8px var(--mono);line-height:1.5;color:var(--muted);margin:5px 0 0}
-
-.upload-section{padding:25px 0 20px;border-bottom:1px solid var(--line)}.upload-section .button{width:100%;margin-top:15px}.upload-section>p:last-child{font-size:10px;color:var(--muted);line-height:1.7}.image-wrap canvas{background:repeating-conic-gradient(#aaa 0% 25%,#ddd 0% 50%) 0 0/20px 20px}.studio-topline h2{overflow-wrap:anywhere}dialog{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:5px;max-width:min(460px,90vw);padding:25px}dialog::backdrop{background:#0009}dialog p{line-height:1.6}.resize-actions{display:flex;justify-content:flex-end;gap:20px;margin-top:20px}
-
+/*
+ * CHAPTER BORK-CSS-17 | Refine control targets
+ *
+ * This later rule intentionally overrides the earlier 3px input height. The
+ * interactive target becomes 17px tall while vendor-specific track rules retain the
+ * fine 3px visible line. Their specificity/order is why these refinements remain
+ * later in the stylesheet.
+ */
+input[type=range] {
+  height:17px;
+  background:transparent
+}
+input[type=range]::-webkit-slider-runnable-track {
+  height:3px;
+  background:linear-gradient(to right,#a7b586 var(--fill,50%),#43473d var(--fill,50%))
+}
+input[type=range]::-webkit-slider-thumb {
+  margin-top:-3px
+}
+input[type=range]::-moz-range-track {
+  height:3px;
+  background:linear-gradient(to right,#a7b586 var(--fill,50%),#43473d var(--fill,50%))
+}
+/*
+ * These structure/seed-lock selectors are retained from the earlier source UI. The
+ * active Pattern seed has no Keep this seed checkbox.
+ */
+.structure-field {
+  margin-top:0;
+  margin-bottom:24px
+}
+.seed-field .seed-lock {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:9px;
+  color:var(--muted);
+  line-height:1.5;
+  margin-top:11px;
+  cursor:pointer
+}
+.seed-lock input {
+  accent-color:var(--accent);
+  margin:0;
+  width:12px;
+  height:12px;
+  flex-shrink:0
+}
+.slider-note {
+  font:8px var(--mono);
+  line-height:1.5;
+  color:var(--muted);
+  margin:5px 0 0
+}
+/*
+ * CHAPTER BORK-CSS-18 | Welcome uploads and transparency
+ *
+ * The upload block replaces the retired Source controls. A checkerboard is drawn
+ * behind the preview canvas to reveal transparent areas; it is a CSS background,
+ * never encoded in exported PNG. Long filenames may wrap. The native dialog and its
+ * backdrop distinguish the explicit resize decision.
+ */
+.upload-section {
+  padding:25px 0 20px;
+  border-bottom:1px solid var(--line)
+}
+.upload-section .button {
+  width:100%;
+  margin-top:15px
+}
+.upload-section>p:last-child {
+  font-size:10px;
+  color:var(--muted);
+  line-height:1.7
+}
+.image-wrap canvas {
+  background:repeating-conic-gradient(#aaa 0% 25%,#ddd 0% 50%) 0 0/20px 20px
+}
+.studio-topline h2 {
+  overflow-wrap:anywhere
+}
+dialog {
+  background:var(--panel);
+  color:var(--text);
+  border:1px solid var(--line);
+  border-radius:5px;
+  max-width:min(460px,90vw);
+  padding:25px
+}
+/*
+ * The browser supplies this modal backdrop pseudo-element when showModal is used.
+ * Closing the dialog is handled by its native form and the controller.
+ */
+dialog::backdrop {
+  background:#0009
+}
+dialog p {
+  line-height:1.6
+}
+.resize-actions {
+  display:flex;
+  justify-content:flex-end;
+  gap:20px;
+  margin-top:20px
+}
 /* The empty preview is also an accessible upload action. */
-button.empty-state{width:100%;height:100%;border:0;background:transparent;font:inherit;cursor:pointer}
-button.empty-state:hover:not(:disabled){background:#ffffff04}
-.empty-state>.empty-title{display:block;font:22px/1.4 Georgia,serif;color:#c0c8b3;margin:1em 0}
+/*
+ * CHAPTER BORK-CSS-19 | Make the empty preview clickable
+ *
+ * The empty-state element is a native button, expanded to fill the available image
+ * wrapper. Transparent background preserves the viewer design; hover gives a faint
+ * cue. Its title is a span styled as a block, while JavaScript lets clicks bubble to
+ * the viewport upload handler.
+ */
+button.empty-state {
+  width:100%;
+  height:100%;
+  border:0;
+  background:transparent;
+  font:inherit;
+  cursor:pointer
+}
+button.empty-state:hover:not(:disabled) {
+  background:#ffffff04
+}
+.empty-state>.empty-title {
+  display:block;
+  font:22px/1.4 Georgia,serif;
+  color:#c0c8b3;
+  margin:1em 0
+}

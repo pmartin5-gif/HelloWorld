@@ -20,28 +20,26 @@ This manual diagnostic runs the same client on GitHub's standard Ubuntu runner. 
 
 Local execution continues to read the project's private key file, even if another `GEMINI_API_KEY` exists in the Mac's environment. Only the explicit `--actions-secret` flag in GitHub Actions selects the repository secret. Missing secrets stop before any request.
 
-## Current setup and run
+## Current result — Flash-Lite passed
 
-The user explicitly approved the secret transfer and one free cloud test. Commit `4c63bf81af5d4abb0fd17bac4f993a23dfd44dee` is published on main. Created `GEMINI_API_KEY` as the approved private Actions secret after confirming the free Google project still showed Free tier and billing disabled. GitHub confirmed Repository secret added. No credential value was printed or committed.
+The user authorized a separate free Gemini 3.5 Flash-Lite test after the 3.8 Flash failure, then pushed the explicit selector in commit `691f82728d098d8f08d0a7c7007f3a3f1e7ab4b8`. Eight mocked tests passed before publication, covering model configuration, credential isolation, rejection before network access, redaction, and no retries. The CLI local default remains 3.8 Flash; use `--model gemini-3.5-flash-lite` to select Lite locally.
 
-The one approved diagnostic was dispatched: [run 42724339342](https://github.com/pmartin5-gif/HelloWorld/actions/runs/42724339342), job `129525988360`. Authenticated metadata lookup passed. The single generation request timed out after 120 seconds before an HTTP response; the job failed. No automatic retry or fallback occurred. See `api-verification.json`. No rerun is authorized or scheduled by this record.
+Immediately before the test, verified the public repository and the personal-account `lightboard-prompter` project on Free tier with Set up billing available. Observed Flash-Lite allowance: 15 RPM / 250,000 TPM / 500 RPD, with zero displayed usage before the run. Billing remained disabled. These observed limits do not guarantee future availability.
 
-For later setup review, the existing free-project key is stored as `GEMINI_API_KEY` in **pmartin5-gif/HelloWorld → Settings → Secrets and variables → Actions**. Recheck that the corresponding Google project remains on Free tier with billing disabled. Keep the account's $0 Actions spending stop and the repository public; the diagnostic uses no artifact storage.
+[Run 42727547923](https://github.com/pmartin5-gif/HelloWorld/actions/runs/42727547923), job `129536952110`, succeeded in 13 seconds overall. Authenticated metadata returned `MODEL_INFO_OK`; one minimal-thinking generation returned `LIGHTBOARD_API_OK` in approximately 4.04 seconds. Generation ran from 00:20:36.942 to 00:20:40.986 UTC on November 10 (November 9 locally). No retries, model/provider fallback, artifacts, cache, firmware build, or device operation occurred. The authorized one-test diagnostic is complete; no automatic repeat is scheduled.
 
-The workflow and scripts are published, and the one approved run is complete. It did not validate generation. Do not repeat it automatically. `MODEL_INFO_OK` is only metadata success; `LIGHTBOARD_API_OK` is the required generation success. A 503 or timeout leaves generation unverified and calls for another diagnosis or an explicitly reviewed free-model alternative, not repeated automatic runs.
+Verification record: `api-lite-verification.json`. Sanitized log: `../.build/cloud-api-run-42727547923/diagnostic.log`; screenshot: `../.build/cloud-api-run-42727547923/github-success.jpg`. The actual saved key was checked absent from the log.
 
-The user's Mac and Lightboard can remain disconnected during the cloud test. Do not include the key in a commit, chat message, or screenshot.
+This verifies small API generation with Lite. It does not establish animation quality or implement prompt-to-firmware integration. The user subsequently deferred creative review and requested infrastructure work. The integrated manual pipeline in `prompt-build.md` validates and compiles candidates without a preview or aesthetic approval. Its first cloud generation passed but validation rejected an unsupported call; the second run identified a `rand()` false positive; the unchanged response compiles locally, and fix `1cd37ca` awaits publication. The board can remain unplugged.
 
-## Observed result
+## Existing private secret
 
-GitHub job `129525988360` completed metadata verification at 23:55:50 UTC. The single generation request then ran from 23:55:50 to 23:57:50 UTC and ended with TimeoutError, without an HTTP response. The same model had timed out on the Mac. This does not identify the root cause or establish that every model will fail. The user subsequently authorized a separate Gemini 3.5 Flash-Lite test. The model selector is prepared locally; that alternative test has not run yet.
+The user explicitly approved saving the existing free-project key as `GEMINI_API_KEY` in **pmartin5-gif/HelloWorld → Settings → Secrets and variables → Actions**. GitHub confirmed Repository secret added before the original cloud test. The Lite run reused that secret; no new key or credential access was created. Keep its value out of source, prompts, logs, screenshots, and firmware. The original private local key remains outside Git.
 
-The private Actions secret remains saved as approved. No Google billing setting changed. The diagnostic created no artifact, cache, firmware, or device update. Sanitized job log: `../.build/cloud-api-run-42724339342/diagnostic.log`.
+Recheck the corresponding Google project's free allowance and disabled billing for subsequent model work. Preserve the account's $0 Actions spending stop and the public repository. This diagnostic uses no artifact storage.
 
-## Flash-Lite test preparation
+## Historical 3.8 Flash result — unresolved
 
-On November 9 the user said “ok let's try that” in response to the proposed free Gemini 3.5 Flash-Lite test. Rechecked the personal-account Lightboard project in AI Studio: Free tier, Set up billing available, and Flash-Lite limits of 15 requests/minute, 250,000 tokens/minute, and 500 requests/day, with zero displayed usage. Google's current Standard pricing also lists free-tier input/output. These observations do not guarantee availability or quality.
+Commit `4c63bf81af5d4abb0fd17bac4f993a23dfd44dee` introduced the original diagnostic. [Run 42724339342](https://github.com/pmartin5-gif/HelloWorld/actions/runs/42724339342), job `129525988360`, passed authenticated metadata. Its one low-thinking 3.8 Flash generation request timed out after 120 seconds, from 23:55:50 to 23:57:50 UTC on November 9, before an HTTP response. The job failed without retry or fallback.
 
-Added explicit model selection to the existing workflow and client. The workflow passes the selection through a quoted environment variable; the client rejects names outside the two reviewed choices before reading a key or sending a request. Eight mocked tests and workflow checks pass, without network calls. CLI local default stays 3.8 Flash for compatibility; the workflow defaults to the explicitly selected Flash-Lite alternative. A local Lite invocation must include `--model gemini-3.5-flash-lite`.
-
-Publication of this selector is pending the user's Terminal push. Then run one cloud test with `gemini-3.5-flash-lite` selected, using the existing private secret. No new credential or approval for the already-completed secret transfer is needed. Do not adopt Lite for unattended animation generation until a successful API response and creative-output review are recorded.
+That model had also timed out on the Mac. The cause remains unknown; Lite's success does not explain or fix 3.8 Flash. Preserve `api-verification.json` and `../.build/cloud-api-run-42724339342/diagnostic.log`. No identical rerun is scheduled.

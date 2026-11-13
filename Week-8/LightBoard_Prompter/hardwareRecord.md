@@ -6,6 +6,8 @@
 
 ## Verified information
 
+**Reconnection check — November 9, 2026:** The user reports the board is accessible again and connected over USB. The existing helper's read-only status rediscovered `/dev/cu.usbserial-0001` with profile `esp32:esp32:esp32`, no pending IDE upload, matching source checkpoint, and matching protected code. Live sketch SHA-256 remains `d90e1b58d47ad841c7ef6c737afac802da1e34e0a4810e43ca7ae7e05173bb46`. No device flash, serial read/write, Wi-Fi test, runtime measurement, or new physical visual confirmation was performed.
+
 | Item | Recorded value | Evidence |
 | --- | --- | --- |
 | Board power | Powered, confirmed by the user | User's message in this conversation |

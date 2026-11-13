@@ -1,0 +1,80 @@
+{
+  "date": "2026-11-09",
+  "commit": "d67f3a64c5ae59172ffa6af54da5171843307ae6",
+  "run_id": 42735010470,
+  "run_url": "https://github.com/pmartin5-gif/HelloWorld/actions/runs/42735010470",
+  "status": "cloud validation rejected rand; targeted fix and local compile passed",
+  "creative_prompt": "An overflowing heart that keeps giving",
+  "creative_review_required": false,
+  "save_firmware_requested": true,
+  "free_project_rechecked": true,
+  "observed_project": "gen-lang-client-0021216944",
+  "observed_tier": "Free tier; Set up billing available",
+  "observed_model_limits": {
+    "rpm": 15,
+    "tpm": 250000,
+    "rpd": 500
+  },
+  "observed_peak_usage": {
+    "rpm": 1,
+    "tpm": 609,
+    "rpd": 2
+  },
+  "repository_public": true,
+  "actions_storage": "0 GB used / 0.5 GB included",
+  "actions_billable_usage": "$0",
+  "actions_spending_stop": "$0 budget; Usage blocked",
+  "billing_settings_changed": false,
+  "automatic_retries": false,
+  "fallback": false,
+  "board_operation": false,
+  "outcome_not_yet_observed": false,
+  "job_id": 129562010259,
+  "workflow_duration_seconds": 19,
+  "job_duration_seconds": 13,
+  "generation_requests": 1,
+  "generation_seconds": 4.479,
+  "generation_status": "complete response received",
+  "validation_error": "Candidate calls an unsupported function: rand",
+  "cloud_compile_status": "skipped",
+  "artifact_count": 0,
+  "artifact_storage": false,
+  "candidate_source_retained": true,
+  "response_sha256": "ca9f5d73467bb02aab6278c8db4c03d5d643c960e5f2ea7221cea7d6263f1171",
+  "response_snapshot": "experiments/flash-lite/2026-11-09/cloud-run-42735010470/generation.json",
+  "usage_metadata": {
+    "promptTokenCount": 501,
+    "candidatesTokenCount": 1654,
+    "totalTokenCount": 2155,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 501
+      }
+    ],
+    "serviceTier": "standard"
+  },
+  "sanitized_log": ".build/cloud-prompt-run-42735010470/workflow.log",
+  "log_contains_saved_key": false,
+  "screenshot": ".build/cloud-prompt-run-42735010470/github-rand-diagnosis.jpg",
+  "root_cause": "Validator omitted standard C rand(), available through ESP32 Arduino.h -> stdlib.h.",
+  "fix_commit": "1cd37ca11d14b83ecc6eebe76d69919c2ecb0f78",
+  "offline_tests_passed": 32,
+  "local_recovered_compile": {
+    "status": "passed",
+    "application_bytes": 291216,
+    "static_dram_bytes_reported": 22600,
+    "application_headroom_bytes": 1019504,
+    "source_sha256": "42bc5202bebe334916eb57aeb14d592050621dc1a6e19ffc5997889029cb96ac",
+    "protected_sha256": "68b8b086b13ea3694eea5b4d5674b814a17a7d89206df5764979114e0fcc9e7d",
+    "candidate_sha256": "7bbecbb4211e8015aeae9a62fb16500b111edab24ece60f2831a5a24bef0c3e0",
+    "generation_response_sha256": "ca9f5d73467bb02aab6278c8db4c03d5d643c960e5f2ea7221cea7d6263f1171",
+    "firmware_sha256": "e9af05a1b8d50570ba7f8265bcf1fad63df884dd8aa2c1434363fea541a920f1",
+    "bundle": ".build/cloud-prompt-run-42735010470/local-firmware/",
+    "checksums_verified": true,
+    "new_api_requests": 0,
+    "live_source_unchanged": true,
+    "uploaded_to_board": false
+  },
+  "next_cloud_test": "After publication, select reuse_saved_generation=true with the default heart prompt; skip the API and compile the exact preserved response."
+}

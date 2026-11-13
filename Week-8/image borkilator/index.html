@@ -1,46 +1,309 @@
 <!doctype html>
+<!--
+BORKILATOR | A BOOK INSIDE THE CODE
+
+INTRODUCTION
+This instrument begins with an image you supply. You set global conditions, click
+borkilate, inspect the result, and repeat. Each deliberate pass builds on the current
+image. The original and retained history make comparison and new directions possible.
+This annotated source is meant to explain both the code and the creative decisions it
+serves.
+
+HOW TO READ THIS BOOK
+Start here for the physical arrangement of the page. Continue in app.js for the
+session’s actions, engine.js for pixel mathematics, worker.js for background messaging,
+and style.css for presentation. Every file has an introduction and its own annotated
+contents. These comments explain the program without disabling it. They appear in your
+editor, not as text in the app.
+
+NAVIGATION
+Use Cmd-F for CHAPTER followed by a chapter ID, for example the ID BORK-APP-08. IDs
+include the file family, so they are unique across this book. Searching with CHAPTER
+skips the contents listings. Line numbers may change as annotations grow; these IDs are
+intended to remain stable.
+
+ANNOTATED TABLE OF CONTENTS | THIS FILE
+BORK-HTML-01 — Tell the browser what to load. Declare metadata, CSS, and deferred script
+order
+BORK-HTML-02 — Offer ways to keep work. Provide branding, settings-file input, and
+export buttons
+BORK-HTML-03 — Choose a starting image. Create the native file input for a local still
+image
+BORK-HTML-04 — Prepare a pass. Lay out presets, generated-slider containers, seed, and
+the action button
+BORK-HTML-05 — Inspect the current study. Name the study and expose comparison, history
+navigation, and zoom
+BORK-HTML-06 — Show pixels and progress. Host the Canvas preview, empty upload button,
+and busy overlay
+BORK-HTML-07 — Report and remember. Provide live status, history container, and workflow
+reminders
+BORK-HTML-08 — Ask before reducing dimensions. Define the modal proportional-resize
+decision
+
+THE OTHER VOLUMES
+app.js — BORK-APP-01 through BORK-APP-12: state, controls, upload, explicit passes,
+recoverable history, comparison, export, and replay. For the borkilate click-to-pixels
+route, start at BORK-APP-12, follow apply in BORK-APP-08, render in BORK-APP-04, then
+engine chapters 04–09.
+engine.js — BORK-ENG-01 through BORK-ENG-13: shared numerical tools, the current RGBA
+pipeline, settings normalization, and clearly marked historical monochrome generators.
+worker.js — BORK-WRK-01 through BORK-WRK-03: load the engine, receive a job, and send
+progress or results.
+style.css — BORK-CSS-01 through BORK-CSS-19: visual vocabulary, layout, controls,
+preview, responsive rules, and later cascade refinements.
+
+SUPPORTING MATERIAL
+README.md explains operation, background, and how to run checks. tests/ contains
+development verification programs; it is not loaded into this page. package.json
+describes those optional Node commands and development dependencies; JSON itself cannot
+contain comments. documentation.md records intent, execution, and observed fulfillment.
+archive/ preserves the earlier app and is deliberately outside this annotation pass.
+
+A FEW WORDS BEFORE WE START
+HTML defines elements and their meaning. CSS rules style matching elements. JavaScript
+responds to events and changes state. An id names a particular element; a class groups
+elements for styling; aria attributes communicate roles/state to assistive technology. A
+recipe is an embedded starting PNG plus ordered pass settings. A seed makes pattern
+placement repeatable. None of those settings changes pixels until you explicitly apply a
+pass.
+
+The code currently replaces one whole RGB channel per Cosmic particle hit. Its
+unresolved visual-strength discussion remains a future decision; this book explains the
+existing implementation.
+-->
+<!--
+CHAPTER BORK-HTML-01 | Tell the browser what to load
+
+The doctype above selects modern HTML rendering; keeping it first avoids quirks mode.
+lang identifies the language. Metadata describes the page, the stylesheet controls
+appearance, and the two deferred scripts establish the engine before the controller.
+-->
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#191b19">
-  <title>borkilator — Image & signal studies</title>
-  <meta name="description" content="Upload an image, interrupt its signal, and follow what emerges.">
-  <link rel="stylesheet" href="style.css">
-  <script defer src="engine.js"></script>
-  <script defer src="app.js"></script>
-</head>
-<body>
-  <header class="masthead">
-    <div class="identity"><span class="brand-mark" aria-hidden="true">b<span>∕</span></span><div><h1>borkilator<span class="brand-dot">.</span></h1><p>IMAGE & SIGNAL STUDIES <span>/</span> EXPERIMENT 005</p></div></div>
-    <div class="header-actions"><button class="text-button" id="save-recipe" disabled>Save settings <span aria-hidden="true">↗</span></button><label class="text-button file-label">Open settings<input id="load-recipe" type="file" accept="application/json,.json"></label><button class="button export" id="export" disabled><span aria-hidden="true">↓</span> Export PNG</button></div>
-  </header>
-  <main class="workbench">
-    <aside class="controls" aria-label="Image controls">
-      <section class="upload-section" aria-label="Upload image">
-        <p class="eyebrow">YOUR STARTING IMAGE</p>
-        <label class="button primary file-label">Upload image<input id="upload-image" type="file" accept="image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp"></label>
-        <p>PNG, JPEG, or WebP · up to 100 MiB.<br>Color, transparency, and original size retained.</p>
+  <head>
+    <meta charset="utf-8">
+<!--
+The viewport declaration lets phone layouts use the device’s width. theme-color is
+browser chrome metadata, not an image-processing parameter. The title and description
+describe the tool.
+-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#191b19">
+    <title>borkilator — Image & signal studies</title>
+    <meta name="description" content="Upload an image, interrupt its signal, and follow what emerges.">
+    <link rel="stylesheet" href="style.css">
+<!--
+defer waits until the document has been parsed, then runs these classic scripts in
+document order: engine first, controller second. app.js can therefore look up elements
+and use InkEngine immediately. worker.js is created by the controller when supported; it
+is not another page script.
+-->
+    <script defer src="engine.js"></script>
+    <script defer src="app.js"></script>
+  </head>
+  <body>
+<!--
+CHAPTER BORK-HTML-02 | Offer ways to keep work
+
+The masthead establishes identity and offers explicit persistence. Native buttons start
+disabled until a study exists. Open settings is a real file input wrapped in a label, so
+clicking the label opens the browser’s file chooser. The controller later supplies
+behavior using these IDs.
+-->
+    <header class="masthead">
+<!--
+Decorative marks use aria-hidden so their glyphs are not announced as instructions. The
+visible project name is borkilator; afterimage remains only an internal save-format
+compatibility identifier in JavaScript.
+-->
+      <div class="identity">
+        <span class="brand-mark" aria-hidden="true">b<span>∕</span></span>
+        <div>
+          <h1>borkilator<span class="brand-dot">.</span></h1><p>IMAGE & SIGNAL STUDIES <span>/</span> EXPERIMENT 005</p>
+        </div>
+      </div>
+<!--
+Save settings stores the starting image and applied passes in JSON; Open settings
+reconstructs that work. Export PNG downloads the current result at working dimensions.
+accept filters picker suggestions; JavaScript still validates actual file contents.
+-->
+      <div class="header-actions">
+        <button class="text-button" id="save-recipe" disabled>Save settings <span aria-hidden="true">↗</span></button><label class="text-button file-label">Open settings<input id="load-recipe" type="file" accept="application/json,.json"></label><button class="button export" id="export" disabled><span aria-hidden="true">↓</span> Export PNG</button>
+      </div>
+    </header>
+<!--
+main contains the working instrument. Its two primary children are the control sidebar
+and the studio. CSS lays them side by side on wide screens and places the image first on
+narrow screens; the HTML order also remains meaningful without styling.
+-->
+    <main class="workbench">
+      <aside class="controls" aria-label="Image controls">
+<!--
+CHAPTER BORK-HTML-03 | Choose a starting image
+
+This file input supplies the untouched starting image. Its label is styled as a button
+while the actual native input remains accessible. Selecting a file triggers upload in
+app.js. No upload-to-server API is called; file bytes are read locally by the browser.
+-->
+        <section class="upload-section" aria-label="Upload image">
+          <p class="eyebrow">YOUR STARTING IMAGE</p>
+          <label class="button primary file-label">Upload image<input id="upload-image" type="file" accept="image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp"></label>
+          <p>PNG, JPEG, or WebP · up to 100 MiB.<br>Color, transparency, and original size retained.</p>
+        </section>
+<!--
+CHAPTER BORK-HTML-04 | Prepare a pass
+
+The Signal panel prepares a single future operation. Preset data attributes identify
+named bundles. Most sliders are generated from field definitions in app.js rather than
+repeated by hand here. Pattern seed determines repeatable placement; borkilate
+explicitly applies the prepared pass.
+-->
+        <section id="signal-panel" aria-label="Signal settings">
+          <div class="panel-intro">
+            <p class="eyebrow">INTERRUPT THE SIGNAL</p><h2>One pass at a time.</h2><p>Set the conditions. Then see what happens.</p>
+          </div>
+<!--
+data-preset values correspond to keys in the controller’s presets object. Clear prepares
+zero effects. It does not clear pixels or history. The selected CSS class is managed by
+the controller to show a current preset choice.
+-->
+          <div class="preset-section">
+            <p class="field-label">Starting points</p>
+            <div class="presets">
+              <button data-preset="dragged">Dragged</button><button data-preset="fractured">Fractured</button><button data-preset="encoded">Encoded</button><button data-preset="clear">Clear</button>
+            </div>
+          </div>
+<!--
+These initially empty slider containers are attachment points for makeSliders. The
+controller creates paired range/number inputs for effects, fragment scale, and mix,
+complete with IDs, labels, and help text.
+-->
+          <div class="slider-group" id="signal-sliders">
+          </div>
+<!--
+The seed input accepts an unsigned 32-bit whole number. The circular-arrow button
+chooses a fresh seed but does not render. aria-label provides a meaningful button name
+even though its visible content is only a glyph.
+-->
+          <div class="signal-meta">
+            <div id="signal-shape-sliders">
+            </div>
+            <div class="field seed-field">
+              <label for="signal-seed">Pattern seed</label>
+              <div class="input-row">
+                <input id="signal-seed" type="number" min="0" max="4294967295" step="1" value="7183"><button class="square-button" id="new-pattern" title="Choose a new pattern" aria-label="Choose a new pattern seed">↻</button>
+              </div>
+            </div>
+          </div>
+<!--
+The action button’s id is apply, an internal name retained from earlier wording. app.js
+registers its click handler to apply(). The pending note announces prepared/applied
+state; the accompanying copy expresses the cumulative, deliberate-pass workflow.
+-->
+          <div class="panel-action">
+            <p class="pending-note" id="signal-pending">Settings prepare the next pass</p><button class="button primary" id="apply" disabled><span aria-hidden="true">↳</span> borkilate</button><p>Each pass builds on the current image.<br>Borkilate again to repeat these settings.</p>
+          </div>
+        </section>
+        <div class="control-footer">
+          <span class="tiny-dot"></span> MADE HERE. PROCESSED LOCALLY.</div>
+      </aside>
+<!--
+CHAPTER BORK-HTML-05 | Inspect the current study
+
+The studio holds information and viewing controls for the active study. Its title uses
+the uploaded filename. Original/Current is a comparison choice; another pass and export
+still use the current working result. Undo follows history ancestry, Redo follows its
+stack, and Fit/100% changes only preview sizing.
+-->
+      <section class="studio" aria-label="Image workspace">
+        <div class="studio-topline">
+          <div>
+            <span class="eyebrow">WORKING IMAGE</span><h2 id="study-title">An image, waiting to happen.</h2>
+          </div>
+          <span class="state-chip" id="state-chip">IMAGE</span>
+        </div>
+<!--
+aria-pressed reflects toggle state for comparison and zoom. disabled prevents image
+actions before upload. title attributes explain keyboard shortcuts; the JavaScript key
+handler implements them. Class names style controls; IDs connect them to controller
+functions.
+-->
+        <div class="viewer-toolbar">
+          <div class="view-switch" aria-label="Compare images">
+            <button id="view-current" class="active" aria-pressed="true" disabled>Current</button><button id="view-original" aria-pressed="false" disabled>Original</button>
+          </div>
+          <div class="viewer-tools">
+            <button id="undo" class="text-button" disabled title="Undo current pass (⌘/Ctrl Z)">↶ <span>Undo</span></button><button id="redo" class="text-button" disabled title="Redo (⌘/Ctrl Shift Z)">↷ <span>Redo</span></button><span class="toolbar-rule"></span><button id="zoom" class="zoom-button" disabled aria-pressed="false">Fit <span aria-hidden="true">↗</span></button>
+          </div>
+        </div>
+<!--
+CHAPTER BORK-HTML-06 | Show pixels and progress
+
+Canvas is the visible raster surface, initially hidden. Its initial 3840 × 2160
+dimensions are placeholders: upload replaces them with accepted native dimensions. CSS
+scales the preview without changing stored pixels. The native empty-state button opens
+the upload picker through a bubbling viewport click, including Enter/Space activation.
+-->
+        <div class="viewport" id="viewport">
+          <div class="image-wrap" id="image-wrap">
+            <canvas id="artwork" width="3840" height="2160" aria-label="Working image preview" hidden></canvas><button type="button" class="empty-state" id="empty" aria-label="Upload an image"><span class="empty-glyph" aria-hidden="true">∿</span><span class="empty-title">Click here to upload an image.</span><small>Choose a PNG, JPEG, or WebP image.</small></button>
+          </div>
+          <div class="render-overlay" id="render-overlay" hidden>
+            <div class="render-card">
+              <span class="render-spinner" aria-hidden="true"></span><p id="render-label">Gathering pigment</p><progress id="render-progress" max="1" value="0" aria-label="Render progress"></progress><span id="render-percent">0%</span>
+            </div>
+          </div>
+        </div>
+<!--
+CHAPTER BORK-HTML-07 | Report and remember
+
+The viewport above also contains a hidden busy overlay with a spinner, a progress
+element, and stage text. Those show processing status; they are not artwork. Here the
+captions describe actual working dimensions and viewing state. The live message area
+reports results or errors, and history supplies recoverable navigation within this tab.
+-->
+        <div class="image-caption">
+          <span id="image-details">NATIVE-RESOLUTION IMAGES</span><span id="image-state">READY TO UPLOAD</span>
+        </div>
+<!--
+role=status and aria-live=polite let status updates be announced without interrupting
+the user. The controller assigns textContent and toggles error styling. This is a report
+about an operation; it does not itself trigger processing.
+-->
+        <div class="message" id="message" role="status" aria-live="polite">Upload an image. Then interrupt the signal.</div>
+<!--
+drawHistory replaces this placeholder with thumbnail buttons for retained snapshots.
+Each button restores a full PNG-backed state; the thumbnail is only a small JPEG
+navigation image. Retention is bounded, and closing this tab loses unsaved session
+history.
+-->
+        <section class="history" aria-label="Render history">
+          <div class="history-heading">
+            <h3>History <span id="history-count">00</span></h3><p>Return to any state to take another direction.</p><span class="session-note">THIS TAB’S SESSION</span>
+          </div>
+          <div id="history-list" class="history-list">
+            <p class="history-empty">Your uploads and passes will appear here.</p>
+          </div>
+        </section>
+        <footer class="studio-footer">
+          <span>A STUDY IN CONTROL & CHANCE</span><span>UPLOAD <b>→</b> INTERRUPT <b>→</b> OBSERVE <b>→</b> REPEAT</span>
+        </footer>
       </section>
-      <section id="signal-panel" aria-label="Signal settings">
-        <div class="panel-intro"><p class="eyebrow">INTERRUPT THE SIGNAL</p><h2>One pass at a time.</h2><p>Set the conditions. Then see what happens.</p></div>
-        <div class="preset-section"><p class="field-label">Starting points</p><div class="presets"><button data-preset="dragged">Dragged</button><button data-preset="fractured">Fractured</button><button data-preset="encoded">Encoded</button><button data-preset="clear">Clear</button></div></div>
-        <div class="slider-group" id="signal-sliders"></div>
-        <div class="signal-meta"><div id="signal-shape-sliders"></div><div class="field seed-field"><label for="signal-seed">Pattern seed</label><div class="input-row"><input id="signal-seed" type="number" min="0" max="4294967295" step="1" value="7183"><button class="square-button" id="new-pattern" title="Choose a new pattern" aria-label="Choose a new pattern seed">↻</button></div></div></div>
-        <div class="panel-action"><p class="pending-note" id="signal-pending">Settings prepare the next pass</p><button class="button primary" id="apply" disabled><span aria-hidden="true">↳</span> borkilate</button><p>Each pass builds on the current image.<br>Borkilate again to repeat these settings.</p></div>
-      </section>
-      <div class="control-footer"><span class="tiny-dot"></span> MADE HERE. PROCESSED LOCALLY.</div>
-    </aside>
-    <section class="studio" aria-label="Image workspace">
-      <div class="studio-topline"><div><span class="eyebrow">WORKING IMAGE</span><h2 id="study-title">An image, waiting to happen.</h2></div><span class="state-chip" id="state-chip">IMAGE</span></div>
-      <div class="viewer-toolbar"><div class="view-switch" aria-label="Compare images"><button id="view-current" class="active" aria-pressed="true" disabled>Current</button><button id="view-original" aria-pressed="false" disabled>Original</button></div><div class="viewer-tools"><button id="undo" class="text-button" disabled title="Undo current pass (⌘/Ctrl Z)">↶ <span>Undo</span></button><button id="redo" class="text-button" disabled title="Redo (⌘/Ctrl Shift Z)">↷ <span>Redo</span></button><span class="toolbar-rule"></span><button id="zoom" class="zoom-button" disabled aria-pressed="false">Fit <span aria-hidden="true">↗</span></button></div></div>
-      <div class="viewport" id="viewport"><div class="image-wrap" id="image-wrap"><canvas id="artwork" width="3840" height="2160" aria-label="Working image preview" hidden></canvas><button type="button" class="empty-state" id="empty" aria-label="Upload an image"><span class="empty-glyph" aria-hidden="true">∿</span><span class="empty-title">Click here to upload an image.</span><small>Choose a PNG, JPEG, or WebP image.</small></button></div><div class="render-overlay" id="render-overlay" hidden><div class="render-card"><span class="render-spinner" aria-hidden="true"></span><p id="render-label">Gathering pigment</p><progress id="render-progress" max="1" value="0" aria-label="Render progress"></progress><span id="render-percent">0%</span></div></div></div>
-      <div class="image-caption"><span id="image-details">NATIVE-RESOLUTION IMAGES</span><span id="image-state">READY TO UPLOAD</span></div>
-      <div class="message" id="message" role="status" aria-live="polite">Upload an image. Then interrupt the signal.</div>
-      <section class="history" aria-label="Render history"><div class="history-heading"><h3>History <span id="history-count">00</span></h3><p>Return to any state to take another direction.</p><span class="session-note">THIS TAB’S SESSION</span></div><div id="history-list" class="history-list"><p class="history-empty">Your uploads and passes will appear here.</p></div></section>
-      <footer class="studio-footer"><span>A STUDY IN CONTROL & CHANCE</span><span>UPLOAD <b>→</b> INTERRUPT <b>→</b> OBSERVE <b>→</b> REPEAT</span></footer>
-    </section>
-  </main>
-  <dialog id="resize-dialog"><form method="dialog"><h2>Resize this image?</h2><p id="resize-description"></p><p>The processing limit is 8192 pixels per side and 16,777,216 pixels total.</p><div class="resize-actions"><button value="cancel" class="text-button">Cancel</button><button value="resize" class="button primary">Resize proportionally</button></div></form></dialog>
-</body>
+    </main>
+<!--
+CHAPTER BORK-HTML-08 | Ask before reducing dimensions
+
+Images above working limits require a user decision before reduction. The controller
+fills in original/proposed dimensions and calls showModal. With method=dialog, clicking
+a button closes the dialog and sets its return value to cancel or resize. This dialog is
+separate from the ordinary busy overlay, so its buttons remain usable during import.
+-->
+    <dialog id="resize-dialog">
+      <form method="dialog">
+        <h2>Resize this image?</h2><p id="resize-description"></p><p>The processing limit is 8192 pixels per side and 16,777,216 pixels total.</p>
+        <div class="resize-actions">
+          <button value="cancel" class="text-button">Cancel</button><button value="resize" class="button primary">Resize proportionally</button>
+        </div>
+      </form>
+    </dialog>
+  </body>
 </html>

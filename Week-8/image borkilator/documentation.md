@@ -271,3 +271,29 @@ Integrated the field with history and version-3 saved settings. Missing coverage
 **Execution:** Inspected coverage and mixing without changing application behavior. Confirmed that 100% already targets every pixel but replaces only one RGB channel per pixel; random replacements can equal the original value. An opaque 256 × 256 test image showed visible changes to approximately 99.57% of pixels at both default mix and full mix. Asked whether a stronger maximum should force larger changes within one channel or randomize all three RGB channels. The user paused before choosing.
 
 **Fulfillment:** Work is paused at the user's request. No range or algorithm change was made. On resuming, revisit the desired visual strength and settle the one-channel versus all-channel behavior before implementation. Preserve saved-recipe replay when changing the effect.
+
+## 31. Resume the Cosmic particle discussion
+
+**Intent:** Continue iterating on image borkilator.
+
+**Execution:** Located the current Week-8 project and reviewed project guidance, README, working-tree status, and this log, especially entries 29–30. Recovered the unresolved feedback that Cosmic particle is too subtle at maximum coverage. Returned to the choice between stronger changes within one RGB channel and randomizing all three channels before altering the effect, as directed by entry 30.
+
+**Fulfillment:** Project context and the pending decision are recovered. No application behavior changed. The desired next change awaits the user's direction.
+
+## 32. Begin a guided code tour
+
+**Intent:** Pivot from changing Cosmic particle to understanding the implementation so future decisions can be better informed. Follow along in Visual Studio Code with explicit file and line references.
+
+**Execution:** Read the current HTML, controller, worker, and relevant engine sections. Prepared a paced tour beginning with the five application files, the HTML entry point, and the connection between the borkilate button and its JavaScript event listener. Used actual current line numbers and explained identifiers, the element lookup helper, and registering a function to run on a click. Identified the active RGBA engine separately from retained procedural code. Deferred the unresolved effect change from entry 30 while following the user's new learning direction.
+
+**Fulfillment:** The opening tour is being provided with local file links and navigation instructions. No application behavior changed. Whether the explanation and pace support the user's understanding awaits feedback.
+
+## 33. Turn the application source into a narrative code book
+
+**Intent:** Make the implementation easier to understand through very thorough comments that read like a book: an introduction, annotated table of contents, uniquely identified searchable chapters, chapter-opening explanations, and ongoing annotations explaining the code and its relationship to the larger goals.
+
+**Execution:** Carried forward the learning direction in entry 32 and deferred the unresolved Cosmic particle strength decision from entries 30–31. Added narrative annotations throughout the five application files: `index.html`, `app.js`, `engine.js`, `worker.js`, and `style.css`. The HTML introduction is the starting point and provides a reading route across the files. Each file has its own introduction and annotated contents; 55 chapter headings use unique file-prefixed IDs. Searching for `CHAPTER` followed by an ID reaches the chapter heading rather than its table-of-contents entry. Comments explain unfamiliar syntax, data representations, event handling, asynchronous work, history ancestry, prepare/adopt boundaries, replay, the RGBA effect stages, and CSS layout/cascade choices. Historical procedural/grayscale code and obsolete source-era styles are explicitly distinguished from the active upload workflow. Expanded densely packed code into readable formatting and added a navigation guide to README. These are explanatory comments, not disabled executable code. No effect, control, save format, or intended application behavior was changed; the archive and development tests were left intact.
+
+**Objective checks:** Compared all three JavaScript files against pre-edit copies using parsed syntax trees and found identical executable structure. Compared parsed HTML elements, attributes, and non-whitespace text, and parsed CSS rules in cascade order, against the same baseline. Checked JavaScript syntax, chapter-heading uniqueness and contents coverage, and the existing current and historical engine/controller suites. Verified the archived files against their existing SHA-256 manifest. These checks establish preservation of the program and navigation structure; they do not establish the educational usefulness of the prose or add new live-browser coverage.
+
+**Fulfillment:** The requested annotated source and reading route are complete. Whether the narrative depth, organization, and explanations make the implementation easier for the user to read awaits their review. No Git commit or publication was performed.

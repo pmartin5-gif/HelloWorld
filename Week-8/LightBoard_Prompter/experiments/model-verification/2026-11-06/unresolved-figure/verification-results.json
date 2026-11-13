@@ -9,7 +9,12 @@
   "firmware_bytes": 290544,
   "seconds": 20.963,
   "live_source_unchanged": true,
-  "visual_review": "Reaching, waiting, and bracing are visible, and the mood remains unresolved. Thin strokes and a tiny head may be weak on the physical panel. Human creative approval pending.",
+  "visual_review": "Reaching, waiting, and bracing are visible, and the mood remains unresolved. Thin strokes and a tiny head may be weak on the physical panel. User accepted sample on November 9 for further prototyping; future brief adds expressive per-pixel brightness.",
   "physical_panel_test": "not performed",
-  "candidate_sha256": "743e9a073b7e201c50a7560344f95fa341bdbf3f49b71ead1dd3a4e273658946"
+  "candidate_sha256": "743e9a073b7e201c50a7560344f95fa341bdbf3f49b71ead1dd3a4e273658946",
+  "user_creative_acceptance": {
+    "date": "2026-11-09",
+    "accepted_for_further_prototyping": true,
+    "future_prompt_change": "Expressive brightness changes for individual pixels."
+  }
 }

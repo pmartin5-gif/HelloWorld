@@ -81,6 +81,18 @@ The homework notes propose further work: introducing an overall “borkilation�
 
 The application is buildless HTML/CSS/JavaScript. [app.js](app.js) manages upload, controls, history, save/reopen, and export; [engine.js](engine.js) performs pixel processing. When served over HTTP, [worker.js](worker.js) runs Signal processing in the background. Opening the local HTML uses a cooperative main-thread fallback with the same engine. Earlier procedural engine functions remain for regression comparison.
 
+The five application files also form an annotated code book. Open [index.html](index.html) **in your editor** to begin with the introduction, project-wide reading route, and annotated contents. Each file has its own introduction and contents, followed by chapter openings and explanations beside the code. The executable program remains active.
+
+| File | Chapter IDs | What you will encounter |
+| --- | --- | --- |
+| [index.html](index.html) | `BORK-HTML-01`–`BORK-HTML-08` | The page structure, script-loading order, upload and Signal controls, preview, history, and resize dialog. |
+| [app.js](app.js) | `BORK-APP-01`–`BORK-APP-12` | Session state, generated controls, worker coordination, image import, deliberate passes, snapshots, comparison, export, and replay. |
+| [engine.js](engine.js) | `BORK-ENG-01`–`BORK-ENG-13` | Shared mathematics, active RGBA processing in chapters 04–09, settings in chapter 10, and explicitly marked historical generators. |
+| [worker.js](worker.js) | `BORK-WRK-01`–`BORK-WRK-03` | The messages that carry pixels, progress, results, and errors between controller and background engine. |
+| [style.css](style.css) | `BORK-CSS-01`–`BORK-CSS-19` | Colors, layout, controls, preview sizing, history, responsive behavior, and later cascade refinements. |
+
+Use Cmd-F with `CHAPTER` followed by an ID, such as `CHAPTER BORK-APP-08`, to jump to its heading rather than its contents entry. To follow a borkilate click, read controller chapter 12, then 08 and 04, then engine chapters 04–09. IDs remain useful when line numbers change. The annotations distinguish prepared settings, current working pixels, and the comparison preview; they explain the existing Cosmic particle behavior without changing its unresolved strength choice.
+
 Node.js is needed only for development checks. The optional controller harness uses the development-only `jsdom` dependency.
 
 ```sh

@@ -1,0 +1,43 @@
+{
+  "date": "2026-11-09",
+  "status": "success",
+  "commit": "3ee19650b076cd55b72841ac07a6fb6a33d14da2",
+  "run_id": 42720712106,
+  "job_id": 129513672507,
+  "run_url": "https://github.com/pmartin5-gif/HelloWorld/actions/runs/42720712106",
+  "duration_seconds": 53,
+  "runner": "ubuntu-24.04",
+  "artifact_id": 13720520896,
+  "artifact_name": "lightboard-baseline-42720712106-1",
+  "artifact_expires_at_utc": "2026-11-10T23:29:10Z",
+  "artifact_zip_bytes": 183113,
+  "artifact_zip_sha256": "e68a2df729812fbf3888676eeb70131851899909c18fe04f9a8b687d285481f0",
+  "local_archive": ".build/cloud-run-42720712106/firmware.zip",
+  "local_firmware_directory": ".build/cloud-run-42720712106/firmware",
+  "archive_digest_verified": true,
+  "file_checksums_verified": true,
+  "source_and_build_lock_verified": true,
+  "application_bytes": 290960,
+  "application_slot_bytes": 1310720,
+  "application_headroom_bytes": 1019760,
+  "static_dram_bytes_reported": 21984,
+  "binaries": {
+    "LightboardBaseline.ino.bin": {
+      "bytes": 290960,
+      "sha256": "488a8ac16f5869928e0f73351b6fdf9ec8222f96f920c8d7e0c2d70678b25048"
+    },
+    "LightboardBaseline.ino.bootloader.bin": {
+      "bytes": 18992,
+      "sha256": "3d97b71a61331ebaddef2a74e090c35299650f395f1387f85130010e84e46563"
+    },
+    "LightboardBaseline.ino.partitions.bin": {
+      "bytes": 3072,
+      "sha256": "148b959cbff1c38aa8e1d5c0ba9d612c54997b945e56a63f41223eef650653a1"
+    }
+  },
+  "uploaded_to_board": false,
+  "model_api_used": false,
+  "billing_settings_changed": false,
+  "free_storage_and_zero_dollar_spending_stop_observed_before_run": true,
+  "nonblocking_warning": "Pinned arduino/setup-arduino-cli action declares Node 20; GitHub ran it successfully on Node 24."
+}

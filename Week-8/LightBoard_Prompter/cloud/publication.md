@@ -1,6 +1,8 @@
 # Lightboard firmware delivery test
 
-This is Step 6 preparation. **Lightboard publication test** builds the preserved baseline and the exact saved heart response, prepares a small delivery package, and optionally publishes it. It makes zero model requests and performs no device operation. The test images have **no Wi-Fi or OTA support**.
+This is Step 6. **Lightboard publication test** builds the preserved baseline and the exact saved heart response, prepares a small delivery package, and optionally publishes it. It makes zero model requests and performs no device operation. The test images have **no Wi-Fi or OTA support**.
+
+**Verified November 9, 2026:** [Run 42746766266](https://github.com/pmartin5-gif/HelloWorld/actions/runs/42746766266) passed on published `7e47654`, creating [the first delivery release](https://github.com/pmartin5-gif/HelloWorld/releases/tag/lightboard-test-42746766266-1) and the feed below. Linux application: **291,200 bytes**; recovery baseline: **290,960 bytes**. All four assets passed server size/SHA-256 checks and anonymous byte-for-byte download checks before the feed advanced. Both feed readbacks passed; an independent GitHub connector read matches the logged manifest. Provenance records original generation `42735010470` and `model_request_in_this_run: false`. This does not establish ESP32 TLS compatibility, Wi-Fi association, runtime memory, physical installation, or recovery. Evidence: `publication-verification.json` and `.build/cloud-publication-run-42746766266/`.
 
 ## Delivery route and cost
 
@@ -8,7 +10,7 @@ Public GitHub Release assets hold the binaries; a separate `lightboard-feed` bra
 
 `https://raw.githubusercontent.com/pmartin5-gif/HelloWorld/lightboard-feed/manifest.json`
 
-This URL does not exist until the first successful publication. The branch starts with only this manifest and does not change main. Each release has a unique `lightboard-test-<run-id>-<attempt>` tag and is a prerelease with `make_latest: false`, so it does not become the repository-wide latest release. Existing Lightboard releases/assets are never overwritten or deleted by this code.
+This URL was created by the successful publication above. The branch starts with only this manifest and does not change main. Each release has a unique `lightboard-test-<run-id>-<attempt>` tag and is a prerelease with `make_latest: false`, so it does not become the repository-wide latest release. Existing Lightboard releases/assets are never overwritten or deleted by this code.
 
 [GitHub documents](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases) no total release-size or bandwidth limit, with each asset below 2 GiB. Our two application images total approximately 583 KB. [Standard runners for public repositories are free](https://docs.github.com/en/billing/concepts/product-billing/github-actions). The workflow stops before allocating a runner for private repositories or other branches, uses standard `ubuntu-24.04`, and stores no Actions artifact or cache. It needs no paid hosting, personal access token, model key, billing change, or new account. Stop if the free public route becomes unavailable.
 
@@ -53,4 +55,4 @@ SHA-256 checks detect byte corruption; the manifest and binaries rely on GitHub 
 
 `python3 -m unittest discover -s tests -v` includes failure-ordering, corruption, feed conflicts, duplicate releases, preservation of previous firmware, repository/ref checks, and restricted redirects. Mocked tests do not establish real GitHub publication or physical recovery.
 
-An isolated real local check compiled the baseline and exact unchanged heart response using CLI 1.5.1 / core 2.0.17, then prepared only the four delivery assets. Baseline: **290,944 bytes**. Candidate: **291,216 bytes**. Both pinned-input checks and bundle/provenance checks passed. Output is `.build/publication-local-check/`; its run ID `1` is a synthetic local fixture, not a published release. Cloud evidence for this new workflow remains pending. See `publication-verification.json`.
+An isolated real local check compiled the baseline and exact unchanged heart response using CLI 1.5.1 / core 2.0.17, then prepared only the four delivery assets. Baseline: **290,944 bytes**. Candidate: **291,216 bytes**. Both pinned-input checks and bundle/provenance checks passed. Output is `.build/publication-local-check/`; its run ID `1` is a synthetic local fixture, not a published release. The subsequent cloud result is recorded separately above and in `publication-verification.json`.
