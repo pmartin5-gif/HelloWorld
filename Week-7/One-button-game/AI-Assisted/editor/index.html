@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Triangle Hero · Song Mapper</title><link rel="stylesheet" href="editor.css">
+  <script src="model.js" defer></script><script src="editor.js" defer></script>
+</head>
+<body>
+<header><div><p class="eyebrow">TRIANGLE HERO / WORKSHOP</p><h1>Song mapper<span class="pixel"> ▲</span></h1><p>Listen. Tap the triangle part. Fine-tune the timing.</p></div><a href="../" target="_blank" rel="noopener">Open game ↗</a></header>
+<main>
+  <section><label>Song to map <select id="song" disabled></select></label><p id="song-description" class="help">Each difficulty has its own song and chart. Unsaved drafts stay in this tab when you switch songs.</p></section>
+  <div id="notice" role="status" aria-live="polite">Loading songs…</div>
+  <fieldset id="workspace" disabled>
+    <section class="transport"><h2>01 / Listen & record</h2>
+      <div class="row"><button id="play">Play · P</button><button id="record" aria-pressed="false">Record taps: off</button><button id="tap">Add note · Space</button><output id="time">0.000 s</output></div>
+      <div class="row"><label>Playback speed <select id="speed"><option value="1">1×</option><option value="0.75">0.75×</option><option value="0.5">0.5×</option></select></label><label><input id="preview" type="checkbox" checked> Click at chart notes</label><label>Tap correction (ms)<input id="tap-offset" type="number" value="0" step="10" min="-1000" max="1000"></label></div>
+      <p class="help">P plays or pauses. With recording on, Space records a strike while music plays. With recording off, Space plays or pauses. Negative tap correction places recorded notes earlier in song time.</p>
+      <label class="seek">Song position <input id="seek" type="range" min="0" max="61.146" step="0.001" value="0"></label>
+    </section>
+    <section><h2>02 / Loop & inspect</h2>
+      <div class="row"><label>Section start (s)<input id="loop-start" type="number" min="0" step="0.1" value="0"></label><label>Section end (s)<input id="loop-end" type="number" min="0" step="0.1" value="10"></label><label><input id="loop" type="checkbox"> Loop section</label><button id="section">Play section</button></div>
+      <div class="row"><label>View length <select id="zoom"><option value="0.1">100 milliseconds</option><option value="0.5">500 milliseconds</option><option value="1">1 second</option><option value="5">5 seconds</option><option value="10" selected>10 seconds</option><option value="20">20 seconds</option><option value="all">Whole song</option></select></label><label><input id="follow" type="checkbox" checked> Follow playhead</label><button id="clear-section" class="danger">Clear visible notes</button><span class="help">Click waveform to seek. Click a marker to select it.</span></div>
+      <canvas id="timeline" width="1200" height="240" aria-label="Song waveform, chart notes and playback position"></canvas>
+      <div class="row"><button id="view-back">← Previous view</button><button id="view-next">Next view →</button><span id="view-label"></span></div>
+    </section>
+    <section><h2>03 / Fine-tune notes</h2>
+      <div class="edit-grid"><div>
+        <label>Chart notes <select id="notes" size="9" aria-label="Chart notes"></select></label>
+      </div><div>
+        <div class="row"><label>Selected timestamp (s)<input id="note-time" type="number" min="0" step="0.000001"></label><button id="set-note">Set time</button><button id="delete" class="danger">Delete note</button></div>
+        <div class="row"><button id="earlier">−10 ms · ←</button><button id="later">+10 ms · →</button><button id="audition">Listen around note</button></div>
+        <div class="row"><label>Shift every note (ms)<input id="shift" type="number" value="-50" step="10"></label><button id="shift-all">Apply shift</button></div>
+        <div class="row"><button id="undo">Undo</button><button id="redo">Redo</button><span id="dirty"></span></div>
+        <p class="help">Shift + arrow nudges by 1 ms. Closely spaced notes are allowed. Exact duplicate timestamps must be adjusted before saving. Undo also restores cleared sections.</p>
+      </div></div>
+    </section>
+    <section><h2>04 / Update the game</h2><div class="row"><button id="save" class="primary">Save chart to game</button><button id="export">Export JSON backup</button><label>Restore draft <input id="import" type="file" accept=".json,application/json"></label><span id="count"></span></div><p class="help">Saving writes the shared chart and keeps a backup of the previous version. The game picks it up when you start or replay a round. Your current round is never interrupted.</p><p id="save-reason" class="help"></p><p id="issues" class="help"></p></section>
+  </fieldset>
+</main>
+<footer>Separate workspace. Same song. One shared chart.</footer>
+</body></html>
