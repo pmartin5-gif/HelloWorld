@@ -10,7 +10,9 @@ The current version works with color and transparency, preserves the original fo
 
 ## Try it
 
-Open [index.html](index.html) in a modern browser. No account, installation, or build step is needed to use the application.
+**[Open borkilator online](https://pmartin5-gif.github.io/HelloWorld/borkilator/)** and share that URL with anyone. No account, installation, or build step is needed to use the application. Images are processed in the visitor's browser.
+
+You can also open [index.html](index.html) locally in a modern browser.
 
 1. **Upload image:** click the empty image pane or use the Upload image control to select a still PNG, JPEG, or WebP. The pane also supports keyboard focus and Enter / Space. Your image begins as an untouched study.
 2. **Prepare Signal settings:** move sliders, enter percentages, or try the Dragged, Fractured, and Encoded presets. Changing settings does not render an effect. Clear resets the prepared effects; it does not undo an image.
@@ -79,6 +81,10 @@ The homework notes propose further work: introducing an overall “borkilation�
 
 ## Development and verification
 
+### GitHub Pages publication
+
+The repository's shared `.github/workflows/pages.yml` workflow publishes the app at `/HelloWorld/borkilator/` when changes to this project reach `main`. It copies only `index.html`, `style.css`, `app.js`, `engine.js`, and `worker.js` into the deployment's `borkilator/` directory. The existing Pages projects are preserved by the shared workflow. No runtime build, API keys, or backend service is required. Future updates use the same shareable URL.
+
 The application is buildless HTML/CSS/JavaScript. [app.js](app.js) manages upload, controls, history, save/reopen, and export; [engine.js](engine.js) performs pixel processing. When served over HTTP, [worker.js](worker.js) runs Signal processing in the background. Opening the local HTML uses a cooperative main-thread fallback with the same engine. Earlier procedural engine functions remain for regression comparison.
 
 The five application files also form an annotated code book. Open [index.html](index.html) **in your editor** to begin with the introduction, project-wide reading route, and annotated contents. Each file has its own introduction and contents, followed by chapter openings and explanations beside the code. The executable program remains active.
@@ -106,4 +112,4 @@ node --check worker.js
 
 The checks cover RGBA effects, grayscale compatibility, deterministic processing, Cosmic particle coverage and one-channel changes, compatibility with pre-effect version-3 pixel digests, preservation of input, worker agreement, upload and save/reopen workflows, history and branching, size limits, cancellation, and failure recovery. A full-resolution 3840 × 2160 RGBA pass has also been checked.
 
-Controller tests use simulated Canvas/PNG APIs. Automated checks do not establish native browser decoding, orientation, resizing quality, layout, PNG encoding, or download behavior. Live browser QA during implementation was blocked by the environment's restriction on starting a local preview server. The homework notes separately record the user's successful upload/distortion example and usability observations; they do not establish comprehensive browser coverage.
+Controller tests use simulated Canvas/PNG APIs. Automated checks do not establish native browser decoding, orientation, resizing quality, layout, PNG encoding, or download behavior. Earlier local browser QA was blocked by the environment's restriction on starting a preview server. On November 17, 2026, the published GitHub Pages version was checked in Chrome: a 640 × 360 sample PNG imported at its native dimensions, and the Fractured preset produced a completed distortion pass with both upload and result in history. This is a focused deployment smoke check, not comprehensive browser coverage. The homework notes separately record the user's successful upload/distortion example and usability observations.
