@@ -1,0 +1,140 @@
+{
+  "date": "2026-11-18",
+  "status": "original firmware recovered; revised refresh-task pilot compiled but not installed",
+  "local_compile": {
+    "built_at_utc": "2026-11-18T22:34:17.839391+00:00",
+    "foundation_id": "3f6b7d269af316c8006155fdb9deb6711f4a0b18f2bf1294613c8784bb81343b",
+    "firmware_version": "ota-pilot-de9996a65a5fa1a5c80b0219",
+    "source_sha256": "74dd87bbec18694cc78024a76bc045c177ee4958bd8fe8f9bfa18f9975df7724",
+    "ota_protected_sha256": "48b4f4c52aa0abf520e16e292fc0fee71ae3b46de12670eea5a5b03d2e694791",
+    "baseline_source_sha256": "d90e1b58d47ad841c7ef6c737afac802da1e34e0a4810e43ca7ae7e05173bb46",
+    "core": "esp32:esp32@2.0.17",
+    "arduino_cli": "1.5.1",
+    "fqbn": "esp32:esp32:esp32:UploadSpeed=921600,CPUFreq=240,FlashFreq=80,FlashMode=qio,FlashSize=4M,PartitionScheme=default,DebugLevel=none,PSRAM=disabled,LoopCore=1,EventsCore=1,EraseFlash=none,JTAGAdapter=default",
+    "binaries": {
+      "LightboardOTA.ino.bin": {
+        "bytes": 1007728,
+        "sha256": "40d55837d766a69b411c9b864e250fd5ba0326992f0629fa2b567a1ea59e056f"
+      },
+      "LightboardOTA.ino.bootloader.bin": {
+        "bytes": 18992,
+        "sha256": "3d97b71a61331ebaddef2a74e090c35299650f395f1387f85130010e84e46563"
+      },
+      "LightboardOTA.ino.partitions.bin": {
+        "bytes": 3072,
+        "sha256": "148b959cbff1c38aa8e1d5c0ba9d612c54997b945e56a63f41223eef650653a1"
+      }
+    },
+    "application_slot_bytes": 1310720,
+    "application_headroom_bytes": 302992,
+    "model_requests": 0,
+    "uploaded_to_board": false,
+    "automatic_updates": false,
+    "physical_flash_partitions_heap_timing_tls_and_recovery_verified": false,
+    "static_dram_bytes_reported": 47336
+  },
+  "offline_tests_passed": 58,
+  "saved_api_key_absent": true,
+  "staged_ide_sketch": "/Users/pmartin5/Documents/GitHub/HelloWorld/Week-8/LightBoard_Prompter/.build/ota-pilot-2026-11-18-v3/LightboardOTA/LightboardOTA.ino",
+  "live_recovery_source_unchanged": true,
+  "usb_adapter_rediscovered": "/dev/cu.usbserial-0001",
+  "installation_started": false,
+  "installed_to_board": false,
+  "fresh_ide_flash_reset_verified": false,
+  "wifi_network_for_test": "pending user selection; previous target MFA IxD",
+  "wifi_credentials_provisioned": false,
+  "actual_flash_and_partitions_verified": false,
+  "runtime_heap_frame_timing_verified": false,
+  "device_https_feed_verified": false,
+  "physical_animation_confirmed": false,
+  "ota_publication_pipeline_adapted": false,
+  "ota_delivery_two_scenes_verified": false,
+  "usb_and_ota_recovery_verified": false,
+  "automatic_updates": false,
+  "new_model_requests": 0,
+  "billing_changes": false,
+  "elf_symbols_verified": [
+    "verifyRollbackLater (strong override)",
+    "esp_crt_bundle_attach"
+  ],
+  "notes": "Static DRAM excludes dynamically allocated task/network memory. Local compile is not flashing or hardware validation.",
+  "staged_sketch_opened_in_ide": false,
+  "code_review": "Baseline animation/setup preserved; URL/foundation/size/TLS checks and deferred boot confirmation reviewed. Native policy tests and real pinned compile passed.",
+  "ide_loading_issue": "Blank new window; editor load timeout; no Upload clicked",
+  "visible_staging_matches_compiled_source": true,
+  "ide_recovered_from_editor_timeout": true,
+  "ide_target": {
+    "board": "ESP32 Dev Module",
+    "port": "/dev/cu.usbserial-0001",
+    "cpu_mhz": 240,
+    "flash_mhz": 80,
+    "flash_mode": "QIO",
+    "flash_mb": 4,
+    "partitions": "default",
+    "psram": false,
+    "erase_all_flash": false,
+    "upload_baud": 921600
+  },
+  "runtime_boot_status": "repeated FreeRTOS xQueueSemaphoreTake scheduler assertion",
+  "recovery_started": true,
+  "recovery_verified": true,
+  "failed_hardware_evidence": ".build/ota-pilot-2026-11-18-v2/failed-hardware-test",
+  "provisional_fault_hypothesis": "Display refresh/SPI blocking while scheduler is suspended during network/NVS startup; exact caller unresolved",
+  "pilot_was_installed": true,
+  "running_firmware": "preserved baseline recovery",
+  "recovery_application_bytes": 290944,
+  "recovery_application_sha256": "95827a8df388874eccf0594faaf98ce36b65869c2255e0ba5d602b20fc6085a8",
+  "recovery_evidence": ".build/ota-pilot-2026-11-18-v2/recovery-evidence",
+  "physical_recovery_visual_confirmation": "pending user response",
+  "unexpected_core_update": {
+    "observed_version": "3.3.13",
+    "restored_version": "2.0.17",
+    "route": "official Arduino CLI core install using already cached archives",
+    "restoration_exit_code": 0
+  },
+  "candidate_status": "v3 compiled; timer ISR only notifies a refresh task; SPI and mutex operations run in task context; hardware validation pending",
+  "needs_private_provisioning": false,
+  "failed_pilot_compile": {
+    "built_at_utc": "2026-11-18T22:19:47.203259+00:00",
+    "foundation_id": "68f3ecf7dab0df8bba8bb3bc24dd23b574e02426ceb06e3cff68f70817ebbf76",
+    "firmware_version": "ota-pilot-4f78b7b2cd2500babe719e13",
+    "source_sha256": "597b417b206387f8dee84bae63818c717059bad2d5dcbcce2a6bb7688bd17a3e",
+    "ota_protected_sha256": "98a3839bdcef5af1e4dccd10e1d1b10fc97967bac8a024bd4b9d7b3839235eb9",
+    "baseline_source_sha256": "d90e1b58d47ad841c7ef6c737afac802da1e34e0a4810e43ca7ae7e05173bb46",
+    "core": "esp32:esp32@2.0.17",
+    "arduino_cli": "1.5.1",
+    "fqbn": "esp32:esp32:esp32:UploadSpeed=921600,CPUFreq=240,FlashFreq=80,FlashMode=qio,FlashSize=4M,PartitionScheme=default,DebugLevel=none,PSRAM=disabled,LoopCore=1,EventsCore=1,EraseFlash=none,JTAGAdapter=default",
+    "binaries": {
+      "LightboardOTA.ino.bin": {
+        "bytes": 1007312,
+        "sha256": "2daa01380c4238ec500e9927cc4da3e04ae614813000a1b87f65e63391b0e92c"
+      },
+      "LightboardOTA.ino.bootloader.bin": {
+        "bytes": 18992,
+        "sha256": "3d97b71a61331ebaddef2a74e090c35299650f395f1387f85130010e84e46563"
+      },
+      "LightboardOTA.ino.partitions.bin": {
+        "bytes": 3072,
+        "sha256": "148b959cbff1c38aa8e1d5c0ba9d612c54997b945e56a63f41223eef650653a1"
+      }
+    },
+    "application_slot_bytes": 1310720,
+    "application_headroom_bytes": 303408,
+    "model_requests": 0,
+    "uploaded_to_board": false,
+    "automatic_updates": false,
+    "physical_flash_partitions_heap_timing_tls_and_recovery_verified": false,
+    "static_dram_bytes_reported": 47320
+  },
+  "failed_staged_ide_sketch": "/Users/pmartin5/Documents/GitHub/HelloWorld/Week-8/LightBoard_Prompter/.build/ota-pilot-2026-11-18-v2/LightboardOTA/LightboardOTA.ino",
+  "failed_pilot_flash_reset_verified": true,
+  "retry_waiting_for": "User confirms restored baseline animation looks normal",
+  "fault_diagnosis": "Initial pilot retained SPI display calls in timer ISR. The pinned HAL uses blocking semaphore locks; this is a plausible cause of the scheduler assertion. The truncated backtrace does not prove the exact caller.",
+  "core_restored_and_libraries_match_pins": true,
+  "no_wifi_credentials_entered": true,
+  "failed_staged_sketch_opened_in_ide": true,
+  "failed_visible_ide_staging_path": "/Users/pmartin5/Documents/Arduino/LightboardOTA/LightboardOTA.ino",
+  "failed_pilot_ide_upload_button_clicks": 1,
+  "recovery_ide_upload_button_clicks": 1,
+  "revised_pilot_ide_upload_button_clicks": 0
+}

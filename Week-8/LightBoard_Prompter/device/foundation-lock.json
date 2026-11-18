@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "foundation_id": "3f6b7d269af316c8006155fdb9deb6711f4a0b18f2bf1294613c8784bb81343b",
+  "files_sha256": {
+    "LightboardRuntime.h": "1f90413b11a68d4e9e2e206de1f3843d878593d4fcee19e48a506d66a498e484",
+    "LightboardRuntime.cpp": "6653a8365e2fdfa19a7a0a3087692689a945bb995d7afcadf2691daabd8f2ce9",
+    "UpdatePolicy.h": "7c15f59591426883b0964b48c6b83ec156558e8435db68de0a8995aae0e9ba32",
+    "protected_sketch": "48b4f4c52aa0abf520e16e292fc0fee71ae3b46de12670eea5a5b03d2e694791",
+    "partitions.csv": "3057e2f0b65ffb81f250ba592702c1512cea0ade043ed9baf869ec30987c1290",
+    "build-lock.json": "d49bcc12704f6748ea380a560a38de7163998a4419b51e1cf00b35458f24cd5e"
+  }
+}
