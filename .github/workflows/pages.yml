@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'Week-6/Experiments/Experiment-03/**'
+      - 'Week-6/Experiments/Experiment-06-Flock-Clock/**'
       - 'Week-8/image borkilator/**'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
@@ -26,7 +27,7 @@ jobs:
         run: |
           set -euo pipefail
           # Preserve the other existing Pages URLs from the last manual deployment.
-          # Experiment 03 and borkilator come from their source folders on main.
+          # Experiments 03/06 and borkilator come from their source folders on main.
           git fetch --depth=1 origin 5cff6ab1d996dd769b3b6ac808321218375af4f3
           mkdir _site
           git archive 5cff6ab1d996dd769b3b6ac808321218375af4f3 | tar --exclude='.DS_Store' -x -C _site
@@ -38,6 +39,12 @@ jobs:
           mkdir _site/borkilator
           for file in index.html style.css app.js engine.js worker.js; do
             cp "Week-8/image borkilator/$file" "_site/borkilator/$file"
+          done
+          # Keep the original clock at the root; publish the independent variation here.
+          rm -rf _site/experiment-06
+          mkdir _site/experiment-06
+          for file in index.html style.css clock.js; do
+            cp "Week-6/Experiments/Experiment-06-Flock-Clock/$file" "_site/experiment-06/$file"
           done
           touch _site/.nojekyll
       - uses: actions/upload-pages-artifact@v5
