@@ -12,6 +12,7 @@
 #include <esp_log.h>
 #include <mbedtls/sha256.h>
 #include <time.h>
+#include <atomic>
 
 // Arduino 2.0.17 otherwise confirms an OTA image before setup() runs.
 extern "C" bool verifyRollbackLater() { return true; }
@@ -29,6 +30,7 @@ bool pendingVerify = false;
 bool healthy = false;
 bool terminalHealthFailure = false;
 bool reconnectEnabled = true;
+std::atomic<int> lastDisconnectReason{-1};
 uint32_t connectStarted = 0;
 uint32_t lastConnectAttempt = 0;
 uint32_t healthWindowStart = 0;
@@ -117,6 +119,47 @@ void connectWifi() {
   lastConnectAttempt = connectStarted = millis();
   WiFi.begin(credentials.ssid, credentials.password);
   Serial.println("LB_WIFI_CONNECTING");  // Never echo SSID, password, or provisioning input.
+}
+void diagnoseWifi(const char* expected = nullptr) {
+  if (!hasCredentials) { Serial.println("LB_STOP: provision Wi-Fi privately first"); return; }
+  if (expected && (!expected[0] || strlen(expected) > 32 || strchr(expected, '\t'))) {
+    Serial.println("LB_STOP: diagnostic name format rejected; input omitted"); return;
+  }
+  if (expected) Serial.printf("LB_WIFI_NAME_CHECK {\"configured_matches_expected\":%s}\n",
+      strcmp(credentials.ssid, expected) == 0 ? "true" : "false");
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.println("LB_WIFI_DIAG: already connected; use status/check; no scan performed"); return;
+  }
+  // The worker owns scanning. Stop any unfinished association, retaining credentials.
+  const int priorReason = lastDisconnectReason.load(std::memory_order_relaxed);
+  WiFi.disconnect(false, false);
+  connectStarted = 0;
+  vTaskDelay(pdMS_TO_TICKS(100));
+  WiFi.scanDelete();
+  Serial.println("LB_WIFI_DIAG_SCANNING: counting 2.4GHz access points; names/password omitted");
+  const int count = WiFi.scanNetworks(false, true, false, 300);
+  unsigned matches = 0, expectedMatches = 0, emitted = 0;
+  for (int i = 0; i < count; ++i) {
+    const String name = WiFi.SSID(i);
+    const bool configuredMatch = name == credentials.ssid;
+    const bool expectedMatch = expected && name == expected;
+    if (configuredMatch) ++matches;
+    if (expectedMatch) ++expectedMatches;
+    if ((!configuredMatch && !expectedMatch) || emitted >= 4) continue;
+    ++emitted;  // Bound output without exposing other networks or BSSIDs.
+    const wifi_auth_mode_t auth = WiFi.encryptionType(i);
+    const bool wpa2 = auth == WIFI_AUTH_WPA2_PSK || auth == WIFI_AUTH_WPA_WPA2_PSK ||
+        auth == WIFI_AUTH_WPA2_WPA3_PSK;
+    Serial.printf("LB_WIFI_DIAG_AP {\"channel\":%d,\"rssi\":%d,\"auth_mode\":%d,"
+        "\"wpa2_personal_compatible\":%s,\"matches_configured\":%s,\"matches_expected\":%s}\n",
+        (int)WiFi.channel(i), (int)WiFi.RSSI(i), (int)auth, wpa2 ? "true" : "false",
+        configuredMatch ? "true" : "false", expectedMatch ? "true" : "false");
+  }
+  WiFi.scanDelete();
+  lastConnectAttempt = millis();  // Keep the normal bounded retry interval after scanning.
+  Serial.printf("LB_WIFI_DIAG {\"scan_result\":%d,\"target_matches\":%u,"
+      "\"expected_matches\":%u,\"prior_disconnect_reason\":%d,\"heap_free\":%u}\n",
+      count, matches, expectedMatches, priorReason, ESP.getFreeHeap());
 }
 void provision(char* value) {
   if (!provisionUntil || (int32_t)(provisionUntil - millis()) <= 0) {
@@ -374,7 +417,10 @@ void healthCheck() {
 void command(char* input) {
   if (strcmp(input, "status") == 0) status();
   else if (strcmp(input, "help") == 0)
-    Serial.println("LB_COMMANDS: status | provision | cancel-provision | offline | reconnect | forget-wifi | check | arm-update | install | rollback");
+    Serial.println("LB_COMMANDS: status | wifi-diagnose | provision | cancel-provision | offline | reconnect | forget-wifi | check | arm-update | install | rollback");
+  else if (strcmp(input, "wifi-diagnose") == 0) diagnoseWifi();
+  else if (strncmp(input, "wifi-diagnose\t", sizeof("wifi-diagnose\t") - 1) == 0)
+    diagnoseWifi(input + sizeof("wifi-diagnose\t") - 1);
   else if (strcmp(input, "provision") == 0) {
     provisionUntil = millis() + 60000;
     provisionPhase = 1;
@@ -470,6 +516,9 @@ void worker(void*) {
   esp_log_level_set("esp-tls", ESP_LOG_NONE);
   esp_log_level_set("esp-x509-crt-bundle", ESP_LOG_NONE);
   hasCredentials = loadCredentials();
+  WiFi.onEvent([](arduino_event_id_t, arduino_event_info_t info) {
+    lastDisconnectReason.store(info.wifi_sta_disconnected.reason, std::memory_order_relaxed);
+  }, ARDUINO_EVENT_WIFI_STA_DISCONNECTED);
   WiFi.persistent(false);
   WiFi.setAutoReconnect(false);
   WiFi.mode(WIFI_STA);

@@ -1,10 +1,10 @@
 {
-  "date": "2026-11-18",
-  "status": "original firmware recovered; revised refresh-task pilot compiled but not installed",
+  "date": "2026-11-19",
+  "status": "Hardware connectivity checks passed; controlled OTA workflow/publisher and two scenes prepared/verified locally; source push/cloud run pending",
   "local_compile": {
-    "built_at_utc": "2026-11-18T22:34:17.839391+00:00",
-    "foundation_id": "3f6b7d269af316c8006155fdb9deb6711f4a0b18f2bf1294613c8784bb81343b",
-    "firmware_version": "ota-pilot-de9996a65a5fa1a5c80b0219",
+    "built_at_utc": "2026-11-20T00:18:14.039754+00:00",
+    "foundation_id": "737b7d0e5f8d6a21c65c5f9e3aee6a126f46e732b79a61aff2b0713e47419309",
+    "firmware_version": "ota-pilot-b381c408b6db4e91ba307920",
     "source_sha256": "74dd87bbec18694cc78024a76bc045c177ee4958bd8fe8f9bfa18f9975df7724",
     "ota_protected_sha256": "48b4f4c52aa0abf520e16e292fc0fee71ae3b46de12670eea5a5b03d2e694791",
     "baseline_source_sha256": "d90e1b58d47ad841c7ef6c737afac802da1e34e0a4810e43ca7ae7e05173bb46",
@@ -13,8 +13,8 @@
     "fqbn": "esp32:esp32:esp32:UploadSpeed=921600,CPUFreq=240,FlashFreq=80,FlashMode=qio,FlashSize=4M,PartitionScheme=default,DebugLevel=none,PSRAM=disabled,LoopCore=1,EventsCore=1,EraseFlash=none,JTAGAdapter=default",
     "binaries": {
       "LightboardOTA.ino.bin": {
-        "bytes": 1007728,
-        "sha256": "40d55837d766a69b411c9b864e250fd5ba0326992f0629fa2b567a1ea59e056f"
+        "bytes": 1010240,
+        "sha256": "133d142a41e75784c2980cb8234d35bc5272cd0688d9648b61d5cfc2a1eca10d"
       },
       "LightboardOTA.ino.bootloader.bin": {
         "bytes": 18992,
@@ -26,28 +26,28 @@
       }
     },
     "application_slot_bytes": 1310720,
-    "application_headroom_bytes": 302992,
+    "application_headroom_bytes": 300480,
     "model_requests": 0,
     "uploaded_to_board": false,
     "automatic_updates": false,
     "physical_flash_partitions_heap_timing_tls_and_recovery_verified": false,
-    "static_dram_bytes_reported": 47336
+    "static_dram_bytes_reported": 47352
   },
-  "offline_tests_passed": 58,
+  "offline_tests_passed": 74,
   "saved_api_key_absent": true,
-  "staged_ide_sketch": "/Users/pmartin5/Documents/GitHub/HelloWorld/Week-8/LightBoard_Prompter/.build/ota-pilot-2026-11-18-v3/LightboardOTA/LightboardOTA.ino",
+  "staged_ide_sketch": "/Users/pmartin5/Documents/GitHub/HelloWorld/Week-8/LightBoard_Prompter/.build/ota-pilot-2026-11-19-v5/LightboardOTA/LightboardOTA.ino",
   "live_recovery_source_unchanged": true,
   "usb_adapter_rediscovered": "/dev/cu.usbserial-0001",
-  "installation_started": false,
-  "installed_to_board": false,
-  "fresh_ide_flash_reset_verified": false,
-  "wifi_network_for_test": "pending user selection; previous target MFA IxD",
-  "wifi_credentials_provisioned": false,
-  "actual_flash_and_partitions_verified": false,
-  "runtime_heap_frame_timing_verified": false,
-  "device_https_feed_verified": false,
-  "physical_animation_confirmed": false,
-  "ota_publication_pipeline_adapted": false,
+  "installation_started": true,
+  "installed_to_board": true,
+  "fresh_ide_flash_reset_verified": true,
+  "wifi_network_for_test": "Hello World",
+  "wifi_credentials_provisioned": true,
+  "actual_flash_and_partitions_verified": true,
+  "runtime_heap_frame_timing_verified": true,
+  "device_https_feed_verified": true,
+  "physical_animation_confirmed": true,
+  "ota_publication_pipeline_adapted": true,
   "ota_delivery_two_scenes_verified": false,
   "usb_and_ota_recovery_verified": false,
   "automatic_updates": false,
@@ -57,10 +57,10 @@
     "verifyRollbackLater (strong override)",
     "esp_crt_bundle_attach"
   ],
-  "notes": "Static DRAM excludes dynamically allocated task/network memory. Local compile is not flashing or hardware validation.",
-  "staged_sketch_opened_in_ide": false,
+  "notes": "Physical v3 animation confirmed. Boot and heap/frame checks passed offline and during unsuccessful association. Connected Wi-Fi/TLS memory and OTA delivery/recovery remain pending. IDE image archived separately from CLI build.",
+  "staged_sketch_opened_in_ide": true,
   "code_review": "Baseline animation/setup preserved; URL/foundation/size/TLS checks and deferred boot confirmation reviewed. Native policy tests and real pinned compile passed.",
-  "ide_loading_issue": "Blank new window; editor load timeout; no Upload clicked",
+  "ide_loading_issue": "Resolved by user force quit/reopen; verified v3 visible workspace loaded",
   "visible_staging_matches_compiled_source": true,
   "ide_recovered_from_editor_timeout": true,
   "ide_target": {
@@ -75,24 +75,24 @@
     "erase_all_flash": false,
     "upload_baud": 921600
   },
-  "runtime_boot_status": "repeated FreeRTOS xQueueSemaphoreTake scheduler assertion",
+  "runtime_boot_status": "LB_BOOT_HEALTH_PASSED; fresh v5 status health true",
   "recovery_started": true,
   "recovery_verified": true,
   "failed_hardware_evidence": ".build/ota-pilot-2026-11-18-v2/failed-hardware-test",
   "provisional_fault_hypothesis": "Display refresh/SPI blocking while scheduler is suspended during network/NVS startup; exact caller unresolved",
   "pilot_was_installed": true,
-  "running_firmware": "preserved baseline recovery",
+  "running_firmware": "ota-pilot-b381c408b6db4e91ba307920",
   "recovery_application_bytes": 290944,
   "recovery_application_sha256": "95827a8df388874eccf0594faaf98ce36b65869c2255e0ba5d602b20fc6085a8",
   "recovery_evidence": ".build/ota-pilot-2026-11-18-v2/recovery-evidence",
-  "physical_recovery_visual_confirmation": "pending user response",
+  "physical_recovery_visual_confirmation": "confirmed by user: The animation on the board looks great.",
   "unexpected_core_update": {
     "observed_version": "3.3.13",
     "restored_version": "2.0.17",
     "route": "official Arduino CLI core install using already cached archives",
     "restoration_exit_code": 0
   },
-  "candidate_status": "v3 compiled; timer ISR only notifies a refresh task; SPI and mutex operations run in task context; hardware validation pending",
+  "candidate_status": "v3 retained on board; offline boot/heap/frame/refresh health verified; Wi-Fi/TLS/OTA tests pending",
   "needs_private_provisioning": false,
   "failed_pilot_compile": {
     "built_at_utc": "2026-11-18T22:19:47.203259+00:00",
@@ -128,13 +128,401 @@
   },
   "failed_staged_ide_sketch": "/Users/pmartin5/Documents/GitHub/HelloWorld/Week-8/LightBoard_Prompter/.build/ota-pilot-2026-11-18-v2/LightboardOTA/LightboardOTA.ino",
   "failed_pilot_flash_reset_verified": true,
-  "retry_waiting_for": "User confirms restored baseline animation looks normal",
+  "retry_waiting_for": null,
   "fault_diagnosis": "Initial pilot retained SPI display calls in timer ISR. The pinned HAL uses blocking semaphore locks; this is a plausible cause of the scheduler assertion. The truncated backtrace does not prove the exact caller.",
   "core_restored_and_libraries_match_pins": true,
-  "no_wifi_credentials_entered": true,
+  "no_wifi_credentials_entered": false,
   "failed_staged_sketch_opened_in_ide": true,
   "failed_visible_ide_staging_path": "/Users/pmartin5/Documents/Arduino/LightboardOTA/LightboardOTA.ino",
   "failed_pilot_ide_upload_button_clicks": 1,
   "recovery_ide_upload_button_clicks": 1,
-  "revised_pilot_ide_upload_button_clicks": 0
+  "revised_pilot_ide_upload_button_clicks": 1,
+  "baseline_physical_animation_confirmed": true,
+  "ide_main_process_error": "Object has been destroyed",
+  "ide_force_quit_confirmed_by_user": true,
+  "visible_revised_ide_staging_path": "/Users/pmartin5/Documents/Arduino/LightboardOTA_pilot_v5/LightboardOTA/LightboardOTA.ino",
+  "visible_revised_staging_matches_compiled_source": true,
+  "ide_reopened_confirmed_by_user": true,
+  "ide_built_binaries": {
+    "LightboardOTA.ino.bin": {
+      "bytes": 1010240,
+      "sha256": "7158e57c7cbe547395248c40fd84eb5f5ca2162d41b529000e6427ecf21bccd8"
+    },
+    "LightboardOTA.ino.bootloader.bin": {
+      "bytes": 18992,
+      "sha256": "3d97b71a61331ebaddef2a74e090c35299650f395f1387f85130010e84e46563"
+    },
+    "LightboardOTA.ino.partitions.bin": {
+      "bytes": 3072,
+      "sha256": "148b959cbff1c38aa8e1d5c0ba9d612c54997b945e56a63f41223eef650653a1"
+    }
+  },
+  "hardware_evidence": ".build/ota-pilot-2026-11-19-v5/hardware-evidence",
+  "offline_initial_boot_verified": true,
+  "offline_check_refusal_observed": "LB_STOP: Wi-Fi is not connected",
+  "latest_observed_status": {
+    "version": "ota-pilot-b381c408b6db4e91ba307920",
+    "foundation": "737b7d0e5f8d6a21c65c5f9e3aee6a126f46e732b79a61aff2b0713e47419309",
+    "flash_bytes": 4194304,
+    "layout_ok": true,
+    "running": "app0",
+    "running_offset": 65536,
+    "slot_bytes": 1310720,
+    "target": "app1",
+    "ota_state": -1,
+    "credentials_set": true,
+    "wifi_status": 3,
+    "heap_free": 218184,
+    "heap_min": 143512,
+    "heap_largest": 110580,
+    "worker_stack_free": 14304,
+    "refresh_stack_free": 3436,
+    "refresh_cycles": 236091,
+    "frames": 7151,
+    "max_frame_gap_ms": 55,
+    "health_ok": true,
+    "rssi": -64
+  },
+  "physical_animation_confirmation": "User after move: The animation looks normal",
+  "wifi_connection_verified": true,
+  "wifi_status_observed": 3,
+  "wifi_status_meaning": "WL_CONNECTED",
+  "network_name_pending_user_response": false,
+  "credential_handling": "User entered credentials privately in IDE. Firmware reported LB_CREDENTIALS_STORED_PRIVATELY. No credential value was read or recorded by the agent.",
+  "after_provisioning_observed_status": {
+    "credentials_set": true,
+    "wifi_status": 1,
+    "heap_free": 220604,
+    "heap_min": 220032,
+    "heap_largest": 110580,
+    "worker_stack_free": 22196,
+    "refresh_stack_free": 3436,
+    "refresh_cycles": 319774,
+    "frames": 9590,
+    "max_frame_gap_ms": 70,
+    "health_ok": true
+  },
+  "wifi_retry_result": "One explicit reconnect attempt; LB_WIFI_ASSOCIATION_NOT_CONFIRMED and wifi_status 1 again",
+  "session_paused_by_user": false,
+  "pause_date": "2026-11-18",
+  "assistant_background_continuation_scheduled": false,
+  "resume_next_action": "Push scoped source through user Terminal SSH, verify exact remote commit, then run Lightboard OTA test saved-heart/publish after free-use checks. No new model requests; physical OTA/recovery still pending.",
+  "offline_observed_status": {
+    "version": "ota-pilot-de9996a65a5fa1a5c80b0219",
+    "foundation": "3f6b7d269af316c8006155fdb9deb6711f4a0b18f2bf1294613c8784bb81343b",
+    "flash_bytes": 4194304,
+    "layout_ok": true,
+    "running": "app0",
+    "running_offset": 65536,
+    "slot_bytes": 1310720,
+    "target": "app1",
+    "ota_state": -1,
+    "credentials_set": false,
+    "wifi_status": 6,
+    "heap_free": 220692,
+    "heap_min": 220120,
+    "heap_largest": 110580,
+    "worker_stack_free": 22196,
+    "refresh_stack_free": 3452,
+    "refresh_cycles": 66881,
+    "frames": 2005,
+    "max_frame_gap_ms": 60,
+    "health_ok": true
+  },
+  "resumed_date": "2026-11-19",
+  "network_testing_constraint": "User now authorizes alternate 2.4GHz network Hello World; supersedes previous MFA-IxD-only constraint",
+  "mac_target_network_observation": "System Settings: MFA IxD connected, signal 3 of 3. Band/security not exposed by available read-only tools.",
+  "mac_radio_query": "system_profiler reports interface inactive; CoreWLAN returns interface_unavailable; does not contradict observed UI connection.",
+  "diagnostic_candidate": {
+    "revision": "v5",
+    "compile": {
+      "built_at_utc": "2026-11-20T00:18:14.039754+00:00",
+      "foundation_id": "737b7d0e5f8d6a21c65c5f9e3aee6a126f46e732b79a61aff2b0713e47419309",
+      "firmware_version": "ota-pilot-b381c408b6db4e91ba307920",
+      "source_sha256": "74dd87bbec18694cc78024a76bc045c177ee4958bd8fe8f9bfa18f9975df7724",
+      "ota_protected_sha256": "48b4f4c52aa0abf520e16e292fc0fee71ae3b46de12670eea5a5b03d2e694791",
+      "baseline_source_sha256": "d90e1b58d47ad841c7ef6c737afac802da1e34e0a4810e43ca7ae7e05173bb46",
+      "core": "esp32:esp32@2.0.17",
+      "arduino_cli": "1.5.1",
+      "fqbn": "esp32:esp32:esp32:UploadSpeed=921600,CPUFreq=240,FlashFreq=80,FlashMode=qio,FlashSize=4M,PartitionScheme=default,DebugLevel=none,PSRAM=disabled,LoopCore=1,EventsCore=1,EraseFlash=none,JTAGAdapter=default",
+      "binaries": {
+        "LightboardOTA.ino.bin": {
+          "bytes": 1010240,
+          "sha256": "133d142a41e75784c2980cb8234d35bc5272cd0688d9648b61d5cfc2a1eca10d"
+        },
+        "LightboardOTA.ino.bootloader.bin": {
+          "bytes": 18992,
+          "sha256": "3d97b71a61331ebaddef2a74e090c35299650f395f1387f85130010e84e46563"
+        },
+        "LightboardOTA.ino.partitions.bin": {
+          "bytes": 3072,
+          "sha256": "148b959cbff1c38aa8e1d5c0ba9d612c54997b945e56a63f41223eef650653a1"
+        }
+      },
+      "application_slot_bytes": 1310720,
+      "application_headroom_bytes": 300480,
+      "model_requests": 0,
+      "uploaded_to_board": false,
+      "automatic_updates": false,
+      "physical_flash_partitions_heap_timing_tls_and_recovery_verified": false,
+      "static_dram_bytes_reported": 47352
+    },
+    "visible_sketch": "/Users/pmartin5/Documents/Arduino/LightboardOTA_pilot_v5/LightboardOTA/LightboardOTA.ino",
+    "status": "Flash/hash/reset, v5 runtime, retained credentials, boot health, connected Wi-Fi and expected-name equality verified",
+    "purpose": "Verify exact saved-name equality and general 2.4GHz scan visibility; user confirms Hello World is 2.4GHz",
+    "ide_upload_button_clicks": 2,
+    "full_profile_and_pinned_core_verified": true,
+    "first_attempt": "Rejected before flashing: hidden ZigbeeMode persisted/reappeared despite first board-data refresh",
+    "remediation": "Reloaded again, waited for Start Debugging/2.0.17 metadata, explicitly reselected ESP32 Dev Module and USB; second IDE compile started",
+    "ide_built_binaries": {
+      "LightboardOTA.ino.bin": {
+        "bytes": 1010240,
+        "sha256": "7158e57c7cbe547395248c40fd84eb5f5ca2162d41b529000e6427ecf21bccd8"
+      },
+      "LightboardOTA.ino.bootloader.bin": {
+        "bytes": 18992,
+        "sha256": "3d97b71a61331ebaddef2a74e090c35299650f395f1387f85130010e84e46563"
+      },
+      "LightboardOTA.ino.partitions.bin": {
+        "bytes": 3072,
+        "sha256": "148b959cbff1c38aa8e1d5c0ba9d612c54997b945e56a63f41223eef650653a1"
+      }
+    }
+  },
+  "november_19_v3_observed_status": {
+    "wifi_status": 1,
+    "credentials_set": true,
+    "heap_free": 220592,
+    "heap_min": 218200,
+    "heap_largest": 110580,
+    "worker_stack_free": 22848,
+    "refresh_stack_free": 3452,
+    "refresh_cycles": 71878,
+    "frames": 2157,
+    "max_frame_gap_ms": 34,
+    "health_ok": true
+  },
+  "previous_v3_compile": {
+    "built_at_utc": "2026-11-18T22:34:17.839391+00:00",
+    "foundation_id": "3f6b7d269af316c8006155fdb9deb6711f4a0b18f2bf1294613c8784bb81343b",
+    "firmware_version": "ota-pilot-de9996a65a5fa1a5c80b0219",
+    "source_sha256": "74dd87bbec18694cc78024a76bc045c177ee4958bd8fe8f9bfa18f9975df7724",
+    "ota_protected_sha256": "48b4f4c52aa0abf520e16e292fc0fee71ae3b46de12670eea5a5b03d2e694791",
+    "baseline_source_sha256": "d90e1b58d47ad841c7ef6c737afac802da1e34e0a4810e43ca7ae7e05173bb46",
+    "core": "esp32:esp32@2.0.17",
+    "arduino_cli": "1.5.1",
+    "fqbn": "esp32:esp32:esp32:UploadSpeed=921600,CPUFreq=240,FlashFreq=80,FlashMode=qio,FlashSize=4M,PartitionScheme=default,DebugLevel=none,PSRAM=disabled,LoopCore=1,EventsCore=1,EraseFlash=none,JTAGAdapter=default",
+    "binaries": {
+      "LightboardOTA.ino.bin": {
+        "bytes": 1007728,
+        "sha256": "40d55837d766a69b411c9b864e250fd5ba0326992f0629fa2b567a1ea59e056f"
+      },
+      "LightboardOTA.ino.bootloader.bin": {
+        "bytes": 18992,
+        "sha256": "3d97b71a61331ebaddef2a74e090c35299650f395f1387f85130010e84e46563"
+      },
+      "LightboardOTA.ino.partitions.bin": {
+        "bytes": 3072,
+        "sha256": "148b959cbff1c38aa8e1d5c0ba9d612c54997b945e56a63f41223eef650653a1"
+      }
+    },
+    "application_slot_bytes": 1310720,
+    "application_headroom_bytes": 302992,
+    "model_requests": 0,
+    "uploaded_to_board": false,
+    "automatic_updates": false,
+    "physical_flash_partitions_heap_timing_tls_and_recovery_verified": false,
+    "static_dram_bytes_reported": 47336
+  },
+  "previous_v3_ide_binaries": {
+    "LightboardOTA.ino.bin": {
+      "bytes": 1007728,
+      "sha256": "1cc8f7c6e339e43ddabec50361fae55e2df9b608ffe10446aa44c7828200b6db"
+    },
+    "LightboardOTA.ino.bootloader.bin": {
+      "bytes": 18992,
+      "sha256": "3d97b71a61331ebaddef2a74e090c35299650f395f1387f85130010e84e46563"
+    },
+    "LightboardOTA.ino.partitions.bin": {
+      "bytes": 3072,
+      "sha256": "148b959cbff1c38aa8e1d5c0ba9d612c54997b945e56a63f41223eef650653a1"
+    }
+  },
+  "previous_v3_hardware_evidence": ".build/ota-pilot-2026-11-18-v3/hardware-evidence",
+  "physical_v3_animation_confirmed": true,
+  "wifi_scan_diagnostic": {
+    "scan_result": 0,
+    "target_matches": 0,
+    "prior_disconnect_reason": 39,
+    "reason_meaning": "WIFI_REASON_TIMEOUT in pinned core",
+    "heap_free": 220432
+  },
+  "pending_user_fields": [],
+  "mac_target_network_radio_report": {
+    "source": "user Option-click Wi-Fi observation",
+    "network": "MFA IxD",
+    "channel": 60,
+    "dfs": true,
+    "band_ghz": 5,
+    "width_mhz": 40,
+    "security": "WPA2 Personal"
+  },
+  "usb_connection_last_report": "User confirmed plugged back in; helper rediscovered /dev/cu.usbserial-0001; fresh v4 status read",
+  "next_network": "Hello World",
+  "next_network_band_reported_by_user": "2.4 GHz",
+  "target_wifi_credentials_provisioned": true,
+  "existing_wifi_credentials_present": true,
+  "existing_provisioned_network_reported_by_user": "Hello World",
+  "ide_restarted_by_user": true,
+  "ide_serial_monitor_restored": true,
+  "private_provisioning_ready": false,
+  "mac_same_wifi_required_for_usb_provisioning_and_public_https": false,
+  "mac_hello_world_visibility": "System Settings currently shows Hello World 5GHz; no exact Hello World entry observed",
+  "user_network_band_clarification": "Hello World is 2.4GHz; Hello World 5GHz is separate 5GHz. Do not conflate the SSIDs.",
+  "previous_v4_compile": {
+    "built_at_utc": "2026-11-19T21:51:48.504655+00:00",
+    "foundation_id": "12db4d261df544b5856f0fe15569c8d3eedadf808b5f4acb2c96aa03d4055631",
+    "firmware_version": "ota-pilot-d466c92dabab64d7e42f41f6",
+    "source_sha256": "74dd87bbec18694cc78024a76bc045c177ee4958bd8fe8f9bfa18f9975df7724",
+    "ota_protected_sha256": "48b4f4c52aa0abf520e16e292fc0fee71ae3b46de12670eea5a5b03d2e694791",
+    "baseline_source_sha256": "d90e1b58d47ad841c7ef6c737afac802da1e34e0a4810e43ca7ae7e05173bb46",
+    "core": "esp32:esp32@2.0.17",
+    "arduino_cli": "1.5.1",
+    "fqbn": "esp32:esp32:esp32:UploadSpeed=921600,CPUFreq=240,FlashFreq=80,FlashMode=qio,FlashSize=4M,PartitionScheme=default,DebugLevel=none,PSRAM=disabled,LoopCore=1,EventsCore=1,EraseFlash=none,JTAGAdapter=default",
+    "binaries": {
+      "LightboardOTA.ino.bin": {
+        "bytes": 1009776,
+        "sha256": "ed4276b662d07a4c052698bbfdfb8e96448a685f7d82fd8c868db9550635eaf4"
+      },
+      "LightboardOTA.ino.bootloader.bin": {
+        "bytes": 18992,
+        "sha256": "3d97b71a61331ebaddef2a74e090c35299650f395f1387f85130010e84e46563"
+      },
+      "LightboardOTA.ino.partitions.bin": {
+        "bytes": 3072,
+        "sha256": "148b959cbff1c38aa8e1d5c0ba9d612c54997b945e56a63f41223eef650653a1"
+      }
+    },
+    "application_slot_bytes": 1310720,
+    "application_headroom_bytes": 300944,
+    "model_requests": 0,
+    "uploaded_to_board": false,
+    "automatic_updates": false,
+    "physical_flash_partitions_heap_timing_tls_and_recovery_verified": false,
+    "static_dram_bytes_reported": 47352
+  },
+  "previous_v4_ide_binaries": {
+    "LightboardOTA.ino.bin": {
+      "bytes": 1009776,
+      "sha256": "fb3e631c167f6459df395c7bb17b0586f70653d0dc80e29510e92a2d21d8fdf7"
+    },
+    "LightboardOTA.ino.bootloader.bin": {
+      "bytes": 18992,
+      "sha256": "3d97b71a61331ebaddef2a74e090c35299650f395f1387f85130010e84e46563"
+    },
+    "LightboardOTA.ino.partitions.bin": {
+      "bytes": 3072,
+      "sha256": "148b959cbff1c38aa8e1d5c0ba9d612c54997b945e56a63f41223eef650653a1"
+    }
+  },
+  "previous_v4_hardware_evidence": ".build/ota-pilot-2026-11-19-v4/hardware-evidence",
+  "physical_v4_animation_confirmed": true,
+  "configured_network_name_matches_hello_world": true,
+  "https_attempts": [
+    {
+      "attempt": 1,
+      "observed": [
+        "E (67535) TRANSPORT_BASE: Failed to open a new connection",
+        "LB_STOP: verified HTTPS feed unavailable (Wi-Fi/clock/certificate/status)",
+        "LB_STOP: incomplete or invalid feed"
+      ],
+      "result": "Connection could not open; exact DNS/TLS/network cause not established"
+    },
+    {
+      "attempt": 2,
+      "result": "Failed to open new connection",
+      "observed": [
+        "E (171987) TRANSPORT_BASE: Failed to open a new connection",
+        "LB_STOP: verified HTTPS feed unavailable (Wi-Fi/clock/certificate/status)",
+        "LB_STOP: incomplete or invalid feed"
+      ]
+    },
+    {
+      "attempt": 3,
+      "conditions": "after move, RSSI -62dBm initially",
+      "result": "verified feed reachable; delivery-test OTA explicitly disabled"
+    },
+    {
+      "attempt": 4,
+      "conditions": "after manual offline/reconnect cycle",
+      "result": "verified feed reachable; delivery-test OTA explicitly disabled"
+    }
+  ],
+  "public_feed_rechecked": {
+    "date": "2026-11-19",
+    "via": "GitHub connector raw-file fetch",
+    "url": "https://raw.githubusercontent.com/pmartin5-gif/HelloWorld/lightboard-feed/manifest.json",
+    "build_run_id": "42746766266",
+    "schema_version": 1,
+    "ota_enabled": false,
+    "device_download_verified": false
+  },
+  "pause_reason": "User moving to improve signal; explicitly wait for readiness before more device commands",
+  "signal_after_move": {
+    "rssi_dbm": -62,
+    "previous_rssi_dbm": -81,
+    "improvement_db": 19
+  },
+  "verified_https_feed_result": "LB_FEED_REACHABLE: published delivery-test feed; OTA explicitly disabled",
+  "successful_https_status": {
+    "wifi_status": 3,
+    "rssi": -66,
+    "heap_free": 218236,
+    "heap_min": 143512,
+    "heap_largest": 110580,
+    "worker_stack_free": 14304,
+    "refresh_stack_free": 3436,
+    "refresh_cycles": 111052,
+    "frames": 3364,
+    "max_frame_gap_ms": 48,
+    "health_ok": true
+  },
+  "offline_cycle": {
+    "command_result": "LB_WIFI_OFFLINE: stored credentials retained",
+    "first_status": {
+      "wifi_status": 6,
+      "credentials_set": true,
+      "heap_free": 218876,
+      "heap_min": 143512,
+      "worker_stack_free": 14304,
+      "refresh_stack_free": 3436,
+      "refresh_cycles": 139608,
+      "frames": 4229,
+      "max_frame_gap_ms": 49,
+      "health_ok": true
+    },
+    "result": "passed; offline frames/refresh advance; manual reconnect and verified HTTPS succeeded",
+    "second_status": {
+      "wifi_status": 6,
+      "credentials_set": true,
+      "heap_free": 218876,
+      "heap_min": 143512,
+      "worker_stack_free": 14304,
+      "refresh_stack_free": 3436,
+      "refresh_cycles": 170851,
+      "frames": 5175,
+      "max_frame_gap_ms": 49,
+      "health_ok": true
+    },
+    "frames_advanced": 946,
+    "refresh_cycles_advanced": 31243,
+    "reconnected_marker": "LB_WIFI_CONNECTED: use status/check for diagnostics",
+    "https_marker": "LB_FEED_REACHABLE: published delivery-test feed; OTA explicitly disabled"
+  },
+  "https_after_reconnect_verified": true,
+  "wifi_reconnect_verified": true,
+  "offline_network_animation_verified": true,
+  "wifi_tls_foundation_hardware_smoke_verified": true,
+  "ota_publication_cloud_verified": false,
+  "ota_publication_local_verification": "cloud/ota-publication-verification.json"
 }

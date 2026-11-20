@@ -67,6 +67,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--verify-only", action="store_true")
     parser.add_argument("--install-core", action="store_true", help="Download the pinned core into isolated data")
+    parser.add_argument("--install-only", action="store_true", help="Set up the pinned toolchain without compiling")
     parser.add_argument("--cli", default="arduino-cli")
     parser.add_argument("--data-dir", type=Path, help="Use an existing Arduino data folder for an offline local check")
     parser.add_argument("--candidate", type=Path, help="Validate and compile only restState in an isolated baseline copy")
@@ -74,8 +75,10 @@ def main():
     args = parser.parse_args()
     artifact = WORK / ("candidate-artifact" if args.candidate else "artifact")
     # Clear only this build mode's previous bundle, even when validation fails.
-    if not args.verify_only and artifact.exists():
+    if not args.verify_only and not args.install_only and artifact.exists():
         shutil.rmtree(artifact)
+    if args.install_only and (not args.install_core or args.candidate or args.generation_record or args.verify_only):
+        raise ValueError("--install-only requires --install-core and no build/verify arguments")
     if args.generation_record and not args.candidate:
         raise ValueError("--generation-record requires --candidate")
     lock = json.loads((ROOT / "build-lock.json").read_text())
@@ -121,6 +124,9 @@ def main():
     )).get("platforms", [])
     if not any(p["id"] == lock["core"] and p.get("installed_version") == lock["core_version"] for p in platforms):
         raise ValueError("The pinned ESP32 core is not installed in the selected data folder")
+    if args.install_only:
+        print("PINNED_TOOLCHAIN_READY: no firmware compilation or device operation")
+        return 0
 
     with tempfile.TemporaryDirectory(prefix="compile-", dir=WORK) as temporary:
         temporary = Path(temporary)

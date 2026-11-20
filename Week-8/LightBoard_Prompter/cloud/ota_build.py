@@ -170,6 +170,9 @@ def compile_pilot(work, cli, data_dir, candidate=None, release_tag=None):
         name = "LightboardOTA.ino." + suffix
         shutil.copyfile(export / name, pending / name)
         binaries[name] = {"bytes": (pending / name).stat().st_size, "sha256": build.sha256(pending / name)}
+    # Retain the exact reviewed inputs for publication validation; never release these files.
+    for path in folder.iterdir():
+        shutil.copyfile(path, pending / path.name)
     tag = release_tag or "lightboard-ota-local-" + version.removeprefix("ota-pilot-")
     require(re.fullmatch(r"lightboard-ota-[a-z0-9-]{1,96}", tag), "Invalid OTA release tag")
     manifest = {"schema_version": 2, "repository": "pmartin5-gif/HelloWorld", "channel": "ota-pilot",
@@ -177,6 +180,8 @@ def compile_pilot(work, cli, data_dir, candidate=None, release_tag=None):
         "current": {"version": version, "bytes": app.stat().st_size, "sha256": build.sha256(app),
             "url": "https://github.com/pmartin5-gif/HelloWorld/releases/download/" + tag + "/firmware.bin"}}
     report = {"built_at_utc": datetime.now(timezone.utc).isoformat(), "foundation_id": foundation,
+        "build_lock_sha256": build.sha256(build.ROOT / "build-lock.json"),
+        "foundation_lock_sha256": build.sha256(DEVICE / "foundation-lock.json"),
         "firmware_version": version, "source_sha256": build.sha256(folder / "LightboardOTA.ino"),
         "ota_protected_sha256": scene.protected_hash((folder / "LightboardOTA.ino").read_text()),
         "baseline_source_sha256": lock["baseline"]["source_sha256"], "core": "esp32:esp32@2.0.17",

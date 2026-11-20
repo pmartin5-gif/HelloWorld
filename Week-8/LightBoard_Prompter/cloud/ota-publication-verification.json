@@ -1,0 +1,102 @@
+{
+  "date": "2026-11-19",
+  "status": "locally prepared and verified; not pushed/published or installed by OTA",
+  "offline_tests_passed": 74,
+  "real_pinned_builds": {
+    "baseline": {
+      "built_at_utc": "2026-11-20T00:46:53.372769+00:00",
+      "foundation_id": "737b7d0e5f8d6a21c65c5f9e3aee6a126f46e732b79a61aff2b0713e47419309",
+      "build_lock_sha256": "d49bcc12704f6748ea380a560a38de7163998a4419b51e1cf00b35458f24cd5e",
+      "foundation_lock_sha256": "43878c34cb193b1775ac42cb5e67b6c3f106f4ea0514d8b9166dc57cf9787890",
+      "firmware_version": "ota-pilot-b381c408b6db4e91ba307920",
+      "source_sha256": "74dd87bbec18694cc78024a76bc045c177ee4958bd8fe8f9bfa18f9975df7724",
+      "ota_protected_sha256": "48b4f4c52aa0abf520e16e292fc0fee71ae3b46de12670eea5a5b03d2e694791",
+      "baseline_source_sha256": "d90e1b58d47ad841c7ef6c737afac802da1e34e0a4810e43ca7ae7e05173bb46",
+      "core": "esp32:esp32@2.0.17",
+      "arduino_cli": "1.5.1",
+      "fqbn": "esp32:esp32:esp32:UploadSpeed=921600,CPUFreq=240,FlashFreq=80,FlashMode=qio,FlashSize=4M,PartitionScheme=default,DebugLevel=none,PSRAM=disabled,LoopCore=1,EventsCore=1,EraseFlash=none,JTAGAdapter=default",
+      "binaries": {
+        "LightboardOTA.ino.bin": {
+          "bytes": 1010240,
+          "sha256": "abdf7a776c8ed9e9a9559e00c8f26beed435794f5a5d2ae40ea5a39d85095418"
+        },
+        "LightboardOTA.ino.bootloader.bin": {
+          "bytes": 18992,
+          "sha256": "3d97b71a61331ebaddef2a74e090c35299650f395f1387f85130010e84e46563"
+        },
+        "LightboardOTA.ino.partitions.bin": {
+          "bytes": 3072,
+          "sha256": "148b959cbff1c38aa8e1d5c0ba9d612c54997b945e56a63f41223eef650653a1"
+        }
+      },
+      "application_slot_bytes": 1310720,
+      "application_headroom_bytes": 300480,
+      "model_requests": 0,
+      "uploaded_to_board": false,
+      "automatic_updates": false,
+      "physical_flash_partitions_heap_timing_tls_and_recovery_verified": false,
+      "static_dram_bytes_reported": 47352
+    },
+    "saved_heart": {
+      "built_at_utc": "2026-11-20T00:46:53.494162+00:00",
+      "foundation_id": "737b7d0e5f8d6a21c65c5f9e3aee6a126f46e732b79a61aff2b0713e47419309",
+      "build_lock_sha256": "d49bcc12704f6748ea380a560a38de7163998a4419b51e1cf00b35458f24cd5e",
+      "foundation_lock_sha256": "43878c34cb193b1775ac42cb5e67b6c3f106f4ea0514d8b9166dc57cf9787890",
+      "firmware_version": "ota-pilot-afcce896518c69ba1cadd521",
+      "source_sha256": "1781c37da34807016f2d4d91e7badc5d75819d94a7c387566a40f451e886e442",
+      "ota_protected_sha256": "48b4f4c52aa0abf520e16e292fc0fee71ae3b46de12670eea5a5b03d2e694791",
+      "baseline_source_sha256": "d90e1b58d47ad841c7ef6c737afac802da1e34e0a4810e43ca7ae7e05173bb46",
+      "core": "esp32:esp32@2.0.17",
+      "arduino_cli": "1.5.1",
+      "fqbn": "esp32:esp32:esp32:UploadSpeed=921600,CPUFreq=240,FlashFreq=80,FlashMode=qio,FlashSize=4M,PartitionScheme=default,DebugLevel=none,PSRAM=disabled,LoopCore=1,EventsCore=1,EraseFlash=none,JTAGAdapter=default",
+      "binaries": {
+        "LightboardOTA.ino.bin": {
+          "bytes": 1010480,
+          "sha256": "42f0463950d3e6ddc01a7987933c0afb07db9b97b4ce27fe164ac0b1a3b0db31"
+        },
+        "LightboardOTA.ino.bootloader.bin": {
+          "bytes": 18992,
+          "sha256": "3d97b71a61331ebaddef2a74e090c35299650f395f1387f85130010e84e46563"
+        },
+        "LightboardOTA.ino.partitions.bin": {
+          "bytes": 3072,
+          "sha256": "148b959cbff1c38aa8e1d5c0ba9d612c54997b945e56a63f41223eef650653a1"
+        }
+      },
+      "application_slot_bytes": 1310720,
+      "application_headroom_bytes": 300240,
+      "model_requests": 0,
+      "uploaded_to_board": false,
+      "automatic_updates": false,
+      "physical_flash_partitions_heap_timing_tls_and_recovery_verified": false,
+      "static_dram_bytes_reported": 47968
+    }
+  },
+  "workflow": "Lightboard OTA test",
+  "workflow_manual_only": true,
+  "workflow_yaml_bash_and_embedded_python_syntax_verified": true,
+  "actions_artifacts_or_cache": false,
+  "new_model_requests": 0,
+  "billing_changes": false,
+  "publication_package": ".build/ota-publication-local-2026-11-19/package",
+  "package_published": false,
+  "simulated_legacy_preservation": {
+    "simulation_only": true,
+    "manifest_bytes": 3963,
+    "device_limit_bytes": 8192,
+    "legacy_schema_preserved": 1,
+    "foundation_id": "737b7d0e5f8d6a21c65c5f9e3aee6a126f46e732b79a61aff2b0713e47419309",
+    "live_feed_changed": false
+  },
+  "hardware_foundation": {
+    "version": "ota-pilot-b381c408b6db4e91ba307920",
+    "foundation_id": "737b7d0e5f8d6a21c65c5f9e3aee6a126f46e732b79a61aff2b0713e47419309",
+    "wifi_tls_offline_reconnect_and_normal_animation_confirmed": true
+  },
+  "live_ota_publication_verified": false,
+  "ota_installation_two_scenes_and_rollback_verified": false,
+  "remote_main_observed": "c57644d1a81cdb54e2afcb0ba50e6a2060e6cf95",
+  "shell_github_access": "DNS resolution fails; prior Terminal SSH push route required",
+  "automatic_device_updates": false,
+  "actual_saved_api_key_absent_from_scoped_files": true
+}

@@ -1,5 +1,15 @@
 # Lightboard remote prompting step by step
 
+**Latest v5 checkpoint, November 19:** v5 is installed (1,010,240-byte verified IDE flash) and passes boot health. Exact saved-name check confirms **Hello World**, Wi-Fi status 3, RSSI -81 dBm. No further provisioning needed. Two HTTPS `check` attempts failed to open a connection; exact DNS/TCP/TLS/internet cause unresolved. After first attempt: free/min heap 219,088/201,756 bytes, worker stack headroom 15,312, max frame gap 60 ms, health true. Public feed rechecked independently and remains schema1/non-OTA. Await user internet/captive-portal and v5 physical-animation confirmation; improve signal if practical before another retry. Certificate validation remains enabled. See v5 hardware-evidence and verification.json.
+
+**Latest Hello World test, November 19:** Private provisioning completed and credentials-stored message observed. Association failed with a timeout (prior reason 39); configured-name scan returned zero matches. Mac Wi-Fi list currently shows **Hello World 5GHz**, without an exact Hello World entry. Asked whether the 2.4 GHz network is enabled/visible or has a different name. v4 health stays true, free/min heap 220,480/218,136 bytes, max frame gap 49 ms. HTTPS remains untested; no firmware change or password value observed.
+
+**Latest network choice, November 19:** User now authorizes **Hello World**, reported as 2.4 GHz, superseding MFA IxD only. ESP32 is temporarily unplugged; wait for the user’s reconnect report before device commands. v4 remains the last verified healthy installation. Hello World credentials are not yet provisioned; previous saved credentials remain. Next rediscover USB, read fresh status, hand off private IDE provisioning, then verify association/HTTPS and runtime health.
+
+**November 19 radio clarification:** User confirms v4 operating normally. Mac MFA IxD connection is **DFS channel 60, 5 GHz, 40 MHz; WPA2 Personal**. ESP32 needs 2.4 GHz; the Mac’s 5 GHz association does not establish whether this SSID also broadcasts on 2.4 GHz. WPA2 Personal fits the pilot. Next determine network owner/router access and confirm compatible 2.4 GHz availability on MFA IxD. No hotspot substitution or further firmware change is needed for that check.
+
+**November 19 current checkpoint:** v4 diagnostic pilot is installed and passed boot health; saved credentials retained. `wifi-diagnose` found zero matches for the configured name, prior disconnect reason 201 (`NO_AP_FOUND`). User requires MFA IxD only. Mac UI shows that name connected; channel/security fields and v4 physical confirmation are requested from user. After scan: free/min heap 220,528/219,960 bytes, max frame gap 61 ms, health true. Actual IDE app 1,009,776 bytes with fresh hash/reset evidence under `.build/ota-pilot-2026-11-19-v4/hardware-evidence/`. All 58 offline tests pass; pinned core/full profile retained. No reprovisioning, model request, spending, publication or OTA delivery. Resolve target visibility/security before HTTPS.
+
 **Updated:** November 9, 2026
 
 **Status:** Step 4 and the Flash-Lite API diagnostic passed. Step 5's published fix `1cd37ca` passed saved-response reuse, validation, and pinned cloud compilation in run `42742746935`: 291,200-byte application, generation skipped, all 84 pinned inputs verified. No artifact was uploaded; report/checksum inspection remains deferred. Step 6 publication passed in run `42746766266` on published `7e47654`, including anonymous asset/feed readbacks and preserved recovery firmware. Separate Wi-Fi/OTA preparation is next. Creative review remains deferred; technical checks remain required. Read `RESUME.md` for the current handoff.
@@ -188,15 +198,18 @@ Bring back this request:
 
 **Hardware step with the assistant. This extends the protected firmware foundation once.**
 
+**November 19 checkpoint:** v5 is installed with pinned core/full profile and preserved scene. User confirms normal physical animation. Exact Hello World network-name match, actual 4MB/two-slot layout, boot health, certificate-verified feed retrieval, offline frame/refresh continuity and manual reconnect pass. Signal improved from -81 to -62 dBm after moving, final -64 dBm. Final free/min heap 218,184/143,512 bytes; max frame gap 55 ms. The old public feed remains OTA disabled. Actual controlled OTA installs and rollback/recovery are still required. See device verification and v5 hardware evidence.
+
 Bring back this request:
 
 > Prepare a development copy of the Lightboard firmware with Wi-Fi and OTA updates. Preserve the current continuous animation behavior, pins, timing, brightness, and double buffering. Verify flash partitions and memory with the pinned toolchain. Keep networking and update support outside generated restState. Include trusted update verification, version reporting, separately provisioned credentials, and a tested USB recovery procedure. Prepare and review the code before the initial installation.
 
-- [ ] Verify that MFA IxD supports the board's Wi-Fi band and authentication, including any extra browser/enterprise login, then verify actual flash capacity and the installed partition layout. Compile the networked build to measure image size and measure runtime heap during the controlled hardware test before enabling automatic OTA.
-- [ ] Connect the ESP32 to your computer by USB for the initial installation and credential provisioning. Arduino IDE may be used for this one-time setup in the current environment.
-- [ ] Check that it connects to Wi-Fi, displays the known scene, and reports its current version.
-- [ ] Confirm the continuous animation, brightness, refresh, and frame timing are preserved. Buttons and face effects have been removed from the current foundation.
-- [ ] Disconnect internet access temporarily and confirm the installed animation continues.
+- [x] Verify the selected 2.4 GHz Hello World network, actual flash/OTA partitions, compiled networked-image fit and runtime heap during verified HTTPS. Automatic OTA remains disabled.
+- [x] Complete initial USB installation and private credential provisioning through Arduino IDE.
+- [x] Verify Wi-Fi connection, known-scene physical behavior and current version.
+- [x] Verify retained GPIO/brightness/double-buffer/timer parameters, user-confirmed continuous animation and healthy frame/refresh metrics during Wi-Fi/HTTPS. Refresh work now runs in a task; the timer ISR only notifies it.
+- [x] Disconnect Wi-Fi, verify continuing frame/refresh counters and health, then reconnect using saved credentials and verify HTTPS again.
+- [x] Prepare sealed-foundation OTA workflow/publisher and two known-scene packages; 74 offline tests, real builds and local package/workflow checks pass. Cloud publication remains pending.
 - [ ] Publish a second known scene through the controlled test path. Confirm that the board downloads, installs, restarts, and reports the new version.
 - [ ] Restore the previous known scene and confirm recovery works. Do not assume automatic crash rollback exists unless we explicitly configure and test it.
 

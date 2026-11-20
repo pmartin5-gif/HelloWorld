@@ -1,0 +1,103 @@
+name: Lightboard OTA test
+
+# Known scenes only; no model API, email, serial access, or automatic device install.
+on:
+  workflow_dispatch:
+    inputs:
+      scene:
+        description: 'Known scene (use saved-heart for the first OTA installation)'
+        type: choice
+        options:
+          - saved-heart
+          - baseline
+        default: saved-heart
+        required: true
+      publish:
+        description: 'Publish verified OTA assets and advance feed; device still needs local arm/install'
+        type: boolean
+        default: false
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lightboard-api-test
+  cancel-in-progress: false
+
+jobs:
+  known-scene:
+    if: ${{ github.repository == 'pmartin5-gif/HelloWorld' && github.event.repository.private == false && github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    defaults:
+      run:
+        working-directory: Week-8/LightBoard_Prompter
+    steps:
+      - name: Check out sealed foundation and known-scene inputs
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /Week-8/LightBoard_Prompter/cloud/
+            /Week-8/LightBoard_Prompter/device/
+            /Week-8/LightBoard_Prompter/tests/
+            /Week-8/LightBoard_Prompter/experiments/flash-lite/2026-11-09/cloud-run-42735010470/generation.json
+
+      - name: Test sealed OTA foundation and publication policy offline
+        run: |
+          python3 -m unittest discover -s tests -p 'test_ota*.py'
+          python3 -m unittest discover -s tests -p 'test_wifi_diagnostics.py'
+
+      - name: Install pinned Arduino CLI
+        uses: arduino/setup-arduino-cli@81d310742121c928ea9c8bbd407b4217b432ae02 # v2
+        with:
+          version: '1.5.1'
+
+      - name: Set up pinned ESP32 toolchain without an unrelated build
+        run: python3 cloud/build.py --install-core --install-only
+
+      - name: Compile preserved scene with the sealed OTA foundation
+        run: >-
+          python3 cloud/ota_build.py --cli arduino-cli --data-dir .build/arduino-data
+          --work .build/ota-baseline
+
+      - name: Compile selected known scene and prepare allowlisted publication
+        env:
+          SCENE: ${{ inputs.scene }}
+        run: |
+          candidate=.build/ota-baseline/artifact
+          if [ "$SCENE" = saved-heart ]; then
+            mkdir -p .build/ota-input
+            python3 cloud/scene.py --record experiments/flash-lite/2026-11-09/cloud-run-42735010470/generation.json --output .build/ota-input/restState.cpp
+            python3 cloud/ota_build.py --cli arduino-cli --data-dir .build/arduino-data --work .build/ota-heart --candidate .build/ota-input/restState.cpp
+            candidate=.build/ota-heart/artifact
+          fi
+          python3 cloud/ota_publish.py --candidate "$candidate" --baseline .build/ota-baseline/artifact --scene "$SCENE" --output .build/ota-publication
+
+      - name: Publish and anonymously verify OTA assets before advancing feed
+        if: ${{ success() && inputs.publish }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 cloud/ota_publish.py --publish --output .build/ota-publication
+
+      - name: Record preparation/publication without claiming installation
+        if: ${{ success() }}
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          m = json.loads(Path('.build/ota-publication/manifest.json').read_text())
+          print(json.dumps(m, indent=2))
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as out:
+              out.write('## Controlled Lightboard OTA test\n\n')
+              out.write('Scene: ' + m['scene'] + '. Published: ' + str(m['published']) + '.\n\n')
+              out.write('Foundation: `' + m['foundation_id'] + '`.\n\n')
+              out.write('Source commit: `' + m['build']['commit_sha'] + '`.\n\n')
+              out.write('Application: ' + str(m['current']['bytes']) + ' bytes. Zero model requests.\n\n')
+              out.write('No device operation, automatic install, Actions artifact or cache.\n\n')
+              out.write('Local check/arm-update/install, boot health, second scene and rollback still require physical verification.\n')
+          PY

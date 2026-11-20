@@ -1675,6 +1675,308 @@ Pause the collaboration after successful cloud publication and resume later in a
 
 Verified the current resume note and local tip `7e47654`, then explicitly recorded the requested pause, successful publication run `42746766266`, saved local verification/handoff edits, and next Step 7 preparation. The board was last reported USB-connected but must be rediscovered when resuming. No board firmware was installed in this session. The exact resume prompt is near the top of `RESUME.md`; it preserves the zero-spending constraint, separately prepared Wi-Fi/OTA foundation, private credential provisioning, Arduino IDE initial-installation route, and pending physical tests. No additional push, cloud/model rerun, or automatic continuation is pending for the completed publication milestone. No background work is scheduled.
 
+## 68. Resume, prepare the OTA pilot, test hardware, and recover the baseline
+
+**Date:** November 18, 2026
+
+### Your prompt
+
+> Ok we're back. let's pick up where we left off.
+
+### Intent
+
+Resume Step 7 from the saved publication checkpoint, keep zero additional spending, preserve the working scene, and prepare a separate Wi-Fi/OTA foundation with controlled hardware checks.
+
+### Preparation and implementation
+
+Read the handoff, live project instructions and helper README. USB was rediscovered at `/dev/cu.usbserial-0001`, with no pending helper job and matching baseline/protected hashes. Repository main had advanced through unrelated work to `c57644d`; the public feed still referenced the successful November 9 release and explicitly disabled OTA. Asked which network to use, without requesting its password; no answer was received.
+
+Prepared a separate builder, sealed runtime, private USB/NVS provisioning dialogue, redacted status/heap/frame/partition diagnostics, authenticated HTTPS reads, bounded update-policy checks, image SHA-256 verification, manual check/arm/install commands, and deferred boot health confirmation. Network operations run outside generated `restState`. The existing publisher deliberately cannot publish this new OTA foundation yet. No network-listening server, automatic installation, firmware signing, Secure Boot, or eFuse changes were introduced. Source/secret/checksum checks and 57 offline tests passed, as did a real pinned compile. Original Desktop source and recovery archives remained unchanged.
+
+### Hardware result and recovery
+
+The IDE initially opened a blank window and logged editor-load timeouts, then recovered. Verified the full original board profile and performed one pilot upload. Fresh IDE output confirmed **1,007,312 bytes**, hash verification, and reset. The pilot then repeatedly hit `xQueueSemaphoreTake queue.c:1554` with the scheduler suspended; the backtrace was truncated/corrupted. No credentials were entered. This exposed a real runtime issue that compilation/offline tests did not establish. The initial design retained the original SPI display calls in the timer ISR. Inspection of the pinned HAL shows blocking semaphore calls, making that a plausible source of the assertion; the truncated trace does not prove its exact caller.
+
+Immediately selected the unchanged original sketch and restored it through the IDE. Fresh recovery output confirmed **290,944 bytes**, `Hash of data verified`, and `Hard resetting via RTS pin`. Its cached full profile and hardware path confirm ESP32 **2.0.17**. Archived the failed pilot binary/ELF/log snippet and the recovery firmware/options/output under `.build/ota-pilot-2026-11-18-v2/`. The first serial view after recovery contained garbled buffered data. Asked the user to confirm that the original physical animation looks normal; that confirmation remains pending.
+
+An IDE interaction also triggered an unintended board-core update to **3.3.13** during recovery. Reported this explicitly and restored **2.0.17** with the official CLI using already cached archives; the restoration returned exit code 0. Verified the installed drawing libraries still match all three pins. The recovery image itself was built/flashed before the update replaced 2.0.17, as its build record shows. No update to the intended dependency versions remains. Future UI actions must use fresh state between individual clicks around moving notifications.
+
+### Revised candidate and current limits
+
+Revised the development foundation so the timer ISR only signals a dedicated refresh task with an ISR-safe notification; SPI/display work and buffer swaps now use a task-context mutex. Retained the original GPIOs, brightness, double buffering, 1,000 µs alarm, scan argument, animation bytes, and 33 ms frame scheduling parameters. The refresh mechanism changed and requires physical timing validation. Added an ISR regression check and refresh stack/cycle diagnostics to boot health validation.
+
+All **58 offline tests pass** and the revised v3 compiles against restored 2.0.17: **1,007,728-byte image**, **302,992-byte application headroom**, **47,336-byte reported static DRAM**. Actual Wi-Fi/TLS heap, frame timing, partitions, boot health, and recovery behavior remain unverified. v3 is **not installed**. Its staged source/artifacts are under `.build/ota-pilot-2026-11-18-v3/`; failed v2 directories have `DO_NOT_UPLOAD.txt` markers. Updated device verification/guide, plan, resume, and hardware records. No new model request, paid service, billing change, credential provisioning, or cloud publication occurred.
+
+Saved the nine scoped pilot/build/test/verification files in local commit `9202d60`, without pushing or including unrelated edits. A push is not required for the next local hardware test. Next action depends on the user's physical baseline-recovery confirmation. After that, retry v3 through IDE and verify stable startup before private provisioning. No background continuation or automatic retry is scheduled.
+
+## 69. Confirm recovery, reopen IDE, and install the revised pilot
+
+**Date:** November 18, 2026
+
+### Your prompts
+
+> The animation on the board looks great.
+
+> I force quit the arudino IDE. it is now closed
+
+> reopened
+
+### Intent
+
+Confirm the recovered baseline, resolve the stuck IDE window, and continue the controlled v3 hardware test without changing dependencies or spending.
+
+### Changes made and verification
+
+The user confirmed the recovered original animation. The IDE had logged `Object has been destroyed`; user force quit/reopen restored it. Opened the verified v3 visible copy through Finder after the IDE file chooser would not enable Open. Selected ESP32 Dev Module and `/dev/cu.usbserial-0001`, verified every original Tools setting and installed core 2.0.17, and byte-compared the visible source to the sealed v3 stage. Clicked Upload once. Fresh output confirmed **1,007,728 bytes**, `Hash of data verified`, and `Hard resetting via RTS pin`. Archived actual IDE binaries, ELF/map, build options, source and observed output under `.build/ota-pilot-2026-11-18-v3/hardware-evidence/`. IDE application SHA-256 is `1cc8f7c6e339e43ddabec50361fae55e2df9b608ffe10446aa44c7828200b6db`; CLI binary remains separately identified.
+
+Cleared initially garbled serial output, then read fresh v3 status at 115200 baud/New Line. Version/foundation match. Device reports **4,194,304-byte flash**, valid layout, app0 at 65,536, slot 1,310,720, and target app1. Observed `LB_BOOT_HEALTH_PASSED`, then health true with **220,692 free / 220,120 minimum / 110,580 largest heap bytes**, worker stack free 22,196, refresh stack free 3,452, refresh cycles 66,881, frames 2,005, and maximum frame gap **60 ms**. `check` correctly returned `LB_STOP: Wi-Fi is not connected`; frame/refresh counters continued. AX monitor status text truncates after 512 characters, so only observed fields are recorded. No earlier scheduler assertion appeared in these fresh diagnostics.
+
+### Result and remaining work
+
+v3 is retained on the board and passes offline health. Asked for v3 physical behavior confirmation and Wi-Fi network choice; both remain unanswered at this checkpoint. No credentials entered or stored, network association/TLS test, OTA download, model call, spending, publication, or automatic update occurred. Next is private local provisioning, then measured Wi-Fi/HTTPS behavior and controlled OTA/recovery. The Desktop helper still tracks the preserved old source and must not deploy over v3. Updated handoff, device evidence, plan and hardware notes; no repeat upload or completed cloud test is needed.
+
+## 70. Private provisioning completed; investigate network visibility
+
+**Date:** November 18, 2026
+
+### Your prompt
+
+> done and the animation looks normal.
+
+### Intent
+
+Confirm the physical revised animation and continue connection/HTTPS tests after private credential entry.
+
+### Changes made and result
+
+Observed only redacted firmware messages: provisioning stored credentials, then association was not confirmed. Fresh status identifies v3, credentials set, and Wi-Fi status **1**, defined as `WL_NO_SSID_AVAIL` in the installed pinned core. Sent one explicit `reconnect`; after the association window the result remained status 1. Animation health remains true, frame/refresh counters advance, free/min heap is **220,604/220,032 bytes**, refresh stack headroom 3,436, and maximum frame gap **70 ms**. No credential value was read or recorded.
+
+Asked which network the user provisioned (MFA IxD, phone hotspot, or another network); answer pending. Actual SSID visibility/2.4 GHz compatibility must be resolved before HTTPS can be tested. No new firmware upload, model request, paid use, publication, or update installation occurred. Saved the redacted checkpoint in device verification and resume notes.
+
+## 71. Pause at the Wi-Fi troubleshooting checkpoint
+
+**Date:** November 18, 2026
+
+### Your prompt
+
+> I need to pause again. Please save our place so we can pick up from here next time.
+
+### Intent
+
+Save an accurate handoff for a new context without repeating completed installation or private provisioning.
+
+### Changes made and result
+
+Marked the session paused in `RESUME.md` and `device/verification.json`, refreshed the exact resume prompt, corrected stale current-state wording, and retained the evidence already archived locally. v3 remains installed; the user confirmed normal animation and privately provisioned credentials. Last observed Wi-Fi result is status 1 (`WL_NO_SSID_AVAIL`) after initial association and one explicit retry, while runtime health stays true. The unanswered first question next time is which network was provisioned; resolve its exact name and 2.4 GHz visibility before HTTPS testing. Do not request the password in chat or reflash/reprovision by default. No assistant background continuation is scheduled. No device operation, cloud/model request, push, or spending occurred for this pause. Existing firmware retry behavior is unchanged.
+
+## 72. Resume on MFA IxD and install redacted board diagnostics
+
+**Date:** November 19, 2026
+
+### Your prompts
+
+> Resume LightBoard_Prompter. Read RESUME.md and continue from the Wi-Fi troubleshooting checkpoint.
+
+> The network is called MFA IxD
+
+> keep troubleshooting MFA IxD only
+
+### Intent
+
+Continue the saved connection issue using the intended network; preserve private credentials, working animation, pinned dependencies and zero spending. Do not substitute a hotspot.
+
+### Changes made and verification
+
+Read handoff/live instructions, rediscovered USB, and read fresh v3 status: credentials set, Wi-Fi status 1, health true. Mac System Settings showed MFA IxD connected with signal 3/3. Its details lacked band information; system_profiler reported an inactive interface and CoreWLAN returned interface_unavailable. Wireless Diagnostics did not expose a scan window; no tests or settings changes were started. These observations did not establish the target’s radio/security configuration.
+
+Added `wifi-diagnose` to the separate pilot, plus an atomic numeric disconnect-reason callback. The worker stops unfinished association without deleting credentials, scans only the saved name, reports at most four matching AP channel/RSSI/auth-mode/WPA2-compatibility rows, then frees results and resumes the bounded retry interval. Connected networks are not disrupted by the diagnostic. Names, passwords, BSSIDs and other networks are omitted. Animation/protected sketch bytes are unchanged. Resealed the reviewed runtime foundation, preserving v3 lock/evidence. All 58 offline checks and a real pinned compile passed: **1,009,776-byte** v4 app, **300,944-byte** slot headroom, **47,352-byte** static DRAM.
+
+Finder UI input failed; Arduino File → Sketchbook opened the exact v4 stage. First Upload stopped before flashing because IDE cached an unsupported `ZigbeeMode` option. Reloaded board data through Tools; the stale options disappeared. Second Upload used the original full profile and installed ESP32 2.0.17. Fresh output verified **1,009,776 bytes**, hash, and hard reset. Cached options/source match the intended stage; runtime preprocessing only prepended its exact-path #line. Archived actual IDE app/bootloader/partitions, ELF/map, source/options and observed output under `.build/ota-pilot-2026-11-19-v4/hardware-evidence/`. IDE application SHA-256 `fb3e631c167f6459df395c7bb17b0586f70653d0dc80e29510e92a2d21d8fdf7` is distinct from the CLI build.
+
+### Result and next step
+
+Fresh v4 status confirmed expected version/foundation and retained credentials. `wifi-diagnose` returned **scan result 0, target matches 0, prior disconnect reason 201 (NO_AP_FOUND)**. Boot health passed. After scan and normal association retry: free/min heap **220,528/219,960 bytes**, max frame gap **61 ms**, health true, advancing frame/refresh counters. No earlier scheduler assertion observed. Zero matches do not prove a 5 GHz-only network or exclude a saved-name mismatch.
+
+Asked the user to Option-click the Mac Wi-Fi menu and report only Channel/band and Security, and to confirm normal v4 animation. These answers remain pending. No password value was read/recorded; no reprovisioning, hotspot switch, new model request, spending, cloud publication or OTA install occurred. Next resolve MFA IxD visibility/security, then authenticated HTTPS and controlled OTA/recovery. Desktop helper remains on the old source foundation and must not deploy over retained v4.
+
+## 73. Confirm Mac radio details and normal v4 display
+
+**Date:** November 19, 2026
+
+### Your prompt
+
+> The channel reads: DFS 60 (5 GhZ, 40 MHZ). Security reads WPA2 Personal. The board is operating normally.
+
+### Intent
+
+Supply the requested network radio/security fields and confirm physical behavior after the diagnostic upload.
+
+### Changes made and result
+
+Recorded the user’s Mac observation: MFA IxD is connected at DFS channel 60, 5 GHz, 40 MHz, WPA2 Personal. Confirmed normal physical v4 animation in verification/evidence and updated the handoff. This ESP32 requires 2.4 GHz; WPA2 Personal fits the pilot. The Mac’s current 5 GHz association does not prove that MFA IxD lacks a simultaneous 2.4 GHz service. Zero board scan matches likewise do not exclude a saved-name mismatch. Asked who manages the router/access points so compatible 2.4 GHz availability can be checked. Kept the user’s MFA-IxD-only constraint. Saved an unsent question for the network owner in RESUME.md; no message was sent. No board command/upload, credential operation, network setting change, model request, spending or publication occurred in this turn.
+
+## 74. Authorize a different 2.4 GHz network; wait for USB reconnection
+
+**Date:** November 19, 2026
+
+### Your prompts
+
+> I am unplugged from the ESP32 for a moment. I will let you know when i am plugged back in. but i found a network that i have access to that is 2.4ghz. Could we just use that one?
+
+> It's called Hello World
+
+### Intent
+
+Use an available compatible-band network instead of continuing exclusively on MFA IxD, while postponing device work until USB is reconnected.
+
+### Changes made and result
+
+Recorded **Hello World**, reported by user as 2.4 GHz, as the new test target. This explicitly supersedes the prior MFA-IxD-only constraint. Updated handoff/device/plan records and marked USB reconnection as the next required user signal. No device command or upload was attempted while unplugged. v4 remains the last verified healthy firmware; existing saved credentials have not been replaced. On reconnection, rediscover USB, inspect fresh status, hand off private local provisioning, then test association/HTTPS and runtime health. No password was requested in chat, network setting changed, model call sent, spending incurred, or cloud publication performed.
+
+## 75. Reconnect USB and prepare private Hello World provisioning
+
+**Date:** November 19, 2026
+
+### Your prompt
+
+> ok i am plugged back in.
+
+### Intent
+
+Resume device access and switch saved Wi-Fi credentials to the authorized 2.4 GHz Hello World network.
+
+### Changes made and result
+
+Read-only helper status rediscovered `/dev/cu.usbserial-0001`, matching original source/protected checkpoints and no pending helper upload. Brought the v4 workspace forward through Arduino Sketchbook; no upload performed. Fresh runtime status identifies v4, valid layout, existing credentials, Wi-Fi status 1 and health true. Free/min heap **220,528/218,136 bytes**, maximum frame gap **34 ms**, advancing counters. Cleared monitor output and verified 115200 baud/New Line with an empty input field. Handed off private provisioning instructions; Hello World credentials are not yet claimed stored. Do not observe credential entry. Wait for the user to finish, clear input/history and say done before redacted association/HTTPS checks. No model call, spending, firmware change, or publication.
+
+## 76. Restore Serial Monitor after IDE restart
+
+**Date:** November 19, 2026
+
+### Your prompts
+
+> I had to restart the arduino IDE. Can you set this up again?
+
+> is it ok if i am on a different wifi than hello world for this process?
+
+### Intent
+
+Restore private provisioning setup and clarify whether the Mac and board must share a network.
+
+### Changes made and result
+
+Dismissed board/library update offers without installing anything. Opened the verified v4 workspace through Arduino Sketchbook, rediscovered USB, and restored Serial Monitor at 115200/New Line. A transient capture error cleared after rebinding the app. Fresh device status confirms v4, valid layout, existing credentials, Wi-Fi status 1 and health true, with 220,528 free heap bytes and maximum frame gap 49 ms. Cleared output and left the empty message field ready for the user to initiate private provisioning. No upload or credential entry performed.
+
+Confirmed the Mac may remain on another Wi-Fi network: provisioning uses USB, and the ESP32 independently connects to Hello World and reaches the public GitHub feed. The Mac does not relay those board HTTPS requests. Hello World provisioning is still pending; password stays out of chat and agent observation.
+
+## 77. Hello World provisioning stored; investigate advertised network name
+
+**Date:** November 19, 2026
+
+### Your prompt
+
+> done
+
+### Intent
+
+Verify the private Hello World setup, then test association/HTTPS if connected.
+
+### Changes made and result
+
+Observed redacted `LB_CREDENTIALS_STORED_PRIVATELY`; fresh status has credentials set, Wi-Fi status 6 and health true. Connection was not confirmed, so HTTPS was not attempted. Ran `wifi-diagnose`: zero scan matches for the configured name, prior disconnect reason **39**, defined as `WIFI_REASON_TIMEOUT` by the installed core. Inspected the Mac’s Wi-Fi list without joining/changing any network: it currently shows **Hello World 5GHz**, but no exact **Hello World** entry, including a case-insensitive name check. This does not prove absence of a hidden or temporarily unavailable 2.4 GHz network.
+
+Asked whether exact Hello World is visible/enabled on 2.4 GHz or has a different name. Runtime stays healthy after diagnostics: free/min heap **220,480/218,136 bytes**, maximum frame gap **49 ms**, advancing counters, health true. Saved redacted evidence under v4 hardware-evidence. No credential value was observed or recorded; no firmware upload, model call, spending, network settings change, publication or OTA install occurred. Next resolve the actual available 2.4 GHz name, then association/verified HTTPS.
+
+## 78. Clarify separate bands and expand name/radio diagnostics
+
+**Date:** November 19, 2026
+
+### Your prompt
+
+> Hello World 5GHz is 5GHz. Hello World is 2.4 GHz
+
+### Intent
+
+Keep the target exactly Hello World on 2.4 GHz and avoid conflating it with the separate 5 GHz SSID.
+
+### Changes made and verification so far
+
+Accepted the distinction. v4’s configured-name-only scan cannot distinguish a stored-name mismatch from broader radio visibility. Expanded the separate v5 diagnostic to optionally compare the saved name to a caller-supplied expected name, scan all 2.4 GHz APs, and emit only total/matching counts plus up to four matching AP channel/security rows. No name/password/BSSID is printed; connected interfaces are left connected, and saved credentials are unchanged. Added a native harness that executes the actual production diagnostic function with simulated success/failure, exact and trailing-space names, connected/no-credential cases, output limits and redaction. All **59 tests** pass, along with real pinned compilation: **1,010,240-byte app**, **300,480-byte** slot headroom, **47,352-byte** static DRAM. Animation and protected sketch bytes are unchanged.
+
+Preserved v4 evidence/lock/verification, resealed the reviewed v5 foundation, and staged a byte-matching visible IDE sketch. IDE again retained/reintroduced a hidden ZigbeeMode option despite an initial metadata refresh, so the first attempt stopped before flashing. Reloaded board data again, waited for correct metadata and explicitly reselected the board/USB. The second compile’s actual build.options confirms exact original FQBN and ESP32 2.0.17. Upload is currently in progress; no v5 flash/runtime success is claimed yet. No credential re-entry, model request, paid use, cloud publication or OTA installation.
+
+## 79. Verify v5 installation and Hello World connection; HTTPS remains unresolved
+
+**Date:** November 19, 2026
+
+### Intent
+
+Complete the expanded diagnostic installation from the prior request, verify exact saved-name/network connection, then test authenticated HTTPS without changing credentials or TLS protections.
+
+### Changes made and result
+
+Observed fresh IDE **1,010,240-byte** flash, hash verification and hard reset. Actual build options confirm pinned core/full profile, and cached runtime/header bytes match the stage except the expected exact-path #line prefix. Archived actual IDE images/ELF/map/options/source and upload output under v5 hardware-evidence. IDE app SHA-256 is `7158e57c7cbe547395248c40fd84eb5f5ca2162d41b529000e6427ecf21bccd8`.
+
+Fresh v5 status showed boot health passed, credentials retained and **Wi-Fi connected** (status 3, RSSI **-81 dBm**). Sent expected-name diagnostic with Hello World; output only `configured_matches_expected: true`, then correctly skipped scanning an already connected network. The expanded full scan was not physically exercised. Connection logic was unchanged; connection after reset does not prove the diagnostic code fixed the prior timeout.
+
+First HTTPS check and one retry both reported `TRANSPORT_BASE: Failed to open a new connection`, verified-HTTPS unavailable and incomplete/invalid feed. No TLS/feed success or firmware download/install. After first attempt, free/min heap **219,088/201,756 bytes**, worker stack headroom **15,312**, max frame gap **60 ms**, health true. GitHub connector independently read the public feed: it still exists and is the original schema1/OTA-disabled publication from run 42746766266; this does not establish device network reachability.
+
+Asked whether Hello World has ordinary internet without a browser sign-in, and whether the latest board animation is normal. Answers pending. Next check internet/captive-portal access and improve weak signal if practical before repeating HTTPS; then distinguish DNS/TCP/TLS causes if needed. No password observed/re-entered, insecure fallback, new model call, spending, cloud publication or OTA install occurred.
+
+## 80. Wait while the user moves to improve signal
+
+**Date:** November 19, 2026
+
+### Your prompt
+
+> I suspect that the signal strength is weak in this part of the building. I am going to move and we'll try again. I will let you know when we can try again.
+
+### Intent
+
+Defer further device testing until the user is ready at a position with potentially better Wi-Fi reception.
+
+### Changes made and result
+
+Recorded the requested wait in resume/device verification. Last verified state remains v5 connected to exact Hello World, healthy animation metrics, RSSI -81 dBm and two failed HTTPS opens. No further device command or network change was performed. On the user’s readiness signal, rediscover USB if needed, measure fresh connection/signal/health, then retry verified HTTPS after changed conditions. Saved credentials persist; no firmware upload or reprovisioning is required by default. No assistant background continuation is scheduled.
+
+## 81. Stronger signal; verified HTTPS and reconnect checks pass
+
+**Date:** November 19, 2026
+
+### Your prompts
+
+> ok i moved. can we see if the signal is stronger here and if everything works?
+
+> The animation looks normal
+
+### Intent
+
+Measure reception at the new position and verify the running foundation’s network and display behavior before proceeding to actual OTA tests.
+
+### Changes made and result
+
+Rediscovered USB and read fresh v5 status. Hello World remained connected; signal improved from **-81 to -62 dBm**. Certificate-verified `check` succeeded with `LB_FEED_REACHABLE: published delivery-test feed; OTA explicitly disabled`. After HTTPS, free/min heap was 218,236/143,512 bytes, worker stack headroom 14,304, max frame gap 48 ms, health true. User confirmed normal animation.
+
+Tested `offline`: stored credentials retained, Wi-Fi status 6, health true. Across two disconnected status readings, counters advanced **946 frames and 31,243 refresh cycles**, with maximum frame gap 49 ms. Sent `reconnect`; observed connected marker, then another successful verified feed check. Final status: Wi-Fi connected, RSSI **-64 dBm**, free/min heap **218,184/143,512 bytes**, largest heap block 110,580, worker/refresh stack headroom **14,304/3,436**, frame gap **55 ms**, health true. No restart/assertion observed. Saved actual redacted results in v5 hardware evidence and updated the plan/checkpoint.
+
+Wi-Fi/HTTPS/offline/manual-reconnect and physical animation checks now pass. Improved reception coincided with HTTPS success; it does not establish weak signal as the sole cause of earlier failures. The existing feed is correctly ineligible for installation. Actual OTA installation, deferred boot validation and recovery remain untested. Next prepare a compatible sealed-foundation publication path and two controlled known scenes. No firmware upload, credential entry, model request, spending, publication or update installation occurred for these connectivity checks.
+
+## 82. Prepare controlled OTA cloud publication after connectivity passes
+
+**Date:** November 19, 2026
+
+### Intent
+
+Continue the authorized Step 7 infrastructure work after physical network/display checks pass. Prepare a concrete known-scene OTA test without another model request or automatic device update.
+
+### Changes made and verification
+
+Implemented `cloud/ota_publish.py` and manual **Lightboard OTA test** workflow, with only baseline/saved-heart scene choices. Extended the isolated builder to retain exact public source inputs and lock hashes for validation, and added a toolchain-only installation mode. Publication binds source/runtime/identity/partitions/reports/binaries to the sealed v5 foundation, uses minimal temporary Actions credentials, checks source commit/main and current feed SHA, preserves legacy metadata and immutable release assets, and verifies server digests plus anonymous byte readbacks before updating the feed. Only firmware/recovery applications, manifest and checksums are released. No automatic install, model request, paid service, Actions artifact or cache.
+
+All **74 offline tests pass**. Added real-code diagnostic/privacy tests and OTA publisher tests covering tampering, incompatible foundations, source-commit binding, upload/readback failure, size/nesting bounds, stale main/feed conflicts, immutable tags and toolchain-only behavior. Both real local sealed builds passed: preserved scene **1,010,240 bytes**, saved heart **1,010,480 bytes**, heart headroom **300,240 bytes**, static DRAM **47,968 bytes**. Prepared an unpublished four-file package and validated preserved legacy-manifest shape at **3,963 bytes** within the 8,192-byte device bound. Parsed workflow YAML and checked every shell block/embedded Python script. Test publication markers come from an in-memory fake API, not a live release.
+
+Saved a concise OTA operating/recovery guide and cloud verification record; consolidated the device guide while retaining its earlier version in v5 hardware evidence and chronological history here. No further board command/upload, credential operation, public feed change or OTA install occurred during cloud preparation. Shell GitHub access still fails DNS. GitHub connector confirmed remote main remains c57644d, so the prior Terminal SSH route is the next push step. The scoped commit can then be manually dispatched with saved-heart/Publish after free-use checks. Actual cloud publication, installation of two known scenes and rollback/recovery remain unverified.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.
