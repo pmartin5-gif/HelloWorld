@@ -203,10 +203,10 @@
     "health_ok": true
   },
   "wifi_retry_result": "One explicit reconnect attempt; LB_WIFI_ASSOCIATION_NOT_CONFIRMED and wifi_status 1 again",
-  "session_paused_by_user": false,
-  "pause_date": "2026-11-18",
+  "session_paused_by_user": true,
+  "pause_date": "2026-11-23",
   "assistant_background_continuation_scheduled": false,
-  "resume_next_action": "Controlled OTA hardware checkpoint complete. Next adapt routine prompt-build/publication to this exact sealed foundation with saved-response reuse, then email intake. Keep zero spending/no new model calls; do not repeat proven hardware tests/upload/provisioning by default.",
+  "resume_next_action": "When user resumes, read RESUME.md. Controlled OTA hardware checkpoint is complete. Adapt regular prompt-build/publication to exact proven foundation using saved response, zero spending and no new model calls. Do not repeat completed installs/rollback, USB flashing or provisioning by default.",
   "offline_observed_status": {
     "version": "ota-pilot-de9996a65a5fa1a5c80b0219",
     "foundation": "3f6b7d269af316c8006155fdb9deb6711f4a0b18f2bf1294613c8784bb81343b",
@@ -484,7 +484,7 @@
     "device_download_verified": true,
     "installed_version_verified": true
   },
-  "pause_reason": "User will report when collaboration can resume; no further commands or publication now",
+  "pause_reason": "User taking a break; will resume in a new context window",
   "signal_after_move": {
     "rssi_dbm": -62,
     "previous_rssi_dbm": -81,

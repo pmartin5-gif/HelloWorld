@@ -2128,6 +2128,24 @@ Controlled Step 7 two-scene Wi-Fi delivery, deferred health, SDK manual rollback
 
 Next adapt regular prompt-build/publication to the proven OTA foundation using a saved response and no new model API call. Old regular builder/helper still use the non-OTA foundation and must not overwrite the current runtime. Then proceed to email intake/queue/dispatch/accurate device acknowledgments. No repeat completed hardware test or workflow is a resume prerequisite. Save the eight scoped progress/guide/verification files in a local notes commit; the tested code remains remote 051a334 and no extra push is required to keep the board working.
 
+## 90. Pause after verified OTA delivery and recovery
+
+**Date:** November 23, 2026
+
+### Your prompt
+
+> ok i'm going to take a break for now. when i get back it will be in a new context window and i will ask to resume
+
+### Intent
+
+Save the exact next-context checkpoint and stop further task work until the user resumes.
+
+### Changes made and result
+
+Marked RESUME.md and device verification paused. Completion evidence/guides are saved in local commit **134154e**; tested source **051a334** is already remote. Final board remains last verified baseline stones in app0/SDK VALID with healthy runtime, saved Wi-Fi credentials and user-confirmed normal display. Two known OTA scene installs, deferred validity, manual rollback and baseline restoration passed. Automatic delivery stays off; automatic crash/power-loss recovery is not claimed.
+
+Next resume task is regular prompt-build/publication integration with the proven sealed foundation, using the saved response and no new model API call/spending, followed by email intake. No repeat hardware test/upload/provisioning or workflow is a prerequisite. Preserve unrelated repository work; rediscover hardware only when needed. No board command, network setting, credential operation, remote push/publication, workflow or model call occurred for this pause. No assistant background continuation is scheduled; firmware association behavior is unchanged. Saved the three scoped pause files locally.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.

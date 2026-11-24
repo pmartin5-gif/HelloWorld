@@ -1,6 +1,12 @@
 # Resume Lightboard Prompter
 
-**Updated:** November 23, 2026. Controlled OTA hardware checkpoint complete; not paused.
+**Updated:** November 23, 2026. **Paused at the user’s request.** Controlled OTA hardware checkpoint is complete.
+
+Wait for the user to resume. No assistant background continuation, workflow dispatch, publication, device command or model request is scheduled. The last verified board state is the normal stones baseline; existing firmware Wi-Fi association behavior is unchanged.
+
+## Resume in a new context window
+
+Read this file and continue with the regular prompt-build/publication integration described below. Completed OTA/rollback tests do not need repeating. Verify repository state before edits; source051a334 is remote, and completion/pause notes are newer local commits. Keep zero additional spending and no new model API calls; reuse the saved response. Hardware may be disconnected during the break—rediscover USB and read fresh state only when hardware work is actually needed. Do not upload or reprovision by default.
 
 ## Current state and next work
 
