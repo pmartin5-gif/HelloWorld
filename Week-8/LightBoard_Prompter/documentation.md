@@ -1977,6 +1977,24 @@ All **74 offline tests pass**. Added real-code diagnostic/privacy tests and OTA 
 
 Saved a concise OTA operating/recovery guide and cloud verification record; consolidated the device guide while retaining its earlier version in v5 hardware evidence and chronological history here. No further board command/upload, credential operation, public feed change or OTA install occurred during cloud preparation. Shell GitHub access still fails DNS. GitHub connector confirmed remote main remains c57644d, so the prior Terminal SSH route is the next push step. The scoped commit can then be manually dispatched with saved-heart/Publish after free-use checks. Actual cloud publication, installation of two known scenes and rollback/recovery remain unverified.
 
+## 83. Pause with verified connectivity and prepared OTA source
+
+**Date:** November 19, 2026
+
+### Your prompt
+
+> I'm going to have to pause again. I will let you know when we can resume.
+
+### Intent
+
+Save the exact next-context checkpoint and stop further collaboration work until the user resumes.
+
+### Changes made and result
+
+Marked the session paused in resume/device verification. v5 remains the last verified installed firmware; stronger reception, Wi-Fi, certificate-verified feed access, offline continuity, manual reconnect and normal physical animation passed. Controlled OTA cloud code/tests/guide are saved in scoped local commit **1fa7610**, following pilot commit 9202d60. All **74 tests** and both real local builds passed. Unrelated repository edits were preserved; final local handoff/pause notes remain working-tree changes.
+
+The Terminal SSH push was requested but not confirmed. On resume, first verify remote main before repeating a push; last observed remote head was c57644d. Cloud publication, two real OTA scene installations and rollback/recovery remain pending. No new board command, network setting, credential operation, model request, spending, workflow dispatch or publication occurred for this pause. No assistant background continuation is scheduled; existing firmware Wi-Fi retry behavior is unchanged.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.

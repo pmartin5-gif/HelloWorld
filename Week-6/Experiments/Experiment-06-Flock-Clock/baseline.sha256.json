@@ -1,0 +1,11 @@
+{
+  "source": "../Experiment-01-Murmuration-Clock",
+  "copied_on": "2026-11-20",
+  "sha256": {
+    "clock.js": "b4b8021ed23f49a05d49536b53ea6e7f4199247063e2b520c4f94c48ead8b21a",
+    "index.html": "7ea01d975559aeb4403352231b98c6b6fbd7686c626708069245b89a1cc5713b",
+    "README.md": "b68294daaa7b90d3f3c02900d3ed664941994f34d5c0418977517685fdbf16ab",
+    "style.css": "6508b7cd4a16917c909f1eaca101b7dc6b916e422c8e1ae56b02fa6b519bdded",
+    "tests/simulation.cjs": "52fd3082306db764a55aaf3ac0902a57786d77feaca6b8954881844898cc9176"
+  }
+}

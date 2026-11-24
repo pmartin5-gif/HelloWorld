@@ -307,3 +307,22 @@ Integrated the field with history and version-3 saved settings. Missing coverage
 **Objective checks:** Current RGBA/controller tests, historical engine/variety tests, and syntax checks for all three JavaScript files passed. Ran the shared workflow's assembly commands in a disposable checkout and verified that existing project directories survive and all five deployed borkilator files match their sources byte for byte. GitHub Actions run [44108688507](https://github.com/pmartin5-gif/HelloWorld/actions/runs/44108688507) built and deployed successfully. Opened the public HTTPS URL in Chrome, imported the existing 640 × 360 dry-blooms sample at its native dimensions, selected Fractured, and completed a distortion pass with original/result history. This focused live check does not establish comprehensive browser, orientation, resizing, or download coverage.
 
 **Fulfillment:** The app is publicly available at the requested shareable URL, without a GitHub account or installation. Publication commit `dd3b37d8fe2c5af39839b2b846656327d639e777` extends the existing workflow so subsequent project updates on `main` redeploy at the same address. The GitHub connector's commit API returned a permission error and the shell could not reach GitHub; the authorized publication was completed through the user's signed-in GitHub browser session. README and this log document the hosting and verification. User-confirmed usefulness is not claimed.
+
+
+## 35. Collect the other published GitHub project links
+
+**Intent:** The user responded “great” to the borkilator publication, then asked for all their other live GitHub project links.
+
+**Execution:** Read the public account's five repository records and successful Pages workflow runs. Four repositories have Pages enabled: HelloWorld, the-void, data-transparency, and fun-app; j-and-p-collab does not. Inspected the shared HelloWorld deployment workflow and its preserved site tree, plus the other published repositories' HTML entry points. Collected direct links to nine other main projects/landing pages, six HelloWorld class/demo pages, and an older Dive Bar/VOID prototype whose multiplayer behavior depends on a backend. Used actual deployed source paths and page titles rather than treating every repository as a hosted application. No hosting settings or public repository files were changed.
+
+**Objective checks:** GitHub's most recent Pages runs for all four hosting repositories report success. The ordinary web fetch tool could not access the public Pages URLs, so this collection uses GitHub deployment records and published source structure; no fresh interactive verification of these other apps is claimed.
+
+**Fulfillment:** The user's “great” confirms that entry 34's publication was useful. The other project links are being provided in this conversation. Their completeness and continued interactive behavior await user review.
+
+## 36. Retrieve the public borkilator URL
+
+**Intent:** Send the user the public URL for image borkilator from their GitHub.
+
+**Execution:** Located the project in `pmartin5-gif/HelloWorld` and consulted the README, Pages workflow, and publication record in entry 34. Retrieved the established public app address, `https://pmartin5-gif.github.io/HelloWorld/borkilator/`. The web fetch tool again could not access the Pages URL, as recorded for earlier links in entry 35; no fresh live verification is claimed.
+
+**Fulfillment:** The previously published public app link is being returned directly. No application or hosting changes were needed. User-confirmed usefulness awaits feedback.

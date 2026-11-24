@@ -1,6 +1,6 @@
 {
   "date": "2026-11-19",
-  "status": "Hardware connectivity checks passed; controlled OTA workflow/publisher and two scenes prepared/verified locally; source push/cloud run pending",
+  "status": "Paused: v5 network/display checks passed; 74-test OTA preparation saved in local commit 1fa7610; push/cloud/physical OTA pending",
   "local_compile": {
     "built_at_utc": "2026-11-20T00:18:14.039754+00:00",
     "foundation_id": "737b7d0e5f8d6a21c65c5f9e3aee6a126f46e732b79a61aff2b0713e47419309",
@@ -203,10 +203,10 @@
     "health_ok": true
   },
   "wifi_retry_result": "One explicit reconnect attempt; LB_WIFI_ASSOCIATION_NOT_CONFIRMED and wifi_status 1 again",
-  "session_paused_by_user": false,
+  "session_paused_by_user": true,
   "pause_date": "2026-11-18",
   "assistant_background_continuation_scheduled": false,
-  "resume_next_action": "Push scoped source through user Terminal SSH, verify exact remote commit, then run Lightboard OTA test saved-heart/publish after free-use checks. No new model requests; physical OTA/recovery still pending.",
+  "resume_next_action": "Wait for user resume; verify whether source commit is already remote before repeating push. Then free-use checks, known-scene OTA cloud publication, physical install/second scene/recovery. Rediscover USB on hardware reconnection.",
   "offline_observed_status": {
     "version": "ota-pilot-de9996a65a5fa1a5c80b0219",
     "foundation": "3f6b7d269af316c8006155fdb9deb6711f4a0b18f2bf1294613c8784bb81343b",
@@ -467,7 +467,7 @@
     "ota_enabled": false,
     "device_download_verified": false
   },
-  "pause_reason": "User moving to improve signal; explicitly wait for readiness before more device commands",
+  "pause_reason": "User will report when collaboration can resume; no further commands or publication now",
   "signal_after_move": {
     "rssi_dbm": -62,
     "previous_rssi_dbm": -81,
@@ -524,5 +524,7 @@
   "offline_network_animation_verified": true,
   "wifi_tls_foundation_hardware_smoke_verified": true,
   "ota_publication_cloud_verified": false,
-  "ota_publication_local_verification": "cloud/ota-publication-verification.json"
+  "ota_publication_local_verification": "cloud/ota-publication-verification.json",
+  "prepared_source_commit": "1fa76104942ae4e2a5e64480c561e306ada6d29f",
+  "source_push_confirmed": false
 }

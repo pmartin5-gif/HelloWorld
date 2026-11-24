@@ -2,7 +2,7 @@
 
 **Updated:** November 19, 2026
 
-**Resumed after moving, November 19.** User requested signal and operation checks. v5 now passes Wi-Fi, certificate-verified HTTPS, offline continuity and manual reconnect, and user confirms normal animation. No assistant background continuation is scheduled.
+**Paused at the user’s request, November 19.** Wait for the user to say resume. No assistant background continuation, workflow dispatch, publication or device command is scheduled. The installed v5 firmware and private saved Wi-Fi credentials remain unchanged; existing firmware association behavior is unchanged.
 
 **Current status:** v5 Wi-Fi/HTTPS/offline/reconnect and physical animation checks passed after moving (final RSSI -64 dBm, free/min heap 218,184/143,512 bytes, max frame gap 55 ms). **Controlled OTA cloud preparation is now implemented and locally verified**, with 74 passing offline tests, real sealed baseline/heart builds, an unpublished allowlisted package and validated workflow syntax. No OTA publication, download/install or rollback has occurred. The shell cannot resolve GitHub; remote main remains c57644d. Next use the previously working Terminal SSH push, then manually run **Lightboard OTA test**, **saved-heart**, **Publish on**, after fresh free-use/$0-stop checks. No new model request or spending. No assistant background continuation is scheduled.
 
@@ -10,11 +10,21 @@
 
 The user resumed work on November 18. Current local progress is saved in `device/verification.json`, `device/README.md`, this note, and `documentation.md`. There are new code commits from unrelated repository work; do not reset main to the older publication commit. No repeat push or cloud/model test is required for completed Steps 5–6.
 
-**Immediate next step:** Publish the scoped local source commit using the user’s Terminal SSH route (shell GitHub DNS remains blocked), verify the exact commit remotely, and run **Lightboard OTA test** on main with **saved-heart** and **Publish** checked after confirming free public-runner use and the existing $0 spending stop. This workflow uses no model API/artifact/cache and never commands a device. Read `cloud/ota-publication.md` and `cloud/ota-publication-verification.json`. A successful run must prove public assets/feed before local check/arm/install. Then verify actual boot/health, publish/install baseline as a second known scene, and test previous-slot recovery. No repeated Wi-Fi provisioning or USB foundation upload needed. Current public schema1 feed is still OTA-disabled until the new publisher completes.
+**Scoped source commit:** `1fa76104942ae4e2a5e64480c561e306ada6d29f` (`Prepare controlled OTA tests for verified Wi-Fi pilot`). Parent pilot commit `9202d60` is also local. Both are ahead of verified remote main `c57644d`; no unrelated edits were committed. Push from the user's Terminal with:
+
+```bash
+git -C /Users/pmartin5/Documents/GitHub/HelloWorld push git@github.com:pmartin5-gif/HelloWorld.git main
+```
+
+Do not force push. If main changed, inspect before retrying. This session's shell still cannot resolve GitHub. After push, verify the exact remote commit before dispatching.
+
+**Immediate next step after the user resumes:** First verify remote main/source commit state. The scoped source commit is `1fa76104942ae4e2a5e64480c561e306ada6d29f`, with parent pilot commit `9202d60`; last observed remote main was `c57644d`. Push was requested but its completion is **not confirmed**. Do not ask for a repeat push if the commit is already remote. If still needed, use the saved Terminal SSH command above without force. Rediscover the board/USB and read fresh state when returning to hardware work.
+
+Once the exact source is remote, confirm free public-runner use and the existing $0 spending stop, then manually run **Lightboard OTA test** on main with **saved-heart** and **Publish** checked. Read `cloud/ota-publication.md` and `cloud/ota-publication-verification.json`. This uses no model API/artifact/cache and does not command a device. Verify the real cloud assets/feed before local check/arm/install; then test actual boot/health, a second known scene and rollback/recovery. No repeated private provisioning or USB foundation upload needed by default. Public schema1 feed remains the last verified live state; no OTA publication/install has been verified.
 
 Reopen this project and say:
 
-> Resume LightBoard_Prompter. Read /Users/pmartin5/Documents/GitHub/HelloWorld/Week-8/LightBoard_Prompter/RESUME.md. Continue from the installed v5 Wi-Fi/HTTPS troubleshooting checkpoint. Credentials are already provisioned and the animation is confirmed normal. The new target is Hello World, reported as 2.4 GHz; this supersedes MFA IxD only. Hello World Wi-Fi, verified HTTPS, offline continuity and manual reconnect passed after moving. Controlled OTA workflow is prepared and locally verified; continue with source push, cloud publication, then physical install/recovery. Keep zero additional spending; do not reflash or repeat provisioning by default.
+> Resume LightBoard_Prompter. Read /Users/pmartin5/Documents/GitHub/HelloWorld/Week-8/LightBoard_Prompter/RESUME.md. Continue from the installed v5 Wi-Fi/HTTPS troubleshooting checkpoint. Credentials are already provisioned and the animation is confirmed normal. The new target is Hello World, reported as 2.4 GHz; this supersedes MFA IxD only. Hello World Wi-Fi, verified HTTPS, offline continuity and manual reconnect passed after moving. Controlled OTA workflow is prepared and locally verified in commit 1fa7610. Push completion is unconfirmed; verify remote state, then cloud publication and physical install/recovery. Keep zero additional spending; do not reflash or repeat provisioning by default.
 
 No repeat installed-pilot upload, push, model request, or completed cloud test is needed. The prior v3 workspace is `/Users/pmartin5/Documents/Arduino/LightboardOTA_pilot_v3/LightboardOTA/LightboardOTA.ino`. Its files match the sealed CLI-compiled source. The separate IDE-built binary is archived with its actual hash under `.build/ota-pilot-2026-11-18-v3/hardware-evidence/`. Failed v2 folders carry `DO_NOT_UPLOAD.txt`; never use them.
 
