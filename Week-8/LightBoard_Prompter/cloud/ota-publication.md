@@ -1,12 +1,14 @@
 # Controlled OTA publication
 
-**November 23 transport correction:** Old run 45307022021 published successfully, but hardware downloads exposed truncated redirect handling with a 1024-byte HTTP receive buffer. The installed corrected vessel/runtime uses 4096, passed full application HTTPS download/SHA and physical animation/health. Its sealed foundation is f1244292bbdf180ad5ea8b4ffbf46c72b9772ef8ad2407276ae26e3786132522. A new main/saved-heart/Publish run is required before real installation; old 737b… feed is intentionally incompatible. No additional USB upload or provisioning is needed. 79 tests and both revised real builds pass.
+**Hardware sequence verified November 23:** Corrected heart run 45312083895 and baseline run 45313009678/source 051a334 published successfully, including 29 OTA tests each, pinned builds, release server digests, anonymous asset/feed rereads. Actual heart/app1 and baseline/app0 installs passed deferred validation; SDK manual rollback returned heart, then baseline reinstallation restored user-confirmed normal stones. Final live current is baseline f2e92e43…/1,011,840bytes/SHA205081b8…, previous compatible heart 709f1f9c…; foundation f1244292bbdf180ad5ea8b4ffbf46c72b9772ef8ad2407276ae26e3786132522. Feed4,620bytes.79 offline tests passed. Manual recovery is verified; general automatic crash/power-loss recovery is untested. Automatic updates remain off. No repeated run/upload/provisioning is needed merely to resume.
+
+The4096-byte HTTP receive buffer fixed the observed truncated release redirect; actual full download/SHA and physical installs now pass. Earlier1024-byte diagnostic/fresh-query experiments are history, not upload targets. Current run/evidence links are in ../RESUME.md.
 
 Publisher migration is pinned to the exact reviewed old manifest (SHA 67a5d7db82b007d8afa9466740cac3c6a3bea24790d3ea63a739aaf37911b0e6) and exact f124 destination. Before mutation it anonymously rereads that immutable manifest and its firmware/recovery. It preserves the old schema1 legacy snapshot, references the immutable old OTA manifest under superseded_ota with compatible_for_ota false, and leaves previous null. Subsequent same-foundation publications retain the compatible previous image and reference. Any edited/unknown history or other transition requires explicit review. No assets are overwritten/deleted. The full old manifest is also preserved under ota-foundation-history/.
 
-The v5 foundation passed physical Wi-Fi, certificate-verified feed access, offline animation continuity and manual reconnect checks. This workflow prepares two known scenes without another model request. Actual OTA installation and rollback are separate hardware checks.
+The sealed foundation also passed physical Wi-Fi, verified feed retrieval, offline animation continuity and manual reconnect. This workflow uses only two preserved scenes and no model request. Regular prompt/email delivery requires a separate integration with this foundation.
 
-Use **Lightboard OTA test**, on **main**. Its choices are `saved-heart` (the preserved response from generation run 42735010470) and `baseline` (the original scene with the same networking foundation). Select **saved-heart first**; baseline has the same source-derived version as the USB-installed pilot and will be treated as already current.
+Use **Lightboard OTA test**, on **main**. Its choices are `saved-heart` (the preserved response from generation run 42735010470) and `baseline` (the original scene with the same networking foundation). The first-heart/second-baseline sequence below has already passed on this board. Do not reinstall an already-current version; the firmware refuses it. Heart source clipping is documented and unchanged.
 
 The public runner uses pinned CLI 1.5.1, ESP32 2.0.17 and the locked libraries. It validates the sealed runtime and exact known-scene source, retains source inputs/checksums for local validation on the runner, and releases only `firmware.bin`, `recovery.bin`, `manifest.json` and `SHA256SUMS`. No source, prompts, API credentials, private Wi-Fi credentials or compiler logs become release assets. Wi-Fi credentials remain in device NVS.
 
@@ -30,7 +32,7 @@ Keep zero additional spending. Before dispatch, verify the public standard runne
 
 The `recovery.bin` release asset is the sealed baseline **application only**; it is not a full bare-flash image and its URL is not accepted by the OTA updater. The preserved v5 IDE sketch supplies the controlled USB recovery path with matching bootloader/partitions. Do not use the Desktop animation helper or the old cloud candidate builder to overwrite the running pilot; those still use the old foundation. Adopt the proven foundation into routine delivery before enabling email/model automation.
 
-Trust remains GitHub HTTPS/account access plus expected image SHA-256. Independent firmware signing, Secure Boot and eFuse anti-rollback are not implemented. No boot-health/rollback claim is established until the physical sequence succeeds.
+Trust remains GitHub HTTPS/account access plus expected image SHA-256. Independent firmware signing, Secure Boot and eFuse anti-rollback are not implemented. The observed sequence establishes manual rollback for the tested images, not general automatic crash/power-loss recovery.
 
 ## Local preparation evidence
 

@@ -2074,6 +2074,60 @@ Confirmed local and remote main at 99b6d37 before publication. Reviewed scoped c
 
 Next user action is the previously working Terminal SSH push, followed by manual Lightboard OTA test on main, saved-heart, Publish checked, preserving the existing $0 stop. Read-only connector can then verify exact remote source, new run and new foundation/feed. Corrected vessel firmware stays installed with normal animation, credentials retained and full-download health/hash passed. No second USB upload, repeat provisioning, model request or completed local check is needed. Actual OTA image writing/boot/second scene/rollback remain unverified until the new cloud package is published and tested.
 
+## 88. Corrected cloud publication and first successful physical OTA installation
+
+**Date:** November 23, 2026
+
+### Your prompts
+
+> done and done. here is the link: https://github.com/pmartin5-gif/HelloWorld/actions/runs/45307022021
+> the board changed to the heart animation, but i'm not sure that it's running normally. it's as if the heart isn't fitting in the frame of the lightboard.
+
+### Intent
+
+Verify the corrected source publication and cloud run, install the known heart over Wi-Fi, and investigate the user's physical display observation.
+
+### Changes made and result
+
+User completed Terminal push and started the workflow. Their URL referenced the earlier run, so discovered the new run without requiring a replacement link: **45312083895**, job **138170029679**, exact remote/local source **051a334077f4d1db1a5c09cb0115ff6bfccdc802**. All steps succeeded, including **29 cloud OTA tests**, real baseline/heart builds, exact pinned foundation transition, old asset/manifest rereads, server digests, anonymous new asset/feed downloads and publication. Release lightboard-ota-45312083895-1 has four assets; heart **1,012,016 bytes**, SHA **5a936c6cdace5fd09e62a9986d8f57c1d56cae415535090e70db78c627475fe6**, version **ota-pilot-709f1f9cc6fe30951ccdd977**. New 4,369-byte feed matches installed foundation **f1244292…**, preserves full legacy metadata plus hash-bound incompatible old-manifest reference, and leaves compatible previous null. Actual logs/release/manifest/jobs/build reports are preserved under .build/ota-cloud-run-45312083895. No model request, spending, Actions artifact/cache or billing change.
+
+Board check matched the exact version/size/hash. Sent arm-update, observed 60-second arming marker, then install as a separate native Arduino Serial Monitor command. Board restarted into new heart version/foundation; fresh status showed **app1 at 1,376,256**, target app0, state1 PENDING_VERIFY, retained credentials and connected Wi-Fi. After the deferred window observed **LB_BOOT_HEALTH_PASSED** and state2 VALID. Final status: free/min heap **218,484/214,088**, worker/refresh stack **22,272/3,436**, max frame gap **74ms**, health true, RSSI -72. This establishes actual first OTA installation/boot/deferred validation, not merely publication or download. No USB upload/provisioning/repeated local build was needed. Pending/valid statuses are archived in the run's hardware-evidence.
+
+User confirmed scene changed from vessel to heart but reported it appeared cropped. Evaluated the exact saved source's implicit shape outside the panel bounds: minimum pulse fits rows3..31, midpoint reaches row32 (4 shape pixels outside), maximum reaches row33 (20 pixels outside). Panel rows are0..31. Thus the saved heart scene itself clips during growth; no normal-fit claim is made. Exact source remains unchanged for this controlled test. Runtime health/OTA transport passed; animation fit is a recorded source issue. No model request or aesthetic revision was made.
+
+Next user action: same workflow on main, **baseline**, Publish checked, send new run URL. No push needed. Then verify matching foundation/history/assets, second OTA to app0 and deferred health/physical baseline, followed by SDK-gated manual rollback with actual boot/version/health observation. Two-scene delivery/rollback and automatic crash recovery remain unverified. Automatic updates remain disabled.
+
+## 89. Second OTA scene, verified manual rollback and final baseline restoration
+
+**Date:** November 23, 2026
+
+### Your prompts
+
+> done. here is the link: https://github.com/pmartin5-gif/HelloWorld/actions/runs/45312083895
+> Yes. I see the stones and it is displaying normally
+> Yes it returned.
+> the stones are back and displaying normally
+
+### Intent
+
+Verify the baseline workflow and second OTA slot, physically test recovery to the prior image, and leave the normal baseline on the panel.
+
+### Changes made and verification
+
+User started a new baseline workflow but pasted the prior heart run link. Discovered **45313009678**, job **138173082040**, exact source **051a334077f4d1db1a5c09cb0115ff6bfccdc802**, without requiring another link or dispatch. All **29 cloud OTA tests**, pinned build/preparation, server asset digests, anonymous release/feed rereads and publication succeeded. Baseline version **ota-pilot-f2e92e43697828ea9cf37401**, **1,011,840 bytes**, SHA **205081b86ce24673b1222e104f7dc156213bb920e2775ad01f5717ea48225807**, same f124 foundation. Four assets and 4,620-byte manifest verified; previous exact installed heart preserved, plus old incompatible manifest reference and legacy metadata. Saved actual log/manifest/release/jobs/reports under .build/ota-cloud-run-45313009678.
+
+Native Arduino Serial Monitor check matched exact baseline version/size/hash; separate arm-update/install commands delivered it over Wi-Fi. New app0 boot observed SDK state1 PENDING_VERIFY, followed by LB_BOOT_HEALTH_PASSED and state2 VALID. Wi-Fi/credentials survived, minimum heap 216,280, max gap 82 ms. User confirmed normal stones. This completes delivery/boot/health of both known scenes, with the earlier saved-heart clipping recorded separately.
+
+Sent local rollback. Observed LB_MANUAL_ROLLBACK_REQUESTED after the SDK availability gate, actual prior-heart reboot/version in app1, SDK state2 VALID, retained Wi-Fi/credentials and deferred health passed. Post-rollback minimum heap 215,428, max gap 63 ms. User confirmed heart returned. No download or cloud publication was needed for rollback. This establishes tested manual slot recovery, not automatic crash/power-cut recovery.
+
+Fresh check matched the already published baseline; separate arm/install reinstalled it over Wi-Fi. Actual baseline/app0/version, LB_BOOT_HEALTH_PASSED and SDK state2 VALID observed. Final status: connected at -69 dBm, free/min/largest heap **219,344/216,280/110,580**, worker/refresh stack **22,848/3,452**, max gap **77 ms**, health true. User confirmed stones back and normal. Final readings are after boot, not measurements during download. Pending/valid baseline, rollback and restored statuses plus physical confirmations are retained in run hardware-evidence. No USB flash, provisioning, new model call, spending, billing change, Actions artifact/cache, new source push or extra cloud run was needed for recovery/restoration.
+
+### Result and next checkpoint
+
+Controlled Step 7 two-scene Wi-Fi delivery, deferred health, SDK manual rollback and restoration pass. Automatic updates remain disabled. Preserved exact current foundation and native IDE vessel fallback, noting that USB fallback returns vessel rather than stones; application-only release recovery is not a bare-flash image. Archived previous checkpoint/guide versions and consolidated RESUME/device guide/plan/current hardware results to remove superseded pending instructions. Existing 79 offline tests and actual cloud checks cover unchanged source; no redundant rebuild/retest for notes.
+
+Next adapt regular prompt-build/publication to the proven OTA foundation using a saved response and no new model API call. Old regular builder/helper still use the non-OTA foundation and must not overwrite the current runtime. Then proceed to email intake/queue/dispatch/accurate device acknowledgments. No repeat completed hardware test or workflow is a resume prerequisite. Save the eight scoped progress/guide/verification files in a local notes commit; the tested code remains remote 051a334 and no extra push is required to keep the board working.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.

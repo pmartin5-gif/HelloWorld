@@ -1,6 +1,6 @@
 {
   "date": "2026-11-23",
-  "status": "Initial saved-heart cloud publication verified; corrected transport foundation built/installed/tested locally; new source publication pending",
+  "status": "Corrected cloud publications, two actual OTA scene installs, deferred validation, manual rollback and baseline reinstallation verified",
   "offline_tests_passed": 74,
   "real_pinned_builds": {
     "baseline": {
@@ -94,8 +94,8 @@
     "wifi_tls_offline_reconnect_and_normal_animation_confirmed": true
   },
   "live_ota_publication_verified": true,
-  "ota_installation_two_scenes_and_rollback_verified": false,
-  "remote_main_observed": "99b6d37b2ad13e6b261733b7d1f3237372861443",
+  "ota_installation_two_scenes_and_rollback_verified": true,
+  "remote_main_observed": "051a334077f4d1db1a5c09cb0115ff6bfccdc802",
   "shell_github_access": "DNS resolution fails; prior Terminal SSH push route required",
   "automatic_device_updates": false,
   "actual_saved_api_key_absent_from_scoped_files": true,
@@ -397,8 +397,472 @@
     "unpublished_package": ".build/ota-header-fix-2026-11-23/package",
     "simulated_transition_manifest_bytes": 4292,
     "prior_manifest_exact_sha256": "67a5d7db82b007d8afa9466740cac3c6a3bea24790d3ea63a739aaf37911b0e6",
-    "source_pushed": false,
-    "cloud_published": false,
-    "actual_ota_installation": false
-  }
+    "source_pushed": true,
+    "cloud_published": true,
+    "actual_ota_installation": true,
+    "actual_cloud_run": {
+      "id": 45312083895,
+      "job_id": 138170029679,
+      "source_commit": "051a334077f4d1db1a5c09cb0115ff6bfccdc802",
+      "conclusion": "success",
+      "cloud_offline_tests": 29,
+      "manifest": {
+        "automatic_updates": false,
+        "build": {
+          "attempt": "1",
+          "commit_sha": "051a334077f4d1db1a5c09cb0115ff6bfccdc802",
+          "run_id": "45312083895"
+        },
+        "channel": "ota-pilot",
+        "current": {
+          "bytes": 1012016,
+          "release_tag": "lightboard-ota-45312083895-1",
+          "sha256": "5a936c6cdace5fd09e62a9986d8f57c1d56cae415535090e70db78c627475fe6",
+          "source_sha256": "1781c37da34807016f2d4d91e7badc5d75819d94a7c387566a40f451e886e442",
+          "url": "https://github.com/pmartin5-gif/HelloWorld/releases/download/lightboard-ota-45312083895-1/firmware.bin",
+          "version": "ota-pilot-709f1f9cc6fe30951ccdd977"
+        },
+        "device": "esp32-32x32",
+        "foundation_id": "f1244292bbdf180ad5ea8b4ffbf46c72b9772ef8ad2407276ae26e3786132522",
+        "fqbn": "esp32:esp32:esp32:UploadSpeed=921600,CPUFreq=240,FlashFreq=80,FlashMode=qio,FlashSize=4M,PartitionScheme=default,DebugLevel=none,PSRAM=disabled,LoopCore=1,EventsCore=1,EraseFlash=none,JTAGAdapter=default",
+        "generation": {
+          "model_request_in_this_run": false,
+          "response_sha256": "ca9f5d73467bb02aab6278c8db4c03d5d643c960e5f2ea7221cea7d6263f1171",
+          "run_id": "42735010470"
+        },
+        "legacy_delivery_test": {
+          "build": {
+            "attempt": "1",
+            "run_id": "42746766266"
+          },
+          "channel": "delivery-test",
+          "current": {
+            "bytes": 291200,
+            "ota_enabled": false,
+            "release_tag": "lightboard-test-42746766266-1",
+            "sha256": "8b52fb73915d67a3cca7b99381f521eb58a707e6bbf26db2136ba4d153d39d44",
+            "source_sha256": "42bc5202bebe334916eb57aeb14d592050621dc1a6e19ffc5997889029cb96ac",
+            "url": "https://github.com/pmartin5-gif/HelloWorld/releases/download/lightboard-test-42746766266-1/firmware.bin",
+            "version": "candidate-42bc5202bebe3349-8b52fb73915d67a3"
+          },
+          "fqbn": "esp32:esp32:esp32:UploadSpeed=921600,CPUFreq=240,FlashFreq=80,FlashMode=qio,FlashSize=4M,PartitionScheme=default,DebugLevel=none,PSRAM=disabled,LoopCore=1,EventsCore=1,EraseFlash=none,JTAGAdapter=default",
+          "generation": {
+            "model_request_in_this_run": false,
+            "response_sha256": "ca9f5d73467bb02aab6278c8db4c03d5d643c960e5f2ea7221cea7d6263f1171",
+            "run_id": "42735010470"
+          },
+          "ota_enabled": false,
+          "previous": {
+            "bytes": 290960,
+            "ota_enabled": false,
+            "release_tag": "lightboard-test-42746766266-1",
+            "sha256": "17b1fc274ab7598d79f08a83eaa13d556c389ff945edc8094b8b632100757454",
+            "source_sha256": "d90e1b58d47ad841c7ef6c737afac802da1e34e0a4810e43ca7ae7e05173bb46",
+            "url": "https://github.com/pmartin5-gif/HelloWorld/releases/download/lightboard-test-42746766266-1/recovery.bin",
+            "version": "baseline-d90e1b58d47ad841-17b1fc274ab7598d"
+          },
+          "previous_role": "pinned baseline for USB recovery",
+          "repository": "pmartin5-gif/HelloWorld",
+          "schema_version": 1,
+          "usb_recovery": {
+            "bytes": 290960,
+            "ota_enabled": false,
+            "release_tag": "lightboard-test-42746766266-1",
+            "sha256": "17b1fc274ab7598d79f08a83eaa13d556c389ff945edc8094b8b632100757454",
+            "source_sha256": "d90e1b58d47ad841c7ef6c737afac802da1e34e0a4810e43ca7ae7e05173bb46",
+            "url": "https://github.com/pmartin5-gif/HelloWorld/releases/download/lightboard-test-42746766266-1/recovery.bin",
+            "version": "baseline-d90e1b58d47ad841-17b1fc274ab7598d"
+          }
+        },
+        "ota_enabled": true,
+        "previous": null,
+        "published": true,
+        "repository": "pmartin5-gif/HelloWorld",
+        "scene": "saved-heart",
+        "schema_version": 2,
+        "superseded_ota": {
+          "compatible_for_ota": false,
+          "foundation_id": "737b7d0e5f8d6a21c65c5f9e3aee6a126f46e732b79a61aff2b0713e47419309",
+          "manifest_sha256": "67a5d7db82b007d8afa9466740cac3c6a3bea24790d3ea63a739aaf37911b0e6",
+          "manifest_url": "https://github.com/pmartin5-gif/HelloWorld/releases/download/lightboard-ota-45307022021-1/manifest.json"
+        },
+        "usb_recovery": {
+          "bytes": 1011840,
+          "release_tag": "lightboard-ota-45312083895-1",
+          "sha256": "205081b86ce24673b1222e104f7dc156213bb920e2775ad01f5717ea48225807",
+          "source_sha256": "74dd87bbec18694cc78024a76bc045c177ee4958bd8fe8f9bfa18f9975df7724",
+          "url": "https://github.com/pmartin5-gif/HelloWorld/releases/download/lightboard-ota-45312083895-1/recovery.bin",
+          "version": "ota-pilot-f2e92e43697828ea9cf37401"
+        },
+        "usb_recovery_scope": "Application only; preserve matching bootloader/partitions and IDE recovery source"
+      },
+      "assets": [
+        {
+          "name": "firmware.bin",
+          "bytes": 1012016,
+          "digest": "sha256:5a936c6cdace5fd09e62a9986d8f57c1d56cae415535090e70db78c627475fe6"
+        },
+        {
+          "name": "manifest.json",
+          "bytes": 4369,
+          "digest": "sha256:94596d8ee35d05bc9b4fa8cc195b1d7f7fefd4ddb3091e87428a2750e92d17bd"
+        },
+        {
+          "name": "recovery.bin",
+          "bytes": 1011840,
+          "digest": "sha256:205081b86ce24673b1222e104f7dc156213bb920e2775ad01f5717ea48225807"
+        },
+        {
+          "name": "SHA256SUMS",
+          "bytes": 238,
+          "digest": "sha256:0a0a665a9383ba19ee7fb601a0df5ee03839d739f20ddaec8756dd15804e6948"
+        }
+      ],
+      "evidence": ".build/ota-cloud-run-45312083895",
+      "reports": [
+        {
+          "built_at_utc": "2026-11-24T02:25:02.499810+00:00",
+          "foundation_id": "f1244292bbdf180ad5ea8b4ffbf46c72b9772ef8ad2407276ae26e3786132522",
+          "build_lock_sha256": "d49bcc12704f6748ea380a560a38de7163998a4419b51e1cf00b35458f24cd5e",
+          "foundation_lock_sha256": "c8664c52ae788ae7580c046f0d6144159cc3ecd3890f93967585d66b3e0b288c",
+          "firmware_version": "ota-pilot-f2e92e43697828ea9cf37401",
+          "source_sha256": "74dd87bbec18694cc78024a76bc045c177ee4958bd8fe8f9bfa18f9975df7724",
+          "ota_protected_sha256": "48b4f4c52aa0abf520e16e292fc0fee71ae3b46de12670eea5a5b03d2e694791",
+          "baseline_source_sha256": "d90e1b58d47ad841c7ef6c737afac802da1e34e0a4810e43ca7ae7e05173bb46",
+          "core": "esp32:esp32@2.0.17",
+          "arduino_cli": "1.5.1",
+          "fqbn": "esp32:esp32:esp32:UploadSpeed=921600,CPUFreq=240,FlashFreq=80,FlashMode=qio,FlashSize=4M,PartitionScheme=default,DebugLevel=none,PSRAM=disabled,LoopCore=1,EventsCore=1,EraseFlash=none,JTAGAdapter=default",
+          "binaries": {
+            "LightboardOTA.ino.bin": {
+              "bytes": 1011840,
+              "sha256": "205081b86ce24673b1222e104f7dc156213bb920e2775ad01f5717ea48225807"
+            },
+            "LightboardOTA.ino.bootloader.bin": {
+              "bytes": 18992,
+              "sha256": "3d97b71a61331ebaddef2a74e090c35299650f395f1387f85130010e84e46563"
+            },
+            "LightboardOTA.ino.partitions.bin": {
+              "bytes": 3072,
+              "sha256": "148b959cbff1c38aa8e1d5c0ba9d612c54997b945e56a63f41223eef650653a1"
+            }
+          },
+          "application_slot_bytes": 1310720,
+          "application_headroom_bytes": 298880,
+          "model_requests": 0,
+          "uploaded_to_board": false,
+          "automatic_updates": false,
+          "physical_flash_partitions_heap_timing_tls_and_recovery_verified": false,
+          "static_dram_bytes_reported": 47352
+        },
+        {
+          "built_at_utc": "2026-11-24T02:25:22.507330+00:00",
+          "foundation_id": "f1244292bbdf180ad5ea8b4ffbf46c72b9772ef8ad2407276ae26e3786132522",
+          "build_lock_sha256": "d49bcc12704f6748ea380a560a38de7163998a4419b51e1cf00b35458f24cd5e",
+          "foundation_lock_sha256": "c8664c52ae788ae7580c046f0d6144159cc3ecd3890f93967585d66b3e0b288c",
+          "firmware_version": "ota-pilot-709f1f9cc6fe30951ccdd977",
+          "source_sha256": "1781c37da34807016f2d4d91e7badc5d75819d94a7c387566a40f451e886e442",
+          "ota_protected_sha256": "48b4f4c52aa0abf520e16e292fc0fee71ae3b46de12670eea5a5b03d2e694791",
+          "baseline_source_sha256": "d90e1b58d47ad841c7ef6c737afac802da1e34e0a4810e43ca7ae7e05173bb46",
+          "core": "esp32:esp32@2.0.17",
+          "arduino_cli": "1.5.1",
+          "fqbn": "esp32:esp32:esp32:UploadSpeed=921600,CPUFreq=240,FlashFreq=80,FlashMode=qio,FlashSize=4M,PartitionScheme=default,DebugLevel=none,PSRAM=disabled,LoopCore=1,EventsCore=1,EraseFlash=none,JTAGAdapter=default",
+          "binaries": {
+            "LightboardOTA.ino.bin": {
+              "bytes": 1012016,
+              "sha256": "5a936c6cdace5fd09e62a9986d8f57c1d56cae415535090e70db78c627475fe6"
+            },
+            "LightboardOTA.ino.bootloader.bin": {
+              "bytes": 18992,
+              "sha256": "3d97b71a61331ebaddef2a74e090c35299650f395f1387f85130010e84e46563"
+            },
+            "LightboardOTA.ino.partitions.bin": {
+              "bytes": 3072,
+              "sha256": "148b959cbff1c38aa8e1d5c0ba9d612c54997b945e56a63f41223eef650653a1"
+            }
+          },
+          "application_slot_bytes": 1310720,
+          "application_headroom_bytes": 298704,
+          "model_requests": 0,
+          "uploaded_to_board": false,
+          "automatic_updates": false,
+          "physical_flash_partitions_heap_timing_tls_and_recovery_verified": false,
+          "static_dram_bytes_reported": 47928
+        }
+      ]
+    },
+    "first_ota_validated_status": {
+      "version": "ota-pilot-709f1f9cc6fe30951ccdd977",
+      "foundation": "f1244292bbdf180ad5ea8b4ffbf46c72b9772ef8ad2407276ae26e3786132522",
+      "flash_bytes": 4194304,
+      "layout_ok": true,
+      "running": "app1",
+      "running_offset": 1376256,
+      "slot_bytes": 1310720,
+      "target": "app0",
+      "ota_state": 2,
+      "credentials_set": true,
+      "wifi_status": 3,
+      "rssi": -72,
+      "heap_free": 218484,
+      "heap_min": 214088,
+      "heap_largest": 110580,
+      "worker_stack_free": 22272,
+      "refresh_stack_free": 3436,
+      "refresh_cycles": 96918,
+      "frames": 2937,
+      "max_frame_gap_ms": 74,
+      "health_ok": true
+    },
+    "physical_scene": {
+      "user_report": "Board changed to heart, but appears not to fit the frame",
+      "scene_changed_confirmed": true,
+      "normal_visual_fit_confirmed": false,
+      "source_bounds_verified": [
+        {
+          "scale": 1.0,
+          "bounds": [
+            4,
+            3,
+            27,
+            31
+          ],
+          "pixels_outside": 0
+        },
+        {
+          "scale": 1.075,
+          "bounds": [
+            3,
+            2,
+            28,
+            32
+          ],
+          "pixels_outside": 4
+        },
+        {
+          "scale": 1.15,
+          "bounds": [
+            2,
+            1,
+            29,
+            33
+          ],
+          "pixels_outside": 20
+        }
+      ],
+      "finding": "Saved heart source extends to row33 at maximum pulse; physical panel rows0..31. This is existing scene geometry clipping, not proof of OTA transport corruption. No scene/source changed for this observation."
+    }
+  },
+  "second_baseline_publication": {
+    "run_id": 45313009678,
+    "job_id": 138173082040,
+    "conclusion": "success",
+    "source_commit": "051a334077f4d1db1a5c09cb0115ff6bfccdc802",
+    "cloud_ota_tests": 29,
+    "manifest": {
+      "automatic_updates": false,
+      "build": {
+        "attempt": "1",
+        "commit_sha": "051a334077f4d1db1a5c09cb0115ff6bfccdc802",
+        "run_id": "45313009678"
+      },
+      "channel": "ota-pilot",
+      "current": {
+        "bytes": 1011840,
+        "release_tag": "lightboard-ota-45313009678-1",
+        "sha256": "205081b86ce24673b1222e104f7dc156213bb920e2775ad01f5717ea48225807",
+        "source_sha256": "74dd87bbec18694cc78024a76bc045c177ee4958bd8fe8f9bfa18f9975df7724",
+        "url": "https://github.com/pmartin5-gif/HelloWorld/releases/download/lightboard-ota-45313009678-1/firmware.bin",
+        "version": "ota-pilot-f2e92e43697828ea9cf37401"
+      },
+      "device": "esp32-32x32",
+      "foundation_id": "f1244292bbdf180ad5ea8b4ffbf46c72b9772ef8ad2407276ae26e3786132522",
+      "fqbn": "esp32:esp32:esp32:UploadSpeed=921600,CPUFreq=240,FlashFreq=80,FlashMode=qio,FlashSize=4M,PartitionScheme=default,DebugLevel=none,PSRAM=disabled,LoopCore=1,EventsCore=1,EraseFlash=none,JTAGAdapter=default",
+      "generation": null,
+      "legacy_delivery_test": {
+        "build": {
+          "attempt": "1",
+          "run_id": "42746766266"
+        },
+        "channel": "delivery-test",
+        "current": {
+          "bytes": 291200,
+          "ota_enabled": false,
+          "release_tag": "lightboard-test-42746766266-1",
+          "sha256": "8b52fb73915d67a3cca7b99381f521eb58a707e6bbf26db2136ba4d153d39d44",
+          "source_sha256": "42bc5202bebe334916eb57aeb14d592050621dc1a6e19ffc5997889029cb96ac",
+          "url": "https://github.com/pmartin5-gif/HelloWorld/releases/download/lightboard-test-42746766266-1/firmware.bin",
+          "version": "candidate-42bc5202bebe3349-8b52fb73915d67a3"
+        },
+        "fqbn": "esp32:esp32:esp32:UploadSpeed=921600,CPUFreq=240,FlashFreq=80,FlashMode=qio,FlashSize=4M,PartitionScheme=default,DebugLevel=none,PSRAM=disabled,LoopCore=1,EventsCore=1,EraseFlash=none,JTAGAdapter=default",
+        "generation": {
+          "model_request_in_this_run": false,
+          "response_sha256": "ca9f5d73467bb02aab6278c8db4c03d5d643c960e5f2ea7221cea7d6263f1171",
+          "run_id": "42735010470"
+        },
+        "ota_enabled": false,
+        "previous": {
+          "bytes": 290960,
+          "ota_enabled": false,
+          "release_tag": "lightboard-test-42746766266-1",
+          "sha256": "17b1fc274ab7598d79f08a83eaa13d556c389ff945edc8094b8b632100757454",
+          "source_sha256": "d90e1b58d47ad841c7ef6c737afac802da1e34e0a4810e43ca7ae7e05173bb46",
+          "url": "https://github.com/pmartin5-gif/HelloWorld/releases/download/lightboard-test-42746766266-1/recovery.bin",
+          "version": "baseline-d90e1b58d47ad841-17b1fc274ab7598d"
+        },
+        "previous_role": "pinned baseline for USB recovery",
+        "repository": "pmartin5-gif/HelloWorld",
+        "schema_version": 1,
+        "usb_recovery": {
+          "bytes": 290960,
+          "ota_enabled": false,
+          "release_tag": "lightboard-test-42746766266-1",
+          "sha256": "17b1fc274ab7598d79f08a83eaa13d556c389ff945edc8094b8b632100757454",
+          "source_sha256": "d90e1b58d47ad841c7ef6c737afac802da1e34e0a4810e43ca7ae7e05173bb46",
+          "url": "https://github.com/pmartin5-gif/HelloWorld/releases/download/lightboard-test-42746766266-1/recovery.bin",
+          "version": "baseline-d90e1b58d47ad841-17b1fc274ab7598d"
+        }
+      },
+      "ota_enabled": true,
+      "previous": {
+        "bytes": 1012016,
+        "release_tag": "lightboard-ota-45312083895-1",
+        "sha256": "5a936c6cdace5fd09e62a9986d8f57c1d56cae415535090e70db78c627475fe6",
+        "source_sha256": "1781c37da34807016f2d4d91e7badc5d75819d94a7c387566a40f451e886e442",
+        "url": "https://github.com/pmartin5-gif/HelloWorld/releases/download/lightboard-ota-45312083895-1/firmware.bin",
+        "version": "ota-pilot-709f1f9cc6fe30951ccdd977"
+      },
+      "published": true,
+      "repository": "pmartin5-gif/HelloWorld",
+      "scene": "baseline",
+      "schema_version": 2,
+      "superseded_ota": {
+        "compatible_for_ota": false,
+        "foundation_id": "737b7d0e5f8d6a21c65c5f9e3aee6a126f46e732b79a61aff2b0713e47419309",
+        "manifest_sha256": "67a5d7db82b007d8afa9466740cac3c6a3bea24790d3ea63a739aaf37911b0e6",
+        "manifest_url": "https://github.com/pmartin5-gif/HelloWorld/releases/download/lightboard-ota-45307022021-1/manifest.json"
+      },
+      "usb_recovery": {
+        "bytes": 1011840,
+        "release_tag": "lightboard-ota-45313009678-1",
+        "sha256": "205081b86ce24673b1222e104f7dc156213bb920e2775ad01f5717ea48225807",
+        "source_sha256": "74dd87bbec18694cc78024a76bc045c177ee4958bd8fe8f9bfa18f9975df7724",
+        "url": "https://github.com/pmartin5-gif/HelloWorld/releases/download/lightboard-ota-45313009678-1/recovery.bin",
+        "version": "ota-pilot-f2e92e43697828ea9cf37401"
+      },
+      "usb_recovery_scope": "Application only; preserve matching bootloader/partitions and IDE recovery source"
+    },
+    "reports": [
+      {
+        "built_at_utc": "2026-11-24T02:32:40.507193+00:00",
+        "foundation_id": "f1244292bbdf180ad5ea8b4ffbf46c72b9772ef8ad2407276ae26e3786132522",
+        "build_lock_sha256": "d49bcc12704f6748ea380a560a38de7163998a4419b51e1cf00b35458f24cd5e",
+        "foundation_lock_sha256": "c8664c52ae788ae7580c046f0d6144159cc3ecd3890f93967585d66b3e0b288c",
+        "firmware_version": "ota-pilot-f2e92e43697828ea9cf37401",
+        "source_sha256": "74dd87bbec18694cc78024a76bc045c177ee4958bd8fe8f9bfa18f9975df7724",
+        "ota_protected_sha256": "48b4f4c52aa0abf520e16e292fc0fee71ae3b46de12670eea5a5b03d2e694791",
+        "baseline_source_sha256": "d90e1b58d47ad841c7ef6c737afac802da1e34e0a4810e43ca7ae7e05173bb46",
+        "core": "esp32:esp32@2.0.17",
+        "arduino_cli": "1.5.1",
+        "fqbn": "esp32:esp32:esp32:UploadSpeed=921600,CPUFreq=240,FlashFreq=80,FlashMode=qio,FlashSize=4M,PartitionScheme=default,DebugLevel=none,PSRAM=disabled,LoopCore=1,EventsCore=1,EraseFlash=none,JTAGAdapter=default",
+        "binaries": {
+          "LightboardOTA.ino.bin": {
+            "bytes": 1011840,
+            "sha256": "205081b86ce24673b1222e104f7dc156213bb920e2775ad01f5717ea48225807"
+          },
+          "LightboardOTA.ino.bootloader.bin": {
+            "bytes": 18992,
+            "sha256": "3d97b71a61331ebaddef2a74e090c35299650f395f1387f85130010e84e46563"
+          },
+          "LightboardOTA.ino.partitions.bin": {
+            "bytes": 3072,
+            "sha256": "148b959cbff1c38aa8e1d5c0ba9d612c54997b945e56a63f41223eef650653a1"
+          }
+        },
+        "application_slot_bytes": 1310720,
+        "application_headroom_bytes": 298880,
+        "model_requests": 0,
+        "uploaded_to_board": false,
+        "automatic_updates": false,
+        "physical_flash_partitions_heap_timing_tls_and_recovery_verified": false,
+        "static_dram_bytes_reported": 47352
+      }
+    ],
+    "assets": [
+      {
+        "name": "firmware.bin",
+        "bytes": 1011840,
+        "digest": "sha256:205081b86ce24673b1222e104f7dc156213bb920e2775ad01f5717ea48225807"
+      },
+      {
+        "name": "manifest.json",
+        "bytes": 4620,
+        "digest": "sha256:937624def30dfe57d848bbb7054eae279f9319ed526fafd8de73c68713cacbb5"
+      },
+      {
+        "name": "recovery.bin",
+        "bytes": 1011840,
+        "digest": "sha256:205081b86ce24673b1222e104f7dc156213bb920e2775ad01f5717ea48225807"
+      },
+      {
+        "name": "SHA256SUMS",
+        "bytes": 238,
+        "digest": "sha256:73820b97f99846da8f4ca78eda422de2228ef9b641b13e9cd377d006152ab1b9"
+      }
+    ],
+    "server_digests_and_anonymous_readbacks_passed": true,
+    "previous_exact_heart_preserved": true,
+    "evidence": ".build/ota-cloud-run-45313009678",
+    "device_installation_verified": true,
+    "validated_status": {
+      "version": "ota-pilot-f2e92e43697828ea9cf37401",
+      "foundation": "f1244292bbdf180ad5ea8b4ffbf46c72b9772ef8ad2407276ae26e3786132522",
+      "flash_bytes": 4194304,
+      "layout_ok": true,
+      "running": "app0",
+      "running_offset": 65536,
+      "slot_bytes": 1310720,
+      "target": "app1",
+      "ota_state": 2,
+      "credentials_set": true,
+      "wifi_status": 3,
+      "rssi": -70,
+      "heap_free": 219328,
+      "heap_min": 216280,
+      "heap_largest": 110580,
+      "worker_stack_free": 22500,
+      "refresh_stack_free": 3452,
+      "refresh_cycles": 56477,
+      "frames": 1702,
+      "max_frame_gap_ms": 82,
+      "health_ok": true
+    },
+    "physical_animation_confirmed": true,
+    "manual_rollback_verified": true,
+    "baseline_restored_after_rollback": true,
+    "final_validated_status": {
+      "version": "ota-pilot-f2e92e43697828ea9cf37401",
+      "foundation": "f1244292bbdf180ad5ea8b4ffbf46c72b9772ef8ad2407276ae26e3786132522",
+      "flash_bytes": 4194304,
+      "layout_ok": true,
+      "running": "app0",
+      "running_offset": 65536,
+      "slot_bytes": 1310720,
+      "target": "app1",
+      "ota_state": 2,
+      "credentials_set": true,
+      "wifi_status": 3,
+      "rssi": -69,
+      "heap_free": 219344,
+      "heap_min": 216280,
+      "heap_largest": 110580,
+      "worker_stack_free": 22848,
+      "refresh_stack_free": 3452,
+      "refresh_cycles": 33643,
+      "frames": 1010,
+      "max_frame_gap_ms": 77,
+      "health_ok": true
+    },
+    "final_physical_stones_confirmed": true
+  },
+  "automatic_crash_or_power_loss_recovery_tested": false
 }

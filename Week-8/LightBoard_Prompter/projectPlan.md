@@ -1,28 +1,14 @@
 # Lightboard remote prompting step by step
 
-**Corrected transport checkpoint, November 23:** Installed vessel+f124 foundation passes full verified HTTPS firmware download/hash and boot/display health; user confirms picture normal. A 4,096-byte HTTP RX buffer receives complete 907-byte redirect (prior 1,024-byte buffer captured 758 and got HTTP618). Full 1,010,416-byte published image SHA matches; no OTA flash. All 79 offline tests, revised baseline/heart real builds and unpublished pinned-transition package pass. Next publish corrected source and run saved-heart/Publish on main; real two-scene installation/rollback remain pending. Read RESUME.md first.
+**Updated:** November 23,2026
 
-**November 23 current checkpoint:** Remote main 99b6d37 verified; OTA run 45307022021 published saved-heart with verified digests/readbacks and preserved legacy feed. Exact current cobalt-vessel animation restored on v5 OTA foundation through IDE; credentials retained and physical scene confirmed. Two OTA attempts failed safely, including a retry after signal improved from -85 to -69 dBm. Board remains vessel/app0/health true, max frame gap 60 ms. Read-only isolated HTTPS diagnostics are being prepared; no successful OTA installation or rollback yet. See RESUME.md and device/verification.json for the live state.
-
-**Latest v5 checkpoint, November 19:** v5 is installed (1,010,240-byte verified IDE flash) and passes boot health. Exact saved-name check confirms **Hello World**, Wi-Fi status 3, RSSI -81 dBm. No further provisioning needed. Two HTTPS `check` attempts failed to open a connection; exact DNS/TCP/TLS/internet cause unresolved. After first attempt: free/min heap 219,088/201,756 bytes, worker stack headroom 15,312, max frame gap 60 ms, health true. Public feed rechecked independently and remains schema1/non-OTA. Await user internet/captive-portal and v5 physical-animation confirmation; improve signal if practical before another retry. Certificate validation remains enabled. See v5 hardware-evidence and verification.json.
-
-**Latest Hello World test, November 19:** Private provisioning completed and credentials-stored message observed. Association failed with a timeout (prior reason 39); configured-name scan returned zero matches. Mac Wi-Fi list currently shows **Hello World 5GHz**, without an exact Hello World entry. Asked whether the 2.4 GHz network is enabled/visible or has a different name. v4 health stays true, free/min heap 220,480/218,136 bytes, max frame gap 49 ms. HTTPS remains untested; no firmware change or password value observed.
-
-**Latest network choice, November 19:** User now authorizes **Hello World**, reported as 2.4 GHz, superseding MFA IxD only. ESP32 is temporarily unplugged; wait for the user’s reconnect report before device commands. v4 remains the last verified healthy installation. Hello World credentials are not yet provisioned; previous saved credentials remain. Next rediscover USB, read fresh status, hand off private IDE provisioning, then verify association/HTTPS and runtime health.
-
-**November 19 radio clarification:** User confirms v4 operating normally. Mac MFA IxD connection is **DFS channel 60, 5 GHz, 40 MHz; WPA2 Personal**. ESP32 needs 2.4 GHz; the Mac’s 5 GHz association does not establish whether this SSID also broadcasts on 2.4 GHz. WPA2 Personal fits the pilot. Next determine network owner/router access and confirm compatible 2.4 GHz availability on MFA IxD. No hotspot substitution or further firmware change is needed for that check.
-
-**November 19 current checkpoint:** v4 diagnostic pilot is installed and passed boot health; saved credentials retained. `wifi-diagnose` found zero matches for the configured name, prior disconnect reason 201 (`NO_AP_FOUND`). User requires MFA IxD only. Mac UI shows that name connected; channel/security fields and v4 physical confirmation are requested from user. After scan: free/min heap 220,528/219,960 bytes, max frame gap 61 ms, health true. Actual IDE app 1,009,776 bytes with fresh hash/reset evidence under `.build/ota-pilot-2026-11-19-v4/hardware-evidence/`. All 58 offline tests pass; pinned core/full profile retained. No reprovisioning, model request, spending, publication or OTA delivery. Resolve target visibility/security before HTTPS.
-
-**Updated:** November 9, 2026
-
-**Status:** Step 4 and the Flash-Lite API diagnostic passed. Step 5's published fix `1cd37ca` passed saved-response reuse, validation, and pinned cloud compilation in run `42742746935`: 291,200-byte application, generation skipped, all 84 pinned inputs verified. No artifact was uploaded; report/checksum inspection remains deferred. Step 6 publication passed in run `42746766266` on published `7e47654`, including anonymous asset/feed readbacks and preserved recovery firmware. Separate Wi-Fi/OTA preparation is next. Creative review remains deferred; technical checks remain required. Read `RESUME.md` for the current handoff.
+**Status:** Controlled Step 7 hardware tests passed: heart and baseline installed over Wi-Fi, deferred validity/health, SDK manual rollback, baseline reinstallation and final normal stones confirmed. Source051a334 is remote. All 79 offline tests and both 29-test corrected cloud runs passed. Automatic updates remain off. Heart clipping is a saved-scene geometry issue; creative refinement remains deferred. Next bridge the normal prompt pipeline to the proven foundation before email intake.
 
 **Goal:** Email a prompt, generate and compile an animation in the cloud, and have the ESP32 install it over Wi-Fi while your computer is off.
 
 **Budget:** Zero additional spending. Stay on verified free allowances. When a limit is reached, pause or queue requests. Do not enable paid fallback or use a time-limited paid trial as the long-term solution.
 
-**Starting point:** The working board is preserved, cloud baseline compilation and free API access are verified, and the integrated prompt-build workflow is implemented locally. Cloud compilation and public delivery are verified. Wi-Fi/OTA preparation, physical installation/recovery tests, and email intake remain; historical full build-report inspection remains separate from the published delivery manifest. Checkmarks distinguish preparation from observed cloud and physical results.
+**Starting point:** Cloud saved-response generation/compilation, public delivery and the separate sealed known-scene OTA workflow are verified. Current board is baseline f2e92e43…/foundation f124…/app0/VALID with saved credentials. The older routine prompt builder/publisher and Desktop helper still use non-OTA source; integrate them before automatic prompt/email delivery. Read RESUME.md for exact evidence and current next action.
 
 ## How to use this plan
 
@@ -198,28 +184,31 @@ Bring back this request:
 
 **Done when:** The delivery route is verified, within free allowances, and ready for a controlled device test. Publishing is not yet proof that a board installed anything.
 
-## Step 7 — Add Wi-Fi and install the first OTA-capable firmware
+## Step 7 — Verify the Wi-Fi/OTA foundation
 
-**Hardware step with the assistant. This extends the protected firmware foundation once.**
+**Controlled hardware checkpoint passed November 23.** Heart run 45312083895 and baseline run 45313009678/source 051a334 published matching sealed foundation f1244292…; actual app1/app0 boots went PENDING_VERIFY→VALID after health. Local SDK rollback rebooted prior heart and passed health/physical confirmation; reinstallation restored baseline/normal stones. Final max gap 77ms, minimum heap 216,280, Wi-Fi connected. Automatic crash/power-loss recovery is not claimed. Heart source clipping at maximum pulse is recorded; normal baseline behavior is confirmed.
 
-**November 19 checkpoint:** v5 is installed with pinned core/full profile and preserved scene. User confirms normal physical animation. Exact Hello World network-name match, actual 4MB/two-slot layout, boot health, certificate-verified feed retrieval, offline frame/refresh continuity and manual reconnect pass. Signal improved from -81 to -62 dBm after moving, final -64 dBm. Final free/min heap 218,184/143,512 bytes; max frame gap 55 ms. The old public feed remains OTA disabled. Actual controlled OTA installs and rollback/recovery are still required. See device verification and v5 hardware evidence.
+- [x] Verify2.4GHz Hello World, real4MiB/two-slot layout, compiled image fit, heap/stack/frame/refresh behavior and verified HTTPS.
+- [x] Native IDE initial installation/private provisioning, with retained credentials; no credential values published.
+- [x] Preserve GPIO/brightness/double buffer/timer/frame parameters; move blocking SPI work out of timer ISR into refresh task.
+- [x] Offline animation continuity, saved-credential reconnect and verified HTTPS.
+- [x] Sealed known-scene publisher/workflow;79 offline tests, real builds, server digests/anonymous assets/feed readbacks and immutable history.
+- [x] Install saved-heart over Wi-Fi, verify actual app1/version/deferred validity/health; user confirms heart, saved source clipping documented.
+- [x] Install baseline over Wi-Fi, verify actual app0/version/deferred validity/health and normal physical stones.
+- [x] SDK-gated manual rollback to prior heart; verify actual app1/version/health and physical return.
+- [x] Reinstall published baseline after rollback, verify final app0/VALID/health and normal stones. Retain compatible prior heart and USB fallback source/images.
 
-Bring back this request:
+Actual evidence and limitations: device/verification.json, cloud/ota-publication-verification.json, run hardware-evidence directories and documentation.md. No model call/spending/Actions artifact/cache needed for these tests.
 
-> Prepare a development copy of the Lightboard firmware with Wi-Fi and OTA updates. Preserve the current continuous animation behavior, pins, timing, brightness, and double buffering. Verify flash partitions and memory with the pinned toolchain. Keep networking and update support outside generated restState. Include trusted update verification, version reporting, separately provisioned credentials, and a tested USB recovery procedure. Prepare and review the code before the initial installation.
+## Step 7A — Carry the proven OTA foundation into routine prompt delivery
 
-- [x] Verify the selected 2.4 GHz Hello World network, actual flash/OTA partitions, compiled networked-image fit and runtime heap during verified HTTPS. Automatic OTA remains disabled.
-- [x] Complete initial USB installation and private credential provisioning through Arduino IDE.
-- [x] Verify Wi-Fi connection, known-scene physical behavior and current version.
-- [x] Verify retained GPIO/brightness/double-buffer/timer parameters, user-confirmed continuous animation and healthy frame/refresh metrics during Wi-Fi/HTTPS. Refresh work now runs in a task; the timer ISR only notifies it.
-- [x] Disconnect Wi-Fi, verify continuing frame/refresh counters and health, then reconnect using saved credentials and verify HTTPS again.
-- [x] Prepare sealed-foundation OTA workflow/publisher and two known-scene packages; 74 offline tests, real builds and local package/workflow checks pass. Cloud publication passed in run 45307022021; physical installation troubleshooting remains.
-- [ ] Publish a second known scene through the controlled test path. Confirm that the board downloads, installs, restarts, and reports the new version.
-- [ ] Restore the previous known scene and confirm recovery works. Do not assume automatic crash rollback exists unless we explicitly configure and test it.
+This bridge is required before Steps 8–10 can deploy new prompts. The known-scene workflow is separate; older routine builds and Desktop helper still overwrite networking support.
 
-**Done when:** Two known scenes can be delivered over Wi-Fi and the original physical behavior still works. Keep automatic model-generated delivery disabled until this checkpoint passes. All later firmware images must retain OTA support.
-
-[Espressif's OTA guide](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/ota.html).
+- [ ] Adapt regular prompt build/publication to sealed runtime/protected-source/identity checks and schema2 compatible current/previous/recovery metadata.
+- [ ] Use an existing saved response first; no new model API call or spending. Validate exact generation-record/function bindings and compile against pinned inputs.
+- [ ] Preserve immutable history/recovery, previous compatible image, exact source-commit/size/hash checks and failed-build/publication behavior.
+- [ ] Verify a real routine-path package retains the foundation, then one controlled install/health without enabling automatic delivery. Reuse completed tests where code is unchanged.
+- [ ] Keep manual update behavior until an explicit tested automation/acknowledgment design exists. Never report published as installed.
 
 ## Step 8 — Prepare the email input
 
