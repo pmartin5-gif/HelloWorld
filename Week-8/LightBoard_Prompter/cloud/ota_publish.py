@@ -21,6 +21,23 @@ ASSETS = delivery.ASSETS
 APP = "LightboardOTA.ino.bin"
 RECOVERY_SCOPE = "Application only; preserve matching bootloader/partitions and IDE recovery source"
 RECORD = ota_build.PROJECT / "experiments/flash-lite/2026-11-09/cloud-run-42735010470/generation.json"
+# One reviewed transition after physical HTTPS testing. Unknown/edited old feeds still stop.
+PRIOR_FOUNDATION = "737b7d0e5f8d6a21c65c5f9e3aee6a126f46e732b79a61aff2b0713e47419309"
+TRANSITION_FOUNDATION = "f1244292bbdf180ad5ea8b4ffbf46c72b9772ef8ad2407276ae26e3786132522"
+PRIOR_MANIFEST_SHA256 = "67a5d7db82b007d8afa9466740cac3c6a3bea24790d3ea63a739aaf37911b0e6"
+
+
+def superseded_reference():
+    return {"foundation_id": PRIOR_FOUNDATION,
+            "manifest_url": asset_url("lightboard-ota-45307022021-1", "manifest.json"),
+            "manifest_sha256": PRIOR_MANIFEST_SHA256, "compatible_for_ota": False}
+
+
+def validate_foundation_transition(prior):
+    _, _, foundation, _, _ = known_source("baseline")
+    require(foundation == TRANSITION_FOUNDATION and prior.get("foundation_id") == PRIOR_FOUNDATION and
+            sha(encoded(prior)) == PRIOR_MANIFEST_SHA256,
+            "Unsupported prior OTA manifest/foundation transition; review exact history before publishing")
 
 
 def known_source(name):
@@ -123,7 +140,8 @@ def validate_manifest(m, published):
     lock, source, foundation, version, generation = known_source(m.get("scene"))
     require(set(m) == {"schema_version", "repository", "channel", "device", "foundation_id", "fqbn",
                        "ota_enabled", "published", "automatic_updates", "scene", "generation", "build",
-                       "current", "usb_recovery", "usb_recovery_scope", "previous", "legacy_delivery_test"} and
+                       "current", "usb_recovery", "usb_recovery_scope", "previous", "legacy_delivery_test",
+                       "superseded_ota"} and
             m["schema_version"] == 2 and m["repository"] == delivery.REPOSITORY and
             m["channel"] == "ota-pilot" and m["device"] == "esp32-32x32" and
             m["foundation_id"] == foundation and m["fqbn"] == lock["fqbn"] and
@@ -141,6 +159,8 @@ def validate_manifest(m, published):
             m["usb_recovery"]["source_sha256"] == sha(baseline.encode()), "Recovery must retain the sealed baseline pilot")
     if m["previous"] is not None:
         validate_entry(m["previous"])
+    require(m["superseded_ota"] is None or m["superseded_ota"] == superseded_reference(),
+            "Unsupported superseded OTA history")
     require(len(encoded(m)) <= 8192, "OTA manifest exceeds device bound")
     pending = [(m, 1)]
     while pending:
@@ -168,7 +188,7 @@ def prepare(candidate, baseline, output, name, run, attempt):
         "current": entry(report, binary, tag, "firmware.bin"),
         "usb_recovery": entry(recovery_report, recovery, tag, "recovery.bin"),
         "usb_recovery_scope": RECOVERY_SCOPE,
-        "previous": None, "legacy_delivery_test": None}
+        "previous": None, "legacy_delivery_test": None, "superseded_ota": None}
     validate_manifest(manifest, False)
     output.mkdir(parents=True)
     (output / "firmware.bin").write_bytes(binary)
@@ -192,6 +212,8 @@ def read_channel(api):
                 data.get("ota_enabled") is False and data.get("fqbn") == lock["fqbn"], "Unsupported legacy feed")
         for key in ("current", "previous", "usb_recovery"):
             delivery.validate_entry(data[key], lock["application_slot_bytes"])
+    elif data.get("foundation_id") == PRIOR_FOUNDATION:
+        validate_foundation_transition(data)
     else:
         validate_manifest(data, True)
     return data, file["sha"]
@@ -202,7 +224,8 @@ def publish(folder, api, download=delivery.public_bytes):
             all(p.is_file() and not p.is_symlink() for p in folder.iterdir()), "Unexpected OTA publication files")
     m = json.loads((folder / "manifest.json").read_text())
     validate_manifest(m, False)
-    require(m["previous"] is None and m["legacy_delivery_test"] is None, "Prepared channel history must be empty")
+    require(m["previous"] is None and m["legacy_delivery_test"] is None and m["superseded_ota"] is None,
+            "Prepared channel history must be empty")
     for filename, key in (("firmware.bin", "current"), ("recovery.bin", "usb_recovery")):
         data = (folder / filename).read_bytes()
         require(data[:1] == b"\xe9" and len(data) == m[key]["bytes"] and sha(data) == m[key]["sha256"],
@@ -227,10 +250,22 @@ def publish(folder, api, download=delivery.public_bytes):
         m["legacy_delivery_test"] = prior  # Preserve full legacy metadata and all immutable release assets.
         for key in ("current", "previous", "usb_recovery"):
             delivery.verify_download(prior[key], download)
-    else:
+    elif prior["foundation_id"] == m["foundation_id"]:
         m["previous"] = prior["current"]
         m["legacy_delivery_test"] = prior["legacy_delivery_test"]
+        m["superseded_ota"] = prior["superseded_ota"]
         delivery.verify_download(m["previous"], download)
+    else:
+        validate_foundation_transition(prior)
+        # Preserve the immutable old manifest as history, never as a compatible rollback entry.
+        reference = superseded_reference()
+        require(download(reference["manifest_url"], 8192) == encoded(prior),
+                "Prior OTA manifest anonymous readback mismatch; feed unchanged")
+        for key in ("current", "usb_recovery"):
+            delivery.verify_download(prior[key], download)
+        m["legacy_delivery_test"] = prior["legacy_delivery_test"]
+        m["superseded_ota"] = reference
+        print("OTA_FOUNDATION_TRANSITION: verified exact prior manifest; previous compatible image is empty")
     m["published"] = True
     validate_manifest(m, True)
     write_manifest(folder, m)

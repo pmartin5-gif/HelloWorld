@@ -176,6 +176,52 @@ class OtaPublicationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'manifest'): self.run_publish(api)
         self.assertFalse(any(c[0] != 'GET' for c in api.calls))
 
+    def reviewed_prior(self):
+        return json.loads((build.ROOT / 'ota-foundation-history/45307022021-1.json').read_text())
+
+    def test_exact_reviewed_foundation_transition_preserves_immutable_history(self):
+        self.prepare(); prior = self.reviewed_prior(); api = FakeGitHub(prior)
+        reference = ota.superseded_reference()
+        api.prior_data[reference['manifest_url']] = ota.encoded(prior)
+        # Old binary readback has its own real verifier tests; assert both are required here.
+        with patch.object(delivery, 'verify_download') as verify:
+            m = self.run_publish(api)
+        self.assertEqual(verify.call_count, 2)
+        self.assertEqual([c.args[0] for c in verify.call_args_list],
+                         [prior['current'], prior['usb_recovery']])
+        self.assertEqual(m['superseded_ota'], reference)
+        self.assertFalse(m['superseded_ota']['compatible_for_ota'])
+        self.assertIsNone(m['previous'])
+        self.assertEqual(m['legacy_delivery_test'], prior['legacy_delivery_test'])
+        self.assertLessEqual(len(ota.encoded(m)), 8192)
+        self.assertFalse(any(c[0] == 'DELETE' for c in api.calls))
+
+    def test_edited_reviewed_prior_or_wrong_destination_stops_before_mutation(self):
+        self.prepare()
+        for field in ('current', 'legacy_delivery_test', 'build'):
+            prior = self.reviewed_prior(); prior[field]['tampered'] = True
+            api = FakeGitHub(prior)
+            with self.assertRaisesRegex(ValueError, 'transition'): self.run_publish(api)
+            self.assertFalse(any(c[0] != 'GET' for c in api.calls))
+        with patch.object(ota, 'TRANSITION_FOUNDATION', '0' * 64):
+            api = FakeGitHub(self.reviewed_prior())
+            with self.assertRaisesRegex(ValueError, 'transition'): self.run_publish(api)
+            self.assertFalse(any(c[0] != 'GET' for c in api.calls))
+
+    def test_transition_manifest_readback_failure_leaves_feed_and_releases_untouched(self):
+        self.prepare(); api = FakeGitHub(self.reviewed_prior())
+        api.prior_data[ota.superseded_reference()['manifest_url']] = b'changed'
+        with self.assertRaisesRegex(ValueError, 'Prior OTA manifest'): self.run_publish(api)
+        self.assertFalse(any(c[0] != 'GET' for c in api.calls))
+
+    def test_compatible_publication_retains_superseded_reference(self):
+        prior = self.prepare(); prior.update(published=True, superseded_ota=ota.superseded_reference())
+        api = FakeGitHub(prior)
+        api.prior_data[prior['current']['url']] = (self.candidate / ota.APP).read_bytes()
+        m = self.run_publish(api)
+        self.assertEqual(m['superseded_ota'], prior['superseded_ota'])
+        self.assertEqual(m['previous'], prior['current'])
+
     def test_prepared_binary_tampering_stops_before_api(self):
         self.prepare(); (self.output / 'firmware.bin').write_bytes(b'bad'); api = self.legacy()
         with self.assertRaisesRegex(ValueError, 'binary changed'): self.run_publish(api)

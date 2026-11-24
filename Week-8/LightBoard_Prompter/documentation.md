@@ -1995,6 +1995,85 @@ Marked the session paused in resume/device verification. v5 remains the last ver
 
 The Terminal SSH push was requested but not confirmed. On resume, first verify remote main before repeating a push; last observed remote head was c57644d. Cloud publication, two real OTA scene installations and rollback/recovery remain pending. No new board command, network setting, credential operation, model request, spending, workflow dispatch or publication occurred for this pause. No assistant background continuation is scheduled; existing firmware Wi-Fi retry behavior is unchanged.
 
+## 84. Resume, preserve the current vessel and publish the first OTA package
+
+**Date:** November 23, 2026
+
+### Your prompts
+
+> Ok I'm back and plugged in to the lightboard. Let's continue where we left off.
+> I ran the git command in the terminal
+> yes it looks the same
+> here is the run link https://github.com/pmartin5-gif/HelloWorld/actions/workflows/lightboard-ota-test.yml
+
+### Intent
+
+Resume controlled Wi-Fi delivery tests with zero additional spending and no new model generation, preserving the current physical scene.
+
+### Changes made and result
+
+Verified remote main at 99b6d37, including scoped OTA source 1fa7610. A later creative helper upload had replaced the pilot with a cobalt vessel on the original non-OTA foundation. Preserved its exact restState/source (Desktop SHA e7bd758e…), rebuilt only through native Arduino IDE using sealed v5 runtime, pinned core 2.0.17 and original full profile. One upload wrote 1,009,632 bytes with hash/reset verification; actual IDE app SHA a53c3376…. Vessel+OTA version 89b604df… passed boot/layout/credentials/Wi-Fi/health checks; user confirmed the same animation. Actual source/options/images/ELF/map and observed output are preserved under .build/ota-vessel-resume-2026-11-23/hardware-evidence. No private credential was re-entered or read.
+
+User manually dispatched Lightboard OTA test after being asked to verify the existing $0 spending stop. Public repository and standard ubuntu-24.04 runner were independently verified; current billing UI was inaccessible to agent browser control, so no fresh agent-observed budget claim is made. Run **45307022021**, job **138153240903**, exact source **99b6d37**, passed all steps including 24 offline OTA tests, baseline/heart compilation, server digests, anonymous release downloads and feed publication. Heart app is **1,010,416 bytes**, SHA **f57bf4cb0297ba9e433e63847ecb5faf89cc85d95cf8d031606ede66b00a57bb**, version **ota-pilot-afcce896518c69ba1cadd521**. Live schema2 foundation matches sealed v5; old schema1 metadata/assets preserved; previous OTA null. Four release assets verified; logs/feed/release evidence saved in .build/ota-cloud-run-45307022021. No model call, Actions artifact/cache, billing change or automatic device update.
+
+## 85. First OTA attempts fail safely; isolate HTTPS diagnostics
+
+**Date:** November 23, 2026
+
+### Your prompts
+
+> I moved the board slightlty. I'm not sure if this will make an improvement. but the picture is presenting properly
+> ok i moved again and the signal should be much better
+
+### Intent
+
+Improve reception and troubleshoot the controlled OTA path while keeping the current scene usable.
+
+### Changes made and result
+
+Board check recognized exact published heart version/size/hash. Separate arm-update/install commands failed with the general rejection marker; status remained vessel/app0/health true at RSSI -83 after a -85 reading. User confirmed picture still proper. Move improved signal to **-69 dBm**; repeated compatible check and one armed install also failed with the same marker. Post-second status remained vessel/app0, health true, minimum heap 141,352, worker stack 11,120 and max frame gap 60 ms. Further move measured -68. Neither attempt produced a verified image/boot or successful OTA installation; exact failure stage is not established. Stronger reception did not resolve it.
+
+Prepared an isolated diagnostic experiment under .build/ota-https-diagnostic-2026-11-23, leaving production runtime and foundation-lock unchanged. It retains exact vessel restState, certificate/hostname/URL checks and adds only redacted HTTPS error/hop/status/length reporting plus a repository-firmware-only read-only probe command without flash calls. Diagnostic identity differs from the production feed, so it is not eligible for installation from that feed. Visible workspace is Documents/Arduino/LightboardOTA_https_diag_20261123/LightboardOTA; original full profile and only installed core 2.0.17 verified. Native IDE Upload started once. Compilation/upload/boot/probe results are pending at this record point; preserve original vessel+OTA recovery sketch. No unchanged third install retry, new model request or spending.
+
+## 86. Resolve the release download failure and prepare a pinned foundation transition
+
+**Date:** November 23, 2026
+
+### Your prompts
+
+> ok i moved again and the signal should be much better
+> the picture looks normal
+
+### Intent
+
+Find the download failure, retain normal animation, and prepare the corrected controlled OTA path without another model request or spending.
+
+### Changes made and verification
+
+First isolated diagnostic flashed through native IDE (1,010,608 bytes, actual SHA 7de4d411…), passed health, and retained credentials. Its read-only release probe completed TLS to both hosts, received GitHub HTTP302 with a 758-byte Location, then HTTP618 from release-assets. No image writing. A second isolated fresh-request/no-cache experiment flashed 1,011,088 bytes (SHA 454a5cc5…), passed health, but still received 618; jwt:expired marker was false. Expired/cached token was not established. Each actual source/profile/image/output/probe record is archived under its .build experiment directory.
+
+Reviewed pinned Espressif IDF4.4.7 HTTP code: its header-value callback frees the header key after dispatch, allowing a split Location to lose its remainder. Tested RX buffer **4096 instead of 1024**, returning to the plain request. Third isolated native IDE upload wrote **1,011,248 bytes**, SHA **373a5b903fab619b588ee49dfe1bbf6b3780953fb76e6db5be4695477ff7375b**, hash/reset verified. This probe received a **907-byte** redirect, HTTP200, and downloaded **all 1,010,416 bytes**, valid ESP magic, complete body and SHA **f57bf4cb0297ba9e433e63847ecb5faf89cc85d95cf8d031606ede66b00a57bb**, exactly matching the public application. No OTA flash operation. This strongly supports redirect truncation as the cause of the failed probes. A larger buffer addresses the observed header block; arbitrary future server fragmentation is not guaranteed, and failed requests remain closed. [Pinned Espressif source](https://raw.githubusercontent.com/espressif/esp-idf/v4.4.7/components/esp_http_client/esp_http_client.c).
+
+After download, version **ota-pilot-20db910531d2722f73d15821**, foundation **f1244292bbdf180ad5ea8b4ffbf46c72b9772ef8ad2407276ae26e3786132522**, app0, valid layout, credentials retained, Wi-Fi connected at -71 dBm, health true. Free/min heap **218,140/144,360**, worker/refresh stack **11,072/3,436**, max frame gap **68 ms**. User confirmed normal physical picture. Source/options/images/ELF/map/probe/status evidence: .build/ota-https-large-header-2026-11-23/hardware-evidence. Exact tested runtime and seal were then adopted into production; no additional USB upload is required.
+
+Added redacted HTTPS diagnostics and bounded repository-firmware-only read-only probe; all existing TLS/hostname/redirect, candidate, checksum/image and boot-selection checks remain. Added native tests of actual probe code for host/recovery rejection, disconnected/open failure, chunked/invalid sizes, short/failed/stalled reads, byte hashing, timeout and output privacy; no flash API is available to its harness. Added a strictly pinned cloud foundation transition accepting only the exact previously published manifest (SHA **67a5d7db…**) into exact f124 foundation, anonymous old manifest/binary rereads before mutation, immutable superseded_ota reference and no incompatible previous rollback entry. Unknown/edited histories or destinations fail before writes. Later compatible publications retain both histories. Full public prior manifest saved at cloud/ota-foundation-history/45307022021-1.json.
+
+All **79 offline tests pass**, including transition and privacy/failure tests. Real pinned builds pass: baseline **1,011,872 bytes**, version f2e92e43…; heart **1,012,080 bytes**, version 709f1f9c…, headroom **298,640**, static DRAM **47,968**. Unpublished four-file package validated in .build/ota-header-fix-2026-11-23/package; simulated transition is **4,292 bytes** within the device bound. It uses a hypothetical run123 URL and is not a release. No model request, spending, paid service, automatic install or new cloud publication occurred while preparing the correction. Source publication is next, followed by a new saved-heart/Publish run, real OTA boot/health, second scene and rollback.
+
+## 87. Save the reviewed correction for Terminal push and new cloud test
+
+**Date:** November 23, 2026
+
+### Intent
+
+Publish the verified source correction so the next controlled OTA run can use the board's current sealed foundation.
+
+### Changes made and result
+
+Confirmed local and remote main at 99b6d37 before publication. Reviewed scoped changes, 79 passing tests, both real builds, exact installed runtime/seal and unpublished transition package. Attempted GitHub connector tree creation; GitHub rejected it with HTTP403 “Resource not accessible by integration”. No branch/release/feed change occurred. Saving the fifteen scoped source/test/history/guide/checkpoint files in a local commit titled **Fix OTA release redirect handling and pin foundation migration**, preserving unrelated staged/working-tree content (index was empty before staging this scope).
+
+Next user action is the previously working Terminal SSH push, followed by manual Lightboard OTA test on main, saved-heart, Publish checked, preserving the existing $0 stop. Read-only connector can then verify exact remote source, new run and new foundation/feed. Corrected vessel firmware stays installed with normal animation, credentials retained and full-download health/hash passed. No second USB upload, repeat provisioning, model request or completed local check is needed. Actual OTA image writing/boot/second scene/rollback remain unverified until the new cloud package is published and tested.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.

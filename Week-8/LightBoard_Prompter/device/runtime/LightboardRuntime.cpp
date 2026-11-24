@@ -228,7 +228,9 @@ class HttpsStream {
   void close() { if (client) { esp_http_client_cleanup(client); client = nullptr; } }
   bool open(const char* initial) {
     char url[3072];
-    if (!allowedHttps(initial) || !timeReady()) return false;
+    if (!allowedHttps(initial) || !timeReady()) {
+      Serial.println("LB_HTTPS_DIAG: initial URL policy or clock rejected"); return false;
+    }
     strcpy(url, initial);
     for (int redirect = 0; redirect <= 3; ++redirect) {
       close();
@@ -240,27 +242,71 @@ class HttpsStream {
       config.max_authorization_retries = -1;
       config.crt_bundle_attach = esp_crt_bundle_attach;
       config.skip_cert_common_name_check = false;
-      config.buffer_size = 1024;
+      config.buffer_size = 4096;
       config.buffer_size_tx = 1024;
       config.event_handler = httpEvent;
       config.user_data = &headers;
       config.user_agent = "Lightboard-OTA-pilot";
       client = esp_http_client_init(&config);
-      if (!client) return false;
+      if (!client) { Serial.println("LB_HTTPS_DIAG: client allocation failed"); return false; }
       esp_http_client_set_header(client, "Accept-Encoding", "identity");
       esp_http_client_set_header(client, "Connection", "close");
-      if (esp_http_client_open(client, 0) != ESP_OK || esp_http_client_fetch_headers(client) < 0 || headers.rejected)
-        return false;
+      esp_err_t openResult = esp_http_client_open(client, 0);
+      Serial.printf("LB_HTTPS_DIAG {\"hop\":%d,\"open_result\":%d,\"heap_free\":%u}\n",
+          redirect, (int)openResult, ESP.getFreeHeap());
+      if (openResult != ESP_OK) return false;
+      int64_t fetched = esp_http_client_fetch_headers(client);
       int statusCode = esp_http_client_get_status_code(client);
+      Serial.printf("LB_HTTPS_DIAG {\"hop\":%d,\"status\":%d,\"length\":%lld,\"chunked\":%s,\"headers_rejected\":%s,\"redirect_bytes\":%u}\n",
+          redirect, statusCode, (long long)fetched,
+          esp_http_client_is_chunked_response(client) ? "true" : "false",
+          headers.rejected ? "true" : "false", (unsigned)strlen(headers.location));
+      if (fetched < 0 || headers.rejected) return false;
       if (statusCode == 200) return true;
       if (statusCode != 301 && statusCode != 302 && statusCode != 303 && statusCode != 307 && statusCode != 308)
         return false;
-      if (!allowedHttps(headers.location)) return false;
+      if (!allowedHttps(headers.location)) { Serial.println("LB_HTTPS_DIAG: redirect URL policy rejected"); return false; }
       strcpy(url, headers.location);
     }
     return false;
   }
 };
+void probeFirmware(const char* url) {
+  // Read-only network probe: no OTA begin/write/end or boot-partition selection.
+  if (!firmwareUrl(url) || WiFi.status() != WL_CONNECTED) {
+    Serial.println("LB_PROBE_STOP: repository firmware URL or Wi-Fi rejected"); return;
+  }
+  HttpsStream stream;
+  if (!stream.open(url)) { Serial.println("LB_PROBE_STOP: HTTPS open failed; no flash operation"); return; }
+  int length = esp_http_client_get_content_length(stream.client);
+  bool chunked = esp_http_client_is_chunked_response(stream.client);
+  Serial.printf("LB_PROBE_HEADERS {\"length\":%d,\"chunked\":%s,\"no_flash_operation\":true}\n",
+      length, chunked ? "true" : "false");
+  if (chunked || length < 288 || length > (int)kAppSlotBytes) return;
+  mbedtls_sha256_context hash; mbedtls_sha256_init(&hash);
+  bool good = mbedtls_sha256_starts_ret(&hash, 0) == 0;
+  uint8_t buffer[1024]; int received = 0; bool magic = false;
+  uint32_t started = millis(), lastData = started;
+  while (good && received < length) {
+    if (expired(millis(), started, 120000) || expired(millis(), lastData, 10000)) { good = false; break; }
+    int wanted = min((int)sizeof(buffer), length - received);
+    int count = esp_http_client_read(stream.client, (char*)buffer, wanted);
+    if (count < 0) { good = false; break; }
+    if (count > 0) {
+      if (!received) magic = buffer[0] == 0xe9;
+      good = mbedtls_sha256_update_ret(&hash, buffer, count) == 0;
+      received += count; lastData = millis();
+    }
+    vTaskDelay(1);
+  }
+  uint8_t digest[32] = {}; char hex[65] = {};
+  good = good && received == length && esp_http_client_is_complete_data_received(stream.client) &&
+      mbedtls_sha256_finish_ret(&hash, digest) == 0;
+  for (size_t i = 0; i < sizeof(digest); ++i) snprintf(hex + i * 2, 3, "%02x", digest[i]);
+  mbedtls_sha256_free(&hash);
+  Serial.printf("LB_PROBE_DOWNLOAD {\"bytes\":%d,\"complete\":%s,\"image_magic\":%s,\"sha256\":\"%s\",\"no_flash_operation\":true}\n",
+      received, good ? "true" : "false", magic ? "true" : "false", hex);
+}
 bool downloadManifest(char* output, size_t capacity) {
   HttpsStream stream;
   if (!stream.open(kFeedUrl)) { Serial.println("LB_STOP: verified HTTPS feed unavailable (Wi-Fi/clock/certificate/status)"); return false; }
@@ -444,7 +490,8 @@ void command(char* input) {
     candidateReady = false; armedUntil = provisionUntil = 0; provisionPhase = 0;
     wipe(provisionSsid, sizeof(provisionSsid));
     Serial.println(removed ? "LB_CREDENTIALS_REMOVED" : "LB_CREDENTIALS_NOT_FOUND_OR_REMOVE_FAILED");
-  } else if (strcmp(input, "check") == 0) checkFeed(true);
+  } else if (strncmp(input, "probe-firmware\t", 15) == 0) probeFirmware(input + 15);
+  else if (strcmp(input, "check") == 0) checkFeed(true);
   else if (strcmp(input, "arm-update") == 0) {
     if (healthy && !pendingVerify && candidateReady && !expired(millis(), candidateCheckedAt, 60000)) {
       armedUntil = millis() + 60000; Serial.println("LB_UPDATE_ARMED_FOR_60_SECONDS: install requires a second USB command");

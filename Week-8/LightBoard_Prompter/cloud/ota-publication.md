@@ -1,5 +1,9 @@
 # Controlled OTA publication
 
+**November 23 transport correction:** Old run 45307022021 published successfully, but hardware downloads exposed truncated redirect handling with a 1024-byte HTTP receive buffer. The installed corrected vessel/runtime uses 4096, passed full application HTTPS download/SHA and physical animation/health. Its sealed foundation is f1244292bbdf180ad5ea8b4ffbf46c72b9772ef8ad2407276ae26e3786132522. A new main/saved-heart/Publish run is required before real installation; old 737b… feed is intentionally incompatible. No additional USB upload or provisioning is needed. 79 tests and both revised real builds pass.
+
+Publisher migration is pinned to the exact reviewed old manifest (SHA 67a5d7db82b007d8afa9466740cac3c6a3bea24790d3ea63a739aaf37911b0e6) and exact f124 destination. Before mutation it anonymously rereads that immutable manifest and its firmware/recovery. It preserves the old schema1 legacy snapshot, references the immutable old OTA manifest under superseded_ota with compatible_for_ota false, and leaves previous null. Subsequent same-foundation publications retain the compatible previous image and reference. Any edited/unknown history or other transition requires explicit review. No assets are overwritten/deleted. The full old manifest is also preserved under ota-foundation-history/.
+
 The v5 foundation passed physical Wi-Fi, certificate-verified feed access, offline animation continuity and manual reconnect checks. This workflow prepares two known scenes without another model request. Actual OTA installation and rollback are separate hardware checks.
 
 Use **Lightboard OTA test**, on **main**. Its choices are `saved-heart` (the preserved response from generation run 42735010470) and `baseline` (the original scene with the same networking foundation). Select **saved-heart first**; baseline has the same source-derived version as the USB-installed pilot and will be treated as already current.
