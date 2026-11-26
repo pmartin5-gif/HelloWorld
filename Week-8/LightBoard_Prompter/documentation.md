@@ -2446,6 +2446,29 @@ User completed requested newly composed marker-only email case. Supplied counter
 
 Saved private log and updated checkpoint/verification/guide/Step8 completion. No source change, tests/full suite, cloud build, model call, email sent by assistant, trigger, publication or device command. No further repeats of successful intake cases needed. Next Step9 is local durable one-in-flight queue and scoped workflow integration preparation, with dispatch/new model calls/publication/replies/triggers/device delivery disabled until concretely configured.
 
+## 108. Durable queue implementation prepared and tested locally
+
+**Date:** November 26, 2026
+
+### Your prompts
+
+> What does a persistent queue mean here?
+> Got it. Let's proceed.
+
+### Intent and changes
+
+Explained stored waiting jobs/progress surviving script executions and Mac shutdown, separate from a future scheduling trigger. User authorized proceeding. Implemented separate email/Queue.gs for existing Code.gs: setup/import/inspection, account binding, immutable receipt checksum references, exact prompt hashes, received-time/ID FIFO, same script lock, existing bounded storage and safe metadata-only summaries. Existing two accepted test receipts will import once; no prompt/body duplication or receipt edits. Config remains record_only; no network, Gmail call, new scope, token, trigger, email, cloud build/model request or board operation.
+
+Internal future-adapter transitions use revisions/event hashes and a durable reservation before any HTTP. Only one reserved/building/published/uncertain job can be active. Quota pause retains FIFO; uncertain request and timeout hold the queue instead of releasing a potentially active/published build. Run/commit/dispatch/prompt bindings required, built versus published distinguished, failed workflow requires verified publication absence, no device-confirmed transition until authenticated reporting exists. Helpers are exercised with fixture remote results only; no actual adapter/evidence validation claims.
+
+Inspected current workflow inputs/defaults: prompt/publish/reuse, no queue job/attempt/result binding yet. Did not change workflow. Primary Google storage/lock and current GitHub dispatch docs checked. GitHub documents run ID response in API2026-03-10 and repository Actions:write; it does not grant token restriction to a single workflow. Future adapter must pin intended workflow/ref/repository, reconcile ambiguous outcomes, and never substitute saved heart generation for the vessel prompt. Notes/handoff in email/queue.md.
+
+### Verification and next checkpoint
+
+Ran only node --test tests/test_persistent_queue.cjs:15 pass,0 fail,109.35ms. Actual Inbox.gs/Queue.gs loaded into fresh mocked Apps Script runtimes sharing persistent properties. Covered real intake compatibility, exact hashes/immutable receipts, exclusion of ignored/rejected outcomes, restart/crash replay, bounded capacity/no purge, shared lock, altered-state refusal, FIFO/quota, one active job, duplicate/stale events, uncertain dispatch/timeouts, run/prompt/commit bindings, publication hold and failure reconciliation. Node syntax and git diff checks pass. No full firmware suite or build.
+
+Local implementation complete; Google installation and live persistence are still pending. Next add separate Script Queue from exact local Queue.gs, Save, run setupQueue once and syncQueue twice. Expect two imports then zero, same two existing received job IDs/hashes/head, no in-flight job and dispatchEnabledfalse. No new test email, manifest edit or reset of setup/history. After persistence check, implement the actual job-bound GitHub adapter separately. No automatic delivery enabled.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.

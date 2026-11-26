@@ -245,11 +245,18 @@ Bring back this request:
 
 **Complete the automation.**
 
+**November26 checkpoint:** Queue.gs now implements durable per-job storage, checksum-bound immutable receipt references, FIFO, shared-lock/capacity controls and one-in-flight/revisioned transitions.15 focused local checks pass; actual Google installation/persistence is next (see email/queue.md). No dispatch/trigger/model/publication/device operation has been enabled. Workflow job-result binding and real adapter are not implemented yet.
+
+- [x] Implement/test durable queue storage and internal transition rules locally, separately from the older offline simulation.
+- [ ] Install separate Queue file, run setupQueue once and syncQueue twice; verify two existing jobs survive as the same entries without another import or dispatch.
+- [ ] Bind workflow inputs/results to queue job ID, attempt, exact prompt hash, run and source commit before enabling dispatch.
+
+
 Bring back this request:
 
 > Connect the tested Apps Script email jobs to the manual Lightboard workflow. Use a narrowly scoped credential to dispatch only the intended repository workflow, store it in Script Properties, and implement a persistent queue with at most one in-flight update for the board. Add received, building, published, device-confirmed, failed, and quota-paused statuses. Keep email replies accurate and prevent duplicate or overlapping delivery.
 
-- [ ] Create the required repository credential with only the permissions the dispatcher needs. Store it through the script's setup process; keep it out of the `.gs` source and the repository.
+- [ ] Create the required repository credential with only the permissions the dispatcher needs. GitHub fine-grained Actions:write is repository-scoped, not single-workflow-scoped; enforce the workflow allowlist in the adapter. Store the credential privately; keep it out of `.gs`, repository, logs and chat.
 - [ ] Test dispatch manually from Apps Script with one known prompt.
 - [ ] Confirm the build uses that exact prompt, publishes only a successful candidate, and keeps the one-board queue until device confirmation or a defined failure/timeout.
 - [ ] Add a time-driven trigger for the processor in Apps Script. Start with a five-minute polling interval and verify its runtime fits the account's quotas; it is not an instant-arrival email trigger.

@@ -1,0 +1,59 @@
+# Persistent queue checkpoint
+
+November 26, 2026: `Queue.gs` implements durable queue storage and transitions. Fifteen focused checks of the actual Apps Script source pass locally. Installation and persistence in the private Google project are the next live check. This is separate from the older offline `queue-simulation.cjs` contract.
+
+## Install and check persistence
+
+In the existing **Lightboard Inbox** Apps Script project:
+
+1. Use **+ beside Files → Script**, name it **Queue**, and replace its contents with the complete local `email/Queue.gs`. Save.
+2. Keep Code.gs, Diagnose.gs, appsscript.json, private configuration and existing receipts. No manifest change, new scope, credential or trigger is needed.
+3. Run **setupQueue** once. Expected: `configured`, `mode:record_only`, `dispatchEnabled:false`. Repeating setup preserves the queue/configuration.
+4. Run **syncQueue**. With the two existing accepted test jobs, expect `imported:2`, `jobs:2`, both `received`, original prompt hashes, the heart as `headJobId`, and `inFlightJobId:null`.
+5. Run **syncQueue** again as a separate execution. Expect `imported:0`, the same two jobs/hashes/head, and no in-flight job. Send no new email for this test.
+
+`inspectQueue` reads the same safe summary without importing anything. Once this checkpoint passes, future manual intake runs can be followed by syncQueue to import new accepted jobs. No queued job starts merely because it was imported. The current two examples are queued test data, not authorization to dispatch them later.
+
+## Storage and ordering
+
+The original `LB_MSG_` email receipts remain immutable. Each accepted receipt has one separate `LB_QUEUE_JOB_<job-id>` property. It stores a reference and a checksum of that exact receipt, prompt checksum, receipt time, status, revision, attempt and bounded progress metadata. It does not duplicate the prompt or sender. Ignored/rejected messages never enter the queue.
+
+Every read validates receipt identity, exact prompt hash, source-record hash, queue schema, account binding and supported states. Edited/missing sources stop processing. FIFO uses receivedAt, then job ID for timestamp ties; property enumeration order is irrelevant. Summary positions include terminal history; headJobId identifies the next eligible item.
+
+Queue operations and processInbox share the script lock. Each job's state is one property write; there is no separate index or active-pointer write that could become inconsistent after interruption. A fresh runtime rebuilds the ordered view from stored records. Importing again skips existing records. Capacity uses the existing 8,000-byte/value and 400,000-byte/store application bounds; it pauses, retains history and performs no automatic cleanup. A partly completed import resumes without creating duplicate entries. This duplicates some metadata and therefore consumes additional finite Script Properties capacity.
+
+## Progress rules prepared for a future adapter
+
+The three public functions only configure, import and inspect. They do not simulate a build or contact GitHub. Internal transition helpers are for a future trusted adapter and focused local tests; do not run them manually to mark progress.
+
+| State | Meaning and scheduling effect |
+| --- | --- |
+| received | Saved and waiting; dispatch is disabled at this checkpoint. |
+| quota_paused | Head job paused before dispatch; later jobs wait. Resume retains FIFO position. |
+| dispatch_pending | One attempt reserved durably before a future HTTP request; later jobs wait. |
+| dispatch_unknown | Request outcome uncertain; retain reservation and reconcile, never blindly resend. |
+| building | Run ID, source commit, dispatch ID and exact prompt hash bound; later jobs wait. |
+| built | Verified build-only completion with no publication; next job may become eligible. |
+| published | Verified OTA metadata recorded; board installation unconfirmed, later jobs wait. |
+| failed | Known finished failure with verified absence of publication; next job may become eligible. |
+| review_required | Timeout/uncertainty retained; later jobs stay blocked pending reconciliation. |
+
+State changes use an expected revision and a last-event ID/hash. Replaying the last exact event is a no-op; conflicting/stale events refuse to advance. A persisted dispatch reservation cannot become a second reservation after restart. A future HTTP adapter must send only on the first successful reservation (`changed:true`) and must reconcile a previously reserved attempt. Queue reservation by itself is not proof that a workflow started.
+
+An unsuccessful workflow can have published before failing, and a timed-out request can still finish. Neither automatically releases the board queue. Publication requires matching run/commit/prompt and validated version/foundation/image hash/size supplied by a trusted verification adapter. Those adapter checks are not implemented in this checkpoint. There is no device-confirmed transition; no authenticated device-report channel exists yet. Publication and review states remain blocked, and deviceConfirmed stays false. Finishing that channel and recovery/reconciliation is required before automatic delivery.
+
+`inspectIntake` continues to show original receipt snapshots. `inspectQueue` is the separate progress view. Neither sends status emails. Email replies, scheduling, model requests, publication and board commands remain off.
+
+## GitHub connection findings and next work
+
+The current `lightboard-prompt-build.yml` accepts only prompt, publish and reuse_saved_generation. It has no queue job/attempt ID or queue-bound machine result. Add those bindings before dispatch integration. Do not infer association from the latest run or prompt text alone. The saved heart response can only be reused for its exact prompt; the queued vessel must not receive that response or silently cause a new model call.
+
+The next adapter must pin owner/repository/workflow/ref, include queue job/attempt/prompt hash, bind the returned or reconciled run and source commit, and verify output before updating queue progress. Add only the Google external-request scope when the actual adapter is ready for review. No token or OAuth change is needed now.
+
+GitHub's current [workflow dispatch documentation](https://docs.github.com/en/rest/actions/workflows#create-a-workflow-dispatch-event) specifies fine-grained **Actions:write** for the repository and a response with run ID/URLs for API version 2026-03-10. Verify actual responses when connecting; an ambiguous response must retain the reservation. Repository permission is not a token restriction to a single workflow: enforce the intended workflow in the adapter and do not describe the credential as workflow-specific. If stronger enforcement is required, use a constrained intermediary. Keep any future credential only in private Script Properties, never source/logs/chat.
+
+Storage/locking use Google's [Properties service](https://developers.google.com/apps-script/reference/properties/properties) and [script lock](https://developers.google.com/apps-script/reference/lock/lock). This queue adds no network calls or Gmail operations.
+
+## Focused validation
+
+Run `node --test tests/test_persistent_queue.cjs` when changing this infrastructure. It exercises real Inbox.gs/Queue.gs in fresh mocked Apps Script runtimes backed by the same property store: import and exact hashes, ignored/rejected exclusion, real intake compatibility, restart/crash replay, bounded capacity, busy locks, edited-state refusal, FIFO/quota, one active attempt, ambiguous dispatch/timeout holds, run/prompt/commit binding, stale/conflicting events, build-only versus publication and failure reconciliation. Remote results in these checks are fixtures, not real builds/publications/device evidence. No firmware suite, artwork review or compiler run is involved.
