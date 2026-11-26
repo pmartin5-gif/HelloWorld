@@ -1,0 +1,90 @@
+name: Lightboard automatic email pilot
+run-name: Lightboard email ${{ inputs.email_job_id }} ${{ inputs.dispatch_id }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      prompt:
+        description: 'Creative email prompt (public workflow, 2000 characters maximum)'
+        required: true
+        type: string
+      email_job_id:
+        required: true
+        type: string
+      dispatch_id:
+        required: true
+        type: string
+      prompt_sha256:
+        required: true
+        type: string
+      source_commit:
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+# Shares the existing generation concurrency group; no overlapping Gemini calls.
+concurrency:
+  group: lightboard-api-test
+  cancel-in-progress: false
+
+jobs:
+  email-to-panel:
+    if: ${{ github.repository == 'pmartin5-gif/HelloWorld' && github.event.repository.private == false && github.ref == 'refs/heads/main' && github.run_attempt == 1 }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    defaults:
+      run:
+        working-directory: Week-8/LightBoard_Prompter
+    env:
+      LB_EMAIL_JOB_ID: ${{ inputs.email_job_id }}
+      LB_EMAIL_DISPATCH_ID: ${{ inputs.dispatch_id }}
+      LB_EMAIL_PROMPT_SHA256: ${{ inputs.prompt_sha256 }}
+      LB_EMAIL_SOURCE_COMMIT: ${{ inputs.source_commit }}
+      CREATIVE_PROMPT: ${{ inputs.prompt }}
+    steps:
+      - name: Check out Lightboard inputs
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /Week-8/LightBoard_Prompter/cloud/
+            /Week-8/LightBoard_Prompter/device/
+            /Week-8/LightBoard_Prompter/generate_candidate.py
+            /Week-8/LightBoard_Prompter/generationBrief.md
+      - name: Bind the email before generation
+        run: python3 cloud/email_pilot.py prepare
+      - name: Verify pinned build inputs
+        run: python3 cloud/build.py --verify-only
+      - name: Install pinned Arduino CLI
+        uses: arduino/setup-arduino-cli@81d310742121c928ea9c8bbd407b4217b432ae02 # v2
+        with:
+          version: '1.5.1'
+      - name: Set up pinned ESP32 compiler
+        run: python3 cloud/build.py --install-core --install-only
+      - name: Generate one new animation with Gemini
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: >-
+          python3 generate_candidate.py --actions-secret
+          --prompt-file .build/generated/creative-prompt.txt
+          --output .build/generated/generation.json
+      - name: Validate animation code boundary
+        run: >-
+          python3 cloud/scene.py --record .build/generated/generation.json
+          --output .build/generated/restState.cpp
+      - name: Compile firmware and recovery
+        run: >-
+          python3 cloud/prompt_build.py --cli arduino-cli --data-dir .build/arduino-data
+          --work .build/prompt-ota --generation-record .build/generated/generation.json
+          --prompt-file .build/generated/creative-prompt.txt --automatic-updates
+      - name: Publish firmware for automatic installation
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 cloud/ota_publish.py --publish --output .build/prompt-ota/package
+      - name: Record email publication
+        run: python3 cloud/email_pilot.py result

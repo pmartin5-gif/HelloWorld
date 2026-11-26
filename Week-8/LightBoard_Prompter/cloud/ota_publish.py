@@ -21,15 +21,16 @@ ASSETS = delivery.ASSETS
 APP = "LightboardOTA.ino.bin"
 RECOVERY_SCOPE = "Application only; preserve matching bootloader/partitions and IDE recovery source"
 RECORD = ota_build.PROJECT / "experiments/flash-lite/2026-11-09/cloud-run-42735010470/generation.json"
-# One reviewed transition after physical HTTPS testing. Unknown/edited old feeds still stop.
-PRIOR_FOUNDATION = "737b7d0e5f8d6a21c65c5f9e3aee6a126f46e732b79a61aff2b0713e47419309"
-TRANSITION_FOUNDATION = "f1244292bbdf180ad5ea8b4ffbf46c72b9772ef8ad2407276ae26e3786132522"
-PRIOR_MANIFEST_SHA256 = "67a5d7db82b007d8afa9466740cac3c6a3bea24790d3ea63a739aaf37911b0e6"
+# Exact manual-heart feed -> opt-in automatic runtime. Bootstrap this runtime
+# once through Arduino IDE; the old runtime correctly rejects a new foundation.
+PRIOR_FOUNDATION = "f1244292bbdf180ad5ea8b4ffbf46c72b9772ef8ad2407276ae26e3786132522"
+TRANSITION_FOUNDATION = "a529d5f9a72ca4858e0ab09ae66ec5eaecff656fdeb6d6a4f040e40633959ec1"
+PRIOR_MANIFEST_SHA256 = "d67c09c2900be711160f05f588f7f384a896dba4e7c8f16ed4c3c1036934a667"
 
 
 def superseded_reference():
     return {"foundation_id": PRIOR_FOUNDATION,
-            "manifest_url": asset_url("lightboard-ota-45307022021-1", "manifest.json"),
+            "manifest_url": asset_url("lightboard-ota-45891588901-1", "manifest.json"),
             "manifest_sha256": PRIOR_MANIFEST_SHA256, "compatible_for_ota": False}
 
 
@@ -177,7 +178,7 @@ def validate_manifest(m, published):
             m["schema_version"] == 2 and m["repository"] == delivery.REPOSITORY and
             m["channel"] == "ota-pilot" and m["device"] == "esp32-32x32" and
             m["foundation_id"] == foundation and m["fqbn"] == lock["fqbn"] and
-            m["published"] is published and m["ota_enabled"] is True and m["automatic_updates"] is False and
+            m["published"] is published and m["ota_enabled"] is True and type(m["automatic_updates"]) is bool and
             m["usb_recovery_scope"] == RECOVERY_SCOPE and
             m["generation"] == generation and set(m["build"]) == {"run_id", "attempt", "commit_sha"} and
             ((m["build"]["commit_sha"] is None and published is False) or
@@ -209,14 +210,14 @@ def write_manifest(folder, manifest):
     (folder / "SHA256SUMS").write_text("".join(f"{sha((folder / n).read_bytes())}  {n}\n" for n in ASSETS[:-1]))
 
 
-def prepare(candidate, baseline, output, name, run, attempt):
+def prepare(candidate, baseline, output, name, run, attempt, automatic_updates=False):
     require(not output.exists(), "OTA publication output already exists")
     report, binary, generation = checked_bundle(candidate, name)
     recovery_report, recovery, _ = checked_bundle(baseline, "baseline")
     tag = tag_name(run, attempt)
     manifest = {"schema_version": 2, "repository": delivery.REPOSITORY, "channel": "ota-pilot",
         "device": "esp32-32x32", "foundation_id": report["foundation_id"], "fqbn": report["fqbn"],
-        "ota_enabled": True, "published": False, "automatic_updates": False, "scene": name,
+        "ota_enabled": True, "published": False, "automatic_updates": automatic_updates, "scene": name,
         "generation": generation, "build": {"run_id": str(run), "attempt": str(attempt),
                                            "commit_sha": os.environ.get("GITHUB_SHA")},
         "current": entry(report, binary, tag, "firmware.bin"),
@@ -306,7 +307,8 @@ def publish(folder, api, download=delivery.public_bytes):
     write_manifest(folder, m)
     release = api.request("POST", "/releases", {"tag_name": tag, "target_commitish": os.environ["GITHUB_SHA"],
         "name": f"Lightboard OTA pilot {m['build']['run_id']}: {m['scene']}",
-        "body": "Validated Lightboard OTA package. No automatic install or device command. "
+        "body": "Validated Lightboard OTA package. Automatic eligibility: " + str(m["automatic_updates"]) + ". "
+                "Installation also requires the board's saved auto-on setting. "
                 "Retains sealed Wi-Fi/update foundation. Recovery asset is an application only. "
                 "Physical installation and rollback checks are separate; preserve USB recovery source.",
         "draft": True, "prerelease": True, "make_latest": "false"})
@@ -328,7 +330,7 @@ def publish(folder, api, download=delivery.public_bytes):
     for url in (f"https://raw.githubusercontent.com/{delivery.REPOSITORY}/{commit}/manifest.json", delivery.FEED_URL):
         require(download(url, 8192) == encoded(m), "OTA feed committed but readback failed; inspect before retrying")
     print(f"OTA_PUBLICATION_PASSED: https://github.com/{delivery.REPOSITORY}/releases/tag/{tag}")
-    print("Publication sends no model request or device command; installation requires device confirmation.")
+    print("Publication sends no model request or device command; board installation is not acknowledged by this result.")
     return m
 
 

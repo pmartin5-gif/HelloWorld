@@ -45,6 +45,10 @@ uint32_t armedUntil = 0;
 Candidate checkedCandidate = {};
 uint32_t candidateCheckedAt = 0;
 bool candidateReady = false;
+struct AutoSettings { uint32_t format; uint32_t enabled; char attemptedSha[65]; };
+AutoSettings autoSettings = {1, 0, {0}};
+uint32_t lastAutomaticCheck = 0;
+bool feedAllowsAutomatic = false;
 
 class FlashGuard {
  public:
@@ -54,6 +58,25 @@ class FlashGuard {
 void wipe(void* data, size_t bytes) {
   volatile uint8_t* p = (volatile uint8_t*)data;
   while (bytes--) *p++ = 0;
+}
+void loadAutoSettings() {
+  Preferences store;
+  AutoSettings saved = {};
+  if (!store.begin("lightboard", true)) return;
+  bool found = store.getBytesLength("auto") == sizeof(saved) &&
+      store.getBytes("auto", &saved, sizeof(saved)) == sizeof(saved);
+  store.end();
+  if (found && saved.format == 1 && saved.enabled <= 1 && saved.attemptedSha[64] == 0 &&
+      (!saved.attemptedSha[0] || sha256Text(saved.attemptedSha))) autoSettings = saved;
+}
+bool saveAutoSettings(const AutoSettings& next) {
+  FlashGuard guard;
+  Preferences store;
+  if (!store.begin("lightboard", false)) return false;
+  bool saved = store.putBytes("auto", &next, sizeof(next)) == sizeof(next);
+  store.end();
+  if (saved) autoSettings = next;
+  return saved;
 }
 Metrics snapshot() {
   portENTER_CRITICAL(&metricsMux);
@@ -88,7 +111,7 @@ void status() {
       "\"target\":\"%s\",\"ota_state\":%d,\"credentials_set\":%s,\"wifi_status\":%d,"
       "\"rssi\":%d,\"heap_free\":%u,\"heap_min\":%u,\"heap_largest\":%u,"
       "\"worker_stack_free\":%u,\"refresh_stack_free\":%u,\"refresh_cycles\":%u,\"frames\":%u,\"max_frame_gap_ms\":%u,"
-      "\"health_ok\":%s,\"automatic_updates\":false}\n",
+      "\"health_ok\":%s,\"automatic_updates\":%s}\n",
       LB_FIRMWARE_VERSION, LB_FOUNDATION_ID, ESP.getFlashChipSize(), layoutValid() ? "true" : "false",
       running ? running->label : "none", running ? running->address : 0,
       running ? running->size : 0, target ? target->label : "none", (int)state,
@@ -96,7 +119,7 @@ void status() {
       WiFi.status() == WL_CONNECTED ? WiFi.RSSI() : 0,
       ESP.getFreeHeap(), ESP.getMinFreeHeap(), ESP.getMaxAllocHeap(),
       (unsigned)uxTaskGetStackHighWaterMark(nullptr), lightboardRefreshStackFree(), lightboardRefreshCycles(),
-      m.frames, m.maxGap, healthy ? "true" : "false");
+      m.frames, m.maxGap, healthy ? "true" : "false", autoSettings.enabled ? "true" : "false");
 }
 bool loadCredentials() {
   Preferences store;
@@ -346,6 +369,7 @@ bool copyText(const cJSON* object, const char* key, char* out, size_t capacity) 
 }
 bool checkFeed(bool announce) {
   candidateReady = false;
+  feedAllowsAutomatic = false;
   wipe(&checkedCandidate, sizeof(checkedCandidate));
   if (WiFi.status() != WL_CONNECTED) { Serial.println("LB_STOP: Wi-Fi is not connected"); return false; }
   char* body = (char*)malloc(kMaxManifest + 1);
@@ -376,6 +400,7 @@ bool checkFeed(bool announce) {
       layoutValid() && target && eligible(schema->valueint, cJSON_IsTrue(enabled),
       device, foundation, LB_FOUNDATION_ID, candidate, target->size);
   bool nonOta = cJSON_IsFalse(enabled);
+  feedAllowsAutomatic = valid && cJSON_IsTrue(field(root, "automatic_updates"));
   cJSON_Delete(root); free(body);
   if (!valid) {
     Serial.println(nonOta ? "LB_FEED_REACHABLE: published delivery-test feed; OTA explicitly disabled" :
@@ -460,10 +485,39 @@ void healthCheck() {
     resetHealthWindow();
   }
 }
+void automaticUpdate() {
+  if (!autoSettings.enabled || !healthy || pendingVerify || terminalHealthFailure || provisionPhase ||
+      !reconnectEnabled || WiFi.status() != WL_CONNECTED ||
+      !expired(millis(), lastAutomaticCheck, 60000)) return;
+  lastAutomaticCheck = millis();
+  if (!checkFeed(false) || !feedAllowsAutomatic ||
+      strcmp(checkedCandidate.version, LB_FIRMWARE_VERSION) == 0 ||
+      strcmp(checkedCandidate.sha256, autoSettings.attemptedSha) == 0) return;
+  Candidate approved = checkedCandidate;
+  // Recheck the exact candidate before reserving a flash attempt. Hash verification
+  // in downloadAndInstall remains mandatory. Persist BEFORE flash to prevent loops
+  // after reset/rollback. A failed download requires explicit auto-on to retry.
+  if (!checkFeed(false) || !feedAllowsAutomatic || !sameCandidate(approved, checkedCandidate)) return;
+  AutoSettings next = autoSettings;
+  strcpy(next.attemptedSha, approved.sha256);
+  if (!saveAutoSettings(next)) { Serial.println("LB_STOP: automatic attempt could not be saved"); return; }
+  Serial.printf("LB_AUTO_INSTALL {\"version\":\"%s\",\"sha256\":\"%s\"}\n", approved.version, approved.sha256);
+  if (downloadAndInstall(approved)) {
+    Serial.println("LB_AUTO_REBOOT: verified image written");
+    vTaskDelay(pdMS_TO_TICKS(100)); ESP.restart();
+  } else Serial.println("LB_AUTO_INSTALL_FAILED: same image will not be retried automatically");
+}
 void command(char* input) {
   if (strcmp(input, "status") == 0) status();
   else if (strcmp(input, "help") == 0)
-    Serial.println("LB_COMMANDS: status | wifi-diagnose | provision | cancel-provision | offline | reconnect | forget-wifi | check | arm-update | install | rollback");
+    Serial.println("LB_COMMANDS: status | wifi-diagnose | provision | cancel-provision | offline | reconnect | forget-wifi | check | arm-update | install | auto-on | auto-off | rollback");
+  else if (strcmp(input, "auto-on") == 0 || strcmp(input, "auto-off") == 0) {
+    AutoSettings next = {1, strcmp(input, "auto-on") == 0 ? 1U : 0U, {0}};
+    if (saveAutoSettings(next)) {
+      lastAutomaticCheck = millis();
+      Serial.println(next.enabled ? "LB_AUTO_ENABLED: eligible published feed checked every 60 seconds" : "LB_AUTO_DISABLED");
+    } else Serial.println("LB_STOP: automatic setting was not saved");
+  }
   else if (strcmp(input, "wifi-diagnose") == 0) diagnoseWifi();
   else if (strncmp(input, "wifi-diagnose\t", sizeof("wifi-diagnose\t") - 1) == 0)
     diagnoseWifi(input + sizeof("wifi-diagnose\t") - 1);
@@ -574,7 +628,7 @@ void worker(void*) {
   else Serial.println("LB_NEEDS_PRIVATE_WIFI_PROVISIONING");
   bool wasConnected = false;
   for (;;) {
-    serialPoll(); healthCheck();
+    serialPoll(); healthCheck(); automaticUpdate();
     bool connected = WiFi.status() == WL_CONNECTED;
     if (connected && !wasConnected) Serial.println("LB_WIFI_CONNECTED: use status/check for diagnostics");
     if (!connected && wasConnected) { candidateReady = false; armedUntil = 0; Serial.println("LB_WIFI_DISCONNECTED"); }
@@ -601,7 +655,9 @@ void begin() {
   esp_ota_img_states_t state = ESP_OTA_IMG_UNDEFINED;
   pendingVerify = running && esp_ota_get_state_partition(running, &state) == ESP_OK && state == ESP_OTA_IMG_PENDING_VERIFY;
   resetHealthWindow();
-  Serial.printf("LB_BOOT version=%s foundation=%s automatic_updates=false\n", LB_FIRMWARE_VERSION, LB_FOUNDATION_ID);
+  loadAutoSettings();
+  Serial.printf("LB_BOOT version=%s foundation=%s automatic_updates=%s\n", LB_FIRMWARE_VERSION, LB_FOUNDATION_ID,
+      autoSettings.enabled ? "true" : "false");
   if (xTaskCreatePinnedToCore(worker, "lightboard-net", 24576, nullptr, 1, &workerHandle, 0) != pdPASS)
     Serial.println("LB_STOP: networking task allocation failed; animation continues");
 }

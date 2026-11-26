@@ -180,7 +180,7 @@ class OtaPublicationTests(unittest.TestCase):
         self.assertFalse(any(c[0] != 'GET' for c in api.calls))
 
     def reviewed_prior(self):
-        return json.loads((build.ROOT / 'ota-foundation-history/45307022021-1.json').read_text())
+        return json.loads((build.ROOT / 'ota-foundation-history/45891588901-1.json').read_text())
 
     def test_exact_reviewed_foundation_transition_preserves_immutable_history(self):
         self.prepare(); prior = self.reviewed_prior(); api = FakeGitHub(prior)

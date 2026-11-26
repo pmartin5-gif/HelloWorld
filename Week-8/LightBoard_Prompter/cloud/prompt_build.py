@@ -15,7 +15,7 @@ else:
     import scene
 
 
-def prepare(work, record, prompt, brief, cli, data_dir, run, attempt):
+def prepare(work, record, prompt, brief, cli, data_dir, run, attempt, automatic_updates=False):
     work = work.resolve()
     ota_build.require((ota_build.PROJECT / ".build").resolve() in work.parents,
                       "Use a new directory inside this project's .build")
@@ -33,13 +33,13 @@ def prepare(work, record, prompt, brief, cli, data_dir, run, attempt):
     ota_build.compile_pilot(work / "baseline", cli, data_dir)
     ota_build.compile_pilot(work / "candidate", cli, data_dir, function, generation_record=frozen)
     manifest = ota_publish.prepare(work / "candidate/artifact", work / "baseline/artifact",
-                                   work / "package", "generated", run, attempt)
-    ota_build.require(manifest["published"] is False and manifest["automatic_updates"] is False,
-                      "Preparation must not enable delivery")
+                                   work / "package", "generated", run, attempt, automatic_updates)
+    ota_build.require(manifest["published"] is False and manifest["automatic_updates"] is automatic_updates,
+                      "Unexpected publication/automatic eligibility")
     print("PROMPT_OTA_PREPARED: " + json.dumps({
         "foundation_id": manifest["foundation_id"], "current": manifest["current"],
         "generation": manifest["generation"], "published": False,
-        "automatic_updates": False, "device_command_sent": False}))
+        "automatic_updates": automatic_updates, "device_command_sent": False}))
     return manifest
 
 
@@ -53,9 +53,10 @@ def main():
     parser.add_argument("--data-dir", type=Path, default=Path.home() / "Library/Arduino15")
     parser.add_argument("--run-id", default=os.environ.get("GITHUB_RUN_ID"))
     parser.add_argument("--attempt", default=os.environ.get("GITHUB_RUN_ATTEMPT", "1"))
+    parser.add_argument("--automatic-updates", action="store_true", help="Make this package eligible for boards explicitly set to auto-on")
     args = parser.parse_args()
     prepare(args.work, args.generation_record, args.prompt_file, args.brief,
-            args.cli, args.data_dir, args.run_id, args.attempt)
+            args.cli, args.data_dir, args.run_id, args.attempt, args.automatic_updates)
     return 0
 
 
