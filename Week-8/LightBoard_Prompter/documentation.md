@@ -2843,6 +2843,16 @@ Saved full publication marker and manual hardware evidence under ignored email-i
 
 **Result:** New firmware automatically installed and healthy; informed user. No resend/rebuild/model request/manual install/Upload/source change or tests. Only native status/check diagnostics. No independent physical appearance confirmation requested; device boot is direct installation evidence. Saved current result/feed/full generated record/delivery metadata in ignored evidence and updated RESUME while retaining the prompt deep dive/checks audit as next-session priorities. Notes remain local to preserve live source pin.
 
+## 136. Confirm latest image and record feed-delay improvement options
+
+> “i see the new image. is there anything we can do to prevent this error from happening again?”
+
+**Intent:** Explain how to reduce the observed delivery lag, preserving the planned end-of-session handoff and working system.
+
+**Finding/options:** Inspected runtime: fixed raw branch feed URL on60s polling, no Cache-Control revalidation request header. Propose testing feed-only no-cache requests and recording actual cache headers; RFC9111 describes revalidation, but no claim that GitHub honors it or delay is eliminated. If ineffective, evaluate hosting only the small update feed where cache policy can be controlled, retaining immutable firmware assets. Device installation acknowledgment would clarify status separately from reducing delivery lag. Runtime changes require deliberate sealed-foundation rollout. No production implementation, test, model request or hardware action in this turn.
+
+**Saved:** Added follow-up options to RESUME alongside the primary Gemini prompt/checks review agenda; recorded user's physical confirmation of85a093. Current successful pipeline unchanged; no new push required.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.
