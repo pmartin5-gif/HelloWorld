@@ -129,6 +129,38 @@ test('failure and ambiguous timeout pause further generation without clearing th
   }
 });
 
+test('explicit rejected-email retry preserves original and dispatches one new attempt only', () => {
+  const h = harness(), c = h.context;
+  c.startContinuousEmail(); h.receipt('first'); h.advance(1000); c.emailPilotTick();
+  const originalId = h.state().jobId, originalReceipt = h.data.LB_MSG_first;
+  h.finish('failure'); c.emailPilotTick(); c.continueAfterRejectedBuild();
+  const rejection = h.data['LB_EMAIL_REJECTED_' + originalId];
+  assert.equal(c.retryLastRejectedEmail().status, 'retry_queued');
+  const retryId = 'lb-123456789abc-retry101';
+  assert.equal(c.retryLastRejectedEmail().status, 'retry_already_recorded');
+  assert.equal(h.posts, 1);
+  c.emailPilotTick(); c.emailPilotTick();
+  assert.equal(h.posts, 2); assert.equal(h.payloads[1].inputs.email_job_id, retryId);
+  assert.equal(h.payloads[1].inputs.prompt, JSON.parse(originalReceipt).job.prompt);
+  assert.equal(h.data.LB_MSG_first, originalReceipt);
+  assert.equal(h.data['LB_EMAIL_REJECTED_' + originalId], rejection);
+});
+
+test('rejected-email retry refuses altered prompt, lab mode and uncertain publication', () => {
+  for (const problem of ['tamper', 'lab', 'no_rejection']) {
+    const h = harness(), c = h.context;
+    c.startContinuousEmail(); h.receipt('first'); h.advance(1000); c.emailPilotTick();
+    h.finish('failure'); c.emailPilotTick(); c.continueAfterRejectedBuild();
+    if (problem === 'tamper') {
+      const receipt = JSON.parse(h.data.LB_MSG_first); receipt.job.prompt += ' changed';
+      h.data.LB_MSG_first = JSON.stringify(receipt);
+    } else if (problem === 'lab') h.data.LB_PROMPT_LAB = JSON.stringify({active:true});
+    else delete h.data['LB_EMAIL_REJECTED_' + h.state().lastRejected.jobId];
+    assert.equal(c.retryLastRejectedEmail().status, 'waiting_or_stopped');
+    assert.equal(h.data.LB_MSG_retry101, undefined); assert.equal(h.posts, 1);
+  }
+});
+
 test('continuous scheduler accepts an intake receipt from an unlisted sender in subject-only mode', () => {
   const h = harness(), c = h.context;
   const config = JSON.parse(h.data.LB_ACTIVE_CONFIG); config.allowAnySender = true; config.requireMarker = false;

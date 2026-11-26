@@ -106,6 +106,41 @@ function startContinuousEmail() {
   });
 }
 function inspectEmailProcessing() { return inspectEmailPilot(); }
+function retryLastRejectedEmail() {
+  return lbaLocked_((store, snapshot) => {
+    const state = lbaState_(snapshot);
+    lbaRequire_(state && state.mode === 'continuous' && state.active && !state.dispatchId, 'HELD_JOB');
+    lbaRequire_(!JSON.parse(snapshot.LB_PROMPT_LAB || '{"active":false}').active, 'LAB_ACTIVE');
+    const rejected = state.lastRejected;
+    lbaRequire_(rejected && rejected.published === false && /^[1-9][0-9]*$/.test(rejected.runId || '') &&
+      snapshot[LBAUTO.rejectedPrefix + rejected.jobId] === JSON.stringify(rejected), 'REJECTED_EMAIL');
+    const originals = Object.keys(snapshot).filter(k => k.startsWith('LB_MSG_'))
+      .map(k => JSON.parse(snapshot[k])).filter(r => r.outcome === 'received' && r.job && r.job.id === rejected.jobId);
+    lbaRequire_(originals.length === 1, 'REJECTED_EMAIL');
+    const original = originals[0].job;
+    lbaRequire_(/^lb-[a-f0-9]{12}-[a-zA-Z0-9]{1,64}$/.test(original.id) && !original.generationBrief &&
+      original.promptSha256 === rejected.promptSha256 && lbHash(original.prompt) === rejected.promptSha256 &&
+      lbSenderAllowed_(original.sender, lbConfig(store)), 'REJECTED_EMAIL');
+    const id = original.id.slice(0, 16) + 'retry' + rejected.runId;
+    const key = 'LB_MSG_retry' + rejected.runId;
+    if (snapshot[key]) {
+      const saved = JSON.parse(snapshot[key]);
+      lbaRequire_(saved.job && saved.job.id === id && saved.job.retryOfJobId === original.id &&
+        saved.job.retryOfRunId === rejected.runId && saved.job.prompt === original.prompt &&
+        saved.job.promptSha256 === original.promptSha256, 'REJECTED_EMAIL');
+      return lbReport({status: 'retry_already_recorded', jobId: id, originalJobId: original.id,
+        dispatchSent: false, deviceConfirmed: false});
+    }
+    lbghCheckSource_(snapshot, state.sourceCommit, state.workflowId, LBAUTO);
+    lbghCheckFile_(snapshot, LBAUTO.workflowPath, state.sourceCommit, LBAUTO.workflowSha256);
+    // Stable receipt key makes a repeated click/lost response reuse the same attempt.
+    lbSet(store, snapshot, key, {schemaVersion: 1, outcome: 'received', job: {
+      id, sender: original.sender, prompt: original.prompt, promptSha256: original.promptSha256,
+      receivedAt: new Date(Date.now()).toISOString(), retryOfJobId: original.id, retryOfRunId: rejected.runId}});
+    return lbReport({status: 'retry_queued', jobId: id, originalJobId: original.id,
+      dispatchSent: false, deviceConfirmed: false});
+  });
+}
 function stopEmailProcessing() { return stopEmailPilot(); }
 function stopEmailPilot() {
   return lbaLocked_((store, snapshot) => {

@@ -2785,6 +2785,18 @@ Saved full publication marker and manual hardware evidence under ignored email-i
 
 **Completion:** Private lab setup and live form check complete. First custom-brief generation and actual panel result await user's explicit Send. No form edits, Send click, Gemini request, workflow dispatch, firmware operation or repeated tests. Updated checkpoint/guide/private evidence. Normal email processing remains active until a submitted experiment selects testing mode; user resumes email processing after testing. Evidence-only notes remain local to preserve live source pin.
 
+## 131. Set the prompt lab aside and prepare the rejected email's repair
+
+> “Let's pause this workflow and come back to it. There was a prompt that was sent by email recently that was rejected. I'd like to work on getting this one passed and then we can come back to the prompt testing.”
+
+**Intent:** Prioritize the rejected emailed prompt and return to the now-working private lab later. No lab experiment exists and its mode is off; no user request to disable normal ESP32 operation.
+
+**Diagnosis:** Latest GitHub runs still show45905216109/job140200232089 as the recent failed email. Actual logs: Gemini returned a candidate in4.773s, then validator rejected unsupported esp_random. Compile/publication skipped. No artifacts retained; original generated code cannot be recovered from this run's logs. Reusing the saved email requires one new Gemini generation, not a rerun of the guarded old workflow attempt. Original failure already archived without retry during lab activation.
+
+**Changes prepared:** Added only esp_random to numeric call allowlist. Verified declaration/include chain in installed pinned ArduinoESP32core2.0.17 and its existing use inside Arduino random(); no foundation/toolchain/runtime/brief/workflow change. Added manual retryLastRejectedEmail to existing scheduler, with original rejection/receipt/hash/sender/source binding, stable new linked retry receipt, repeat-safe behavior and lab-mode/uncertain-state refusal. Original records retained. Helper queues one explicit attempt; existing timer owns dispatch. No automatic retry policy or email send added.
+
+**Focused result:** Two Python checks and two Node actual-handler checks passed, covering allowed numeric call, retained dangerous-call restrictions, exact original prompt, duplicate retry action/ticks and tampered/missing-rejection/lab refusal. No fullsuite, model request, build, publication or board action. Source prepared for user Terminal push; next install matching Automatic, refresh idle source pin, queue one retry and follow its actual build/panel result. No successful retry is claimed before that evidence.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.

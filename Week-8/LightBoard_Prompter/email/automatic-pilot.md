@@ -38,6 +38,12 @@ If generation, compilation or publication fails, quota is exhausted, or a dispat
 
 The first continuous activation archived the completed old pilot under private `LB_EMAIL_FIRST_PILOT`; completed new publications use `LB_EMAIL_PUBLISHED_<jobId>`. The handler configuration remains `LB_EMAIL_PILOT` for compatibility. These keys contain provenance, not installed acknowledgment. Do not delete them to restart processing.
 
+## Explicitly retry a rejected email
+
+The prepared `retryLastRejectedEmail` action is manual: first repair the diagnosed cause, push that source, save matching Automatic.gs, and refresh the source with startContinuousEmail while idle. After continueAfterRejectedBuild has verified and archived a pre-publication rejection, retryLastRejectedEmail creates one new receipt from the exact original email prompt. It preserves the original rejection and links the new attempt to its original job/run. Repeating the action for the same rejection reuses the same receipt; it does not send another email or directly POST a build. Testing mode must be off. Automatic retry loops remain disabled; failed or uncertain publication cannot use this recovery path. A new generation is needed when the failed response was not saved.
+
+November26 repair is prepared locally, awaiting push/live installation: the validator now permits the pinned ESP32 core's numeric esp_random() helper, which Arduino random() itself uses. Other ESP initialization/control calls remain unsupported. This addresses run45905216109's actual validation failure; a successful new build/panel result is not yet claimed.
+
 ## Source updates and restoration
 
 The current handler is already saved in live Apps Script **Automatic.gs** and activated. No push was necessary because the cloud workflow and sealed runtime are unchanged. Canonical local files can be committed normally. If deliberately pushing later changes to remote main, do not push during an active build; afterward run **startContinuousEmail** when no job is reserved. It verifies the same workflow/foundation lock and refreshes its source pin without resetting the cutoff or completed receipts. Otherwise a changed main source pauses fresh dispatch.

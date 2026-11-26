@@ -67,6 +67,17 @@ class SceneTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'unsupported function: unsupportedCall'):
             scene.validate_function('void restState(unsigned long now) { unsupportedCall(); }')
 
+    def test_esp_random_numeric_result_without_esp_control_access(self):
+        function = ('void restState(unsigned long now) { '
+                    'uint32_t value = esp_random(); '
+                    'display.fillScreen(0); '
+                    'display.drawPixel(value % 32, 5, display.color565(0, 0, 255)); }')
+        self.assertEqual(scene.validate_function(function), function)
+        for call in ['esp_restart()', 'esp_fill_random(0, 32)',
+                     'bootloader_random_enable()', 'esp_wifi_start()']:
+            with self.subTest(call=call), self.assertRaisesRegex(ValueError, 'unsupported function'):
+                scene.validate_function('void restState(unsigned long now) { ' + call + '; }')
+
     def test_exact_recovered_cloud_response_accepts_numeric_rand(self):
         path = Path(__file__).resolve().parents[1] / 'experiments/flash-lite/2026-11-09/cloud-run-42735010470/generation.json'
         record, function = scene.load_generation(path)
