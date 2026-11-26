@@ -2175,6 +2175,28 @@ Local integration passed; revised cloud execution/publication and physical routi
 
 Recorded new Wi-Fi as planned/not configured, with unknown name/band/security. No network credentials requested, no provisioning/forget/reconnect/serial/upload/device command, no hardware rediscovery or new observation. Existing Hello World2.4GHz credentials and last observed November23 baseline state are historical, not freshly verified. Once the new network is ready, privately provision through native Arduino IDE and verify fresh association/health; network changes do not require a firmware build. Software/cloud verification can continue independently. Updated resume, plan, device/cloud guides and verification; preserved unrelated Final/ and .DS_Store edits. Zero model calls, spending, billing changes, cloud dispatch, publication or device operations occurred.
 
+## 92. Remove repeated regression tests from routine scenes
+
+**Date:** November 26, 2026
+
+### Your prompt
+
+> I think we don't need to run the full test suite for every scene. What we're trying to do now is verify that information is being passed along in the way we want it to and that infrastructure is working properly. We don't need to verify the quality or integrity of the finished animation/picture because Im going to be making a bunch of changes to that down the road. Will this save us time/tokens?
+
+### Intent
+
+Limit stage-specific work to verifying information flow and delivery infrastructure. Reserve regression testing for infrastructure changes or relevant failures; defer animation quality review and creative changes.
+
+### Changes made and verification
+
+Removed OTA/integration regression-test steps and the unused tests checkout from the routine prompt-build and saved-response publication-test workflows. The explicit known-scene OTA infrastructure-test workflow retains its tests. Response/function binding, protected foundation checks, compilation, package size/hash/identity and publication/readback gates remain because these verify the delivery path. No visual review, clipping repair or new creative generation was introduced. Recovery compilation is unchanged.
+
+Parsed both revised workflow YAML files and checked Bash/embedded Python syntax, safe defaults, retained build/publication gates and absence of routine test steps. No full regression suite or firmware rebuild was run for this workflow-only adjustment. Earlier 88-test/local-build results remain historical evidence, not rerun results. Updated the resume, plan and workflow guide to carry this check policy into future contexts. Changes are local; no cloud workflow, publication, device command, API call or spending occurred.
+
+### Result
+
+Routine scenes avoid repeated regression-test work and its logs. This saves runner time and tool-output/context overhead; tests themselves consume no Gemini model tokens. Actual scene compilation and transfer checks remain. The principal compile cost is unchanged. New Wi-Fi setup and revised cloud verification remain pending.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.

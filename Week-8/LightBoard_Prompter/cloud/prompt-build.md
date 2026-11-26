@@ -10,6 +10,10 @@ The workflow uses `cloud/prompt_build.py` to compile both the recovery baseline 
 
 The saved-response **Lightboard publication test** workflow calls the same builder/publisher. The original non-OTA `cloud/build.py` and `cloud/publish.py` remain for historical baseline tests and legacy metadata checks. They are no longer the routine prompt/publication entry points. The Desktop USB helper still uses the old foundation: do not deploy it onto the OTA board; migrating that helper remains separate work.
 
+## Check scope
+
+Routine scenes run the prompt/response binding, protected-source/foundation checks, candidate compilation and package/publication size/hash/readback gates. Full regression tests are reserved for infrastructure changes or a relevant failure; do not rerun them for every scene or ordinary chat message. No animation preview, aesthetic assessment, clipping repair or creative iteration is required at this stage. The explicit known-scene OTA infrastructure-test workflow retains its tests. Recovery compilation remains in the package builder for now; this change removes repeated regression tests only.
+
 ## Validation and publication
 
 - Exact prompt/brief, complete response SHA-256, supported `restState` function and generation origin are checked before compilation. Saved reuse and a request in the current Actions run have distinct provenance.

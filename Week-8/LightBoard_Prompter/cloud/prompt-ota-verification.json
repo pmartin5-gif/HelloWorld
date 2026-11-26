@@ -124,5 +124,14 @@
     "last_observed_network": "Hello World (2.4 GHz), November 23",
     "current_association_freshly_observed": false
   },
-  "next_action": "Review/push scoped source; run Lightboard prompt build on main with default prompt, reuse on and Publish off after free-use/$0-stop checks. Configure/provision the new Wi-Fi privately when ready. Publication, physical install/health and email intake remain later checkpoints."
+  "next_action": "Review/push scoped source; run Lightboard prompt build on main with default prompt, reuse on and Publish off after free-use/$0-stop checks. Configure/provision the new Wi-Fi privately when ready. Publication, physical install/health and email intake remain later checkpoints.",
+  "routine_check_policy": {
+    "date": "2026-11-26",
+    "regression_tests_per_scene": false,
+    "regression_tests_for_infrastructure_changes_or_relevant_failure": true,
+    "visual_quality_review_required": false,
+    "response_binding_compile_foundation_size_hash_checks_retained": true,
+    "known_scene_infrastructure_test_workflow_retains_tests": true,
+    "new_build_or_full_suite_for_this_workflow_only_change": false
+  }
 }

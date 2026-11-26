@@ -37,17 +37,11 @@ jobs:
           sparse-checkout: |
             /Week-8/LightBoard_Prompter/cloud/
             /Week-8/LightBoard_Prompter/device/
-            /Week-8/LightBoard_Prompter/tests/
             /Week-8/LightBoard_Prompter/generationBrief.md
             /Week-8/LightBoard_Prompter/experiments/flash-lite/2026-11-09/cloud-run-42735010470/generation.json
 
       - name: Verify the pinned foundation and libraries
         run: python3 cloud/build.py --verify-only
-
-      - name: Test OTA and routine prompt gates offline
-        run: |
-          python3 -m unittest discover -s tests -p 'test_ota*.py'
-          python3 -m unittest discover -s tests -p 'test_prompt_ota.py'
 
       - name: Install the pinned Arduino CLI
         uses: arduino/setup-arduino-cli@81d310742121c928ea9c8bbd407b4217b432ae02 # v2

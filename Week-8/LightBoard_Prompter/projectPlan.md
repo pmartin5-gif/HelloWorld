@@ -14,6 +14,8 @@
 
 Work through the technical checkpoints in order. On November 9 the user asked to prioritize infrastructure and defer animation appearance. No additional preview, quality comparison, or aesthetic approval is required before continuing. Keep source protection, compile checks, and physical installation/recovery verification.
 
+**Check scope, November26:** Routine scenes run the prompt/response binding, protected-source/foundation checks, candidate compilation and package/publication size/hash/readback gates. Full regression tests are reserved for infrastructure changes or a relevant failure; do not rerun them for every scene or ordinary chat message. No animation preview, aesthetic assessment, clipping repair or creative iteration is required at this stage. The explicit known-scene OTA infrastructure-test workflow retains its tests. Recovery compilation remains in the package builder for now; this change removes repeated regression tests only.
+
 Email is the proposed first interface for this walkthrough. A form can replace the email portion later. Normal operation will be wireless, but initial Wi-Fi and update provisioning requires a USB connection.
 
 Working folder:

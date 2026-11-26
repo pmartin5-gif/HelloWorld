@@ -14,6 +14,8 @@ Saved-response reuse defaults on, Publish off. No Actions artifact/cache, model 
 
 Desktop helper is **not migrated** and still stages old non-OTA source. Do not deploy it onto the OTA board. `cloud/build.py`/`cloud/publish.py` remain historical baseline/legacy tools; routine workflows now use the sealed path. No standing skill/helper instructions were changed.
 
+**Check scope, user clarification November26:** Routine scenes run the prompt/response binding, protected-source/foundation checks, candidate compilation and package/publication size/hash/readback gates. Full regression tests are reserved for infrastructure changes or a relevant failure; do not rerun them for every scene or ordinary chat message. No animation preview, aesthetic assessment, clipping repair or creative iteration is required at this stage. The explicit known-scene OTA infrastructure-test workflow retains its tests. Recovery compilation remains in the package builder for now; this change removes repeated regression tests only.
+
 ## Preserved completed hardware checkpoint
 
 Two known scenes installed over Wi-Fi, deferred boot validation, manual rollback and baseline restoration all passed November23. Last verified board state is normal warm stones; user confirmed “the stones are back and displaying normally”. No repeated hardware test, upload or provisioning is a resume prerequisite. Last verified source051a334 is remote; newer checkpoint and integration work is local. Preserve unrelated Final/ and .DS_Store edits. Read `projectPlan.md`, `device/README.md`, `cloud/prompt-build.md`, `cloud/ota-publication.md` and verification JSON. Chronological results continue in `documentation.md`, entries84 onward.
