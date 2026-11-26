@@ -2374,6 +2374,22 @@ User reports completing the Code.gs replacement/save/fresh-message/manual run in
 
 Saved user-supplied evidence privately, updated current checkpoint/verification/guide/plan. No source change, new test run, full suite, build, model request, email, trigger or device action. Next use existing inspectIntake for safe job/hash summaries, rerun processInbox without new mail, then inspect again for unchanged sole job ID/hash and zero new received records. Preserve original rejection/setup; do not reset or rerun diagnosis.
 
+## 103. Live exact prompt hash and accepted-job replay verified
+
+**Date:** November 26, 2026
+
+### Your prompt
+
+> inspectIntake12:35:43: one received job with promptSha256738a280e61392c053d167c0ee30656c85712e1a021fab1bc2d1b54dc0718da63, publishedfalse/deviceConfirmedfalse.
+> processInbox12:36:19–12:36:20: record_only/received0/ignored0/rejected0/duplicates2.
+> inspectIntake12:36:37–12:36:38: same sole job ID/status/hash/receivedAt and false publication/device flags.
+
+### Intent, changes and result
+
+Verified supplied prompt SHA against the exact expected heart prompt using hashlib; match. Both supplied inspection arrays contain the identical one accepted job, while intervening processing created none. This completes this live inline-marker prompt-preservation and replay-deduplication check. Full supplied job ID/logs retained only in ignored private evidence; public verification stores counts/comparison outcomes. Original rejection remains historical; its exact identity is not inferred solely from duplicate counters.
+
+Updated verification, resume, guide and Step8 completion checks. No intake source change, regression test run, firmware build, email, model call, trigger, publication or device command. No need to repeat the passing case. Next manual live case is a fresh approved-sender Lightboard message without %%%, expecting ignored1/received0 and unchanged accepted job; standalone-marker context follows separately. Delivery/automation stays off.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.

@@ -2,13 +2,13 @@
 
 **Updated:** November 26, 2026
 
-**Status:** Controlled Step 7 hardware tests passed: heart and baseline installed over Wi-Fi, deferred validity/health, SDK manual rollback, baseline reinstallation and final normal stones confirmed. Source051a334 is remote. All 79 offline tests and both 29-test corrected cloud runs passed. Automatic updates remain off. Heart clipping is a saved-scene geometry issue; creative refinement remains deferred. Routine prompt/publication integration passes locally and in saved-response cloud run45858227133. Record-only email intake and queue simulation pass15 focused checks; private inbox setup is complete and first fixed-reader live run reports one acceptance; exact prompt/hash and replay checks are next. New martin apple Wi-Fi is privately provisioned and verified connected; dedicated Gmail is configured and first acceptance is reported; live receipt/hash and replay checks are next.
+**Status:** Controlled Step 7 hardware tests passed: heart and baseline installed over Wi-Fi, deferred validity/health, SDK manual rollback, baseline reinstallation and final normal stones confirmed. Source051a334 is remote. All 79 offline tests and both 29-test corrected cloud runs passed. Automatic updates remain off. Heart clipping is a saved-scene geometry issue; creative refinement remains deferred. Routine prompt/publication integration passes locally and in saved-response cloud run45858227133. Record-only email intake and queue simulation pass15 focused checks; private inbox setup is complete and live inline-prompt exact hash and stable single-job replay are verified; unmarked/context cases are next. New martin apple Wi-Fi is privately provisioned and verified connected; dedicated Gmail is configured and inline prompt/hash/replay are verified; unmarked/context cases are next.
 
 **Goal:** Email a prompt, generate and compile an animation in the cloud, and have the ESP32 install it over Wi-Fi while your computer is off.
 
 **Budget:** Zero additional spending. Stay on verified free allowances. When a limit is reached, pause or queue requests. Do not enable paid fallback or use a time-limited paid trial as the long-term solution.
 
-**Starting point:** Cloud saved-response generation/compilation, public delivery and the separate sealed known-scene OTA workflow are verified. Current board is baseline f2e92e43…/foundation f124…/app0/VALID with saved credentials. The revised routine builder/publisher passes the saved-response cloud build with the sealed foundation; new routine publication/physical confirmation are pending. The Desktop helper still uses non-OTA source and must not overwrite the OTA board. New martin apple Wi-Fi is verified connected; dedicated Gmail is configured and first acceptance is reported; live receipt/hash and replay checks are next. Read RESUME.md for exact evidence and current next action.
+**Starting point:** Cloud saved-response generation/compilation, public delivery and the separate sealed known-scene OTA workflow are verified. Current board is baseline f2e92e43…/foundation f124…/app0/VALID with saved credentials. The revised routine builder/publisher passes the saved-response cloud build with the sealed foundation; new routine publication/physical confirmation are pending. The Desktop helper still uses non-OTA source and must not overwrite the OTA board. New martin apple Wi-Fi is verified connected; dedicated Gmail is configured and inline prompt/hash/replay are verified; unmarked/context cases are next. Read RESUME.md for exact evidence and current next action.
 
 ## How to use this plan
 
@@ -219,13 +219,13 @@ This bridge is required before Steps 8–10 can deploy new prompts. November 26:
 
 **Start with your own test messages.**
 
-November26: `email/Inbox.gs` and read-only manifest are ready;15 focused inbox/queue tests pass locally. The processor records jobs only and sends no email/build/device command. Live setup/authorization passed with record_only/zero triggers and a label-only approved-sender filter; first prompt receipt/deduplication tests remain pending. `email/queue-simulation.cjs` verifies queue/status rules offline; it is not a live dispatcher. See `email/README.md`.
+November26: `email/Inbox.gs` and read-only manifest are ready;15 focused inbox/queue tests pass locally. The processor records jobs only and sends no email/build/device command. Live setup/authorization passed with record_only/zero triggers and a label-only approved-sender filter; live inline prompt exact hash and stable single-job replay are verified from user-supplied logs; unmarked/context cases remain pending. `email/queue-simulation.cjs` verifies queue/status rules offline; it is not a live dispatcher. See `email/README.md`.
 
 - [x] Implement local record-only intake, prompt/hash preservation, sender/thread binding, stable IDs, deduplication, capacity stops and manual setup guide.
 - [x] Run focused offline inbox/queue-contract checks; no animation assessment or full firmware suite.
 
 - [x] Dedicated Gmail inbox chosen; Lightboard label and label-only sender/subject filter created.
-- [ ] For this prototype, use subject `Lightboard` and put only the creative prompt followed by `%%%` in the message body. Disable automatic signatures in test messages.
+- [x] For this prototype, use subject `Lightboard` and put only the creative prompt followed by `%%%` in the message body. Disable automatic signatures in test messages.
 - [x] Created Lightboard Inbox Apps Script project, loaded code/manifest and configured private approved sender.
 
 Bring back this request:
@@ -233,8 +233,8 @@ Bring back this request:
 > Create the Lightboard Apps Script inbox processor. Initially only validate and record matching emails; do not trigger builds. Extract the new body without quoted history or signatures, recognize a trailing %%%, assign a job ID, prevent duplicates, and accept only our initial test senders. Keep the exact prompt. A standalone marker needs a clear prior design in the same sender's conversation; otherwise report that the design is missing.
 
 - [x] User ran setupInbox and authorized; actual configured/record_only/zero-triggers/completed observed at17:01:06Z November26.
-- [ ] Email one test prompt and confirm exactly one job is recorded.
-- [ ] Run it again and confirm the same email is not processed twice.
+- [x] Email one test prompt and confirm exactly one job is recorded; exact expected prompt hash matches supplied live inspection November26.
+- [x] Run it again and confirm the same email is not processed twice; received0/duplicates2 and unchanged sole job ID/hash in before/after inspections November26.
 - [ ] Send a message without the marker and confirm it does not become a deployment job.
 
 **Done when:** The inbox processor reliably identifies one intended prompt per job and leaves other messages alone. This step does not trigger firmware builds yet.
