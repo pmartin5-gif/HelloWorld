@@ -2390,6 +2390,19 @@ Verified supplied prompt SHA against the exact expected heart prompt using hashl
 
 Updated verification, resume, guide and Step8 completion checks. No intake source change, regression test run, firmware build, email, model call, trigger, publication or device command. No need to repeat the passing case. Next manual live case is a fresh approved-sender Lightboard message without %%%, expecting ignored1/received0 and unchanged accepted job; standalone-marker context follows separately. Delivery/automation stays off.
 
+## 104. Unmarked-message attempt did not consume a new email
+
+**Date:** November 26, 2026
+
+### Your prompt
+
+> processInbox12:38:57–12:38:58: record_only/received0/ignored0/rejected0/duplicates2.
+> inspectIntake12:39:17: same one received job, exact saved-heart hash, publishedfalse/deviceConfirmedfalse.
+
+### Intent and result
+
+Expected one ignored unmarked message. Supplied counters instead show only two prior durable outcomes skipped and no new outcome; accepted job is unchanged. This is not a passing missing-marker check and does not establish whether the proposed email was sent, delivered or labelled. Retained the check as pending rather than changing the parser or setup. Next confirm sending and actual arrival/subject/Lightboard label in the dedicated inbox, manually apply label if absent, then process and inspect. No source change, tests, build, model call, email, trigger or device action.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.
