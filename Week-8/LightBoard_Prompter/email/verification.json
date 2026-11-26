@@ -1,6 +1,6 @@
 {
   "date": "2026-11-26",
-  "status": "Live MIME diagnosis identifies byte-array body; local reader fix passes focused checks; live code update/acceptance pending",
+  "status": "User reports updated live reader; first fixed live run received one, rejected zero; exact receipt/hash and accepted-job replay pending",
   "focused_tests_passed": 15,
   "test_command": "node --test tests/test_email_intake.cjs tests/test_queue_simulation.cjs",
   "full_firmware_regression_suite_run": false,
@@ -21,7 +21,7 @@
   "live_installed_acknowledgments_implemented": false,
   "network_change_pending": false,
   "limitations": [
-    "Gmail setup and MIME diagnostic ran live; accepted prompt receipt/deduplication remain unverified. Prior local tests used mocked Gmail/properties/locks.",
+    "Live fixed-reader run counters supplied by user show received1/rejected0/duplicates1. Exact accepted prompt/hash, job ID and accepted-job replay remain unverified; local tests use mocked Gmail/properties/locks.",
     "Conservative plain-text boundaries require simple test messages; no universal email/signature parser is claimed.",
     "Standalone marker requires direct In-Reply-To to one eligible earlier design from the same sender/thread.",
     "Script Properties capacity is finite; processing pauses rather than deleting receipts or buying storage.",
@@ -36,8 +36,8 @@
     "email/Diagnose.gs": "85140a496d25b22dab5d3b1a10a3f57d045e2958959f152b7656ba6b7a1adb05",
     "tests/test_email_diagnostics.cjs": "4077b99f6584286f618a94f202c8a46a817761892ede3d12b9746de5640aba5f"
   },
-  "next_action": "Replace private-project Code.gs with updated Inbox.gs, save, send a fresh separate identical test email and run processInbox. Preserve original rejection. Then inspect exact prompt/hash and rerun for deduplication.",
-  "mailbox_choice": "Separate Gmail inbox, selected by user; account/setup still pending",
+  "next_action": "Run inspectIntake and compare the sole received job hash to the expected saved prompt; run processInbox again without new mail, then inspectIntake again to verify unchanged job ID/hash and no extra job. Preserve original rejection and setup.",
+  "mailbox_choice": "Separate Gmail inbox configured and authorized; first fixed-reader acceptance reported",
   "network_connection_verified": "martin apple, wifi_status3, configured_matches_expectedtrue, healthtrue; November26",
   "script_project_created": true,
   "source_saved_as": "Code.gs",
@@ -84,8 +84,27 @@
     "filename_present": false,
     "child_count": 0
   },
-  "reader_fix_scope": "Local source only; live Apps Script replacement not yet verified",
-  "reader_fix_saved_in_apps_script_verified": false,
+  "reader_fix_scope": "Local source tested; user reports replacement saved in live Apps Script and supplies successful acceptance counters",
+  "reader_fix_saved_in_apps_script_verified": true,
   "focused_inbox_tests_for_fix_passed": 15,
-  "focused_inbox_test_command": "node --test tests/test_email_intake.cjs"
+  "focused_inbox_test_command": "node --test tests/test_email_intake.cjs",
+  "reader_fix_save_evidence": "User report; remote source not independently compared",
+  "live_email_acceptance_reported": true,
+  "first_fixed_live_attempt": {
+    "date": "2026-11-26",
+    "source": "User-pasted Apps Script execution log after reported Code.gs replacement and fresh test email",
+    "execution_started_local": "12:33:50 PM America/New_York",
+    "execution_completed_local": "12:33:51 PM America/New_York",
+    "execution_completed": true,
+    "result": {
+      "status": "record_only",
+      "received": 1,
+      "ignored": 0,
+      "rejected": 0,
+      "duplicates": 1
+    },
+    "interpretation": "One newly accepted record. The one duplicate is consistent with the earlier rejected message; its identity and accepted receipt contents have not been inspected.",
+    "exact_prompt_hash_verified": false,
+    "accepted_job_replay_verified": false
+  }
 }

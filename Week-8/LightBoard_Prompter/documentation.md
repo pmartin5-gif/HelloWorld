@@ -2358,6 +2358,22 @@ All15 focused inbox checks pass in110ms reported by Node. Added actual-shaped mu
 
 Local code corrected; live replacement/acceptance not yet verified. Existing original rejected receipt stays immutable. User should replace only existing Code.gs from updated Inbox.gs, Save, send a fresh separate identical email and run processInbox once. Keep manifest, Diagnose.gs, setup/private properties and old rejection. No setup rerun or deletion to force replay. Then inspect exact accepted prompt/hash and rerun for deduplication. Private observed diagnostic/next actions saved; guides/verification updated. Browser editing remains unreliable, so use one concrete file replacement rather than another retry loop.
 
+## 102. Fixed reader accepts a new live email
+
+**Date:** November 26, 2026
+
+### Your prompt
+
+> all set. here is the output from the execution log 12:33:50 PM Notice Execution started
+> 12:33:51 PM Info {"status":"record_only","received":1,"ignored":0,"rejected":0,"duplicates":1}
+> 12:33:51 PM Notice Execution completed
+
+### Intent, changes and result
+
+User reports completing the Code.gs replacement/save/fresh-message/manual run instructions. Supplied live log reports one newly received durable outcome and no rejection. The one duplicate is consistent with the preserved earlier rejected message; its identity is not proven by aggregate counters. Exact accepted prompt/hash, stable job ID and accepted-job replay have not yet been inspected. Did not claim remote source byte-for-byte comparison or end-to-end cloud/device delivery.
+
+Saved user-supplied evidence privately, updated current checkpoint/verification/guide/plan. No source change, new test run, full suite, build, model request, email, trigger or device action. Next use existing inspectIntake for safe job/hash summaries, rerun processInbox without new mail, then inspect again for unchanged sole job ID/hash and zero new received records. Preserve original rejection/setup; do not reset or rerun diagnosis.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.
