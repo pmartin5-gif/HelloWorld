@@ -117,7 +117,7 @@ function lbaNext_(snapshot, state) {
   const inbox = JSON.parse(snapshot.LB_ACTIVE_CONFIG);
   return Object.keys(snapshot).filter(k => k.startsWith('LB_MSG_')).map(k => JSON.parse(snapshot[k]))
     .filter(r => r.outcome === 'received' && r.job && Date.parse(r.job.receivedAt) > state.startMs)
-    .map(r => r.job).filter(j => inbox.allowedSenders.includes(j.sender) &&
+    .map(r => r.job).filter(j => lbSenderAllowed_(j.sender, inbox) &&
       /^lb-[a-f0-9]{12}-[a-zA-Z0-9]{1,64}$/.test(j.id || '') && lbHash(j.prompt) === j.promptSha256 &&
       !snapshot[LBAUTO.completedPrefix + j.id])
     .sort((a, b) => a.receivedAt.localeCompare(b.receivedAt) || a.id.localeCompare(b.id))[0];

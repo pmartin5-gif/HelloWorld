@@ -7,6 +7,9 @@ const {join} = require('node:path');
 const crypto = require('node:crypto');
 const vm = require('node:vm');
 const source = readFileSync(join(__dirname, '../email/Automatic.gs'), 'utf8');
+const inboxSource = readFileSync(join(__dirname, '../email/Inbox.gs'), 'utf8');
+const senderPolicySource = inboxSource.slice(inboxSource.indexOf('function lbSenderAllowed_('),
+  inboxSource.indexOf('function lbHeader('));
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 const commit = 'a'.repeat(40), repository = 'pmartin5-gif/HelloWorld';
 const foundation = JSON.parse(readFileSync(join(__dirname, '../device/foundation-lock.json'))).foundation_id;
@@ -56,6 +59,7 @@ function harness() {
         name: 'email-to-panel', conclusion, steps: [{name: 'Record email publication', conclusion: 'success', number: 11}]}]};
       return path.includes('/runs?') ? {workflow_runs: [run()]} : run();
     }});
+  vm.runInContext(senderPolicySource, context);
   vm.runInContext(source, context);
   return {context, data, state, get posts() {return posts;}, get timers() {return timers.length;},
     advance: ms => {now += ms;}, finish: result => {complete = true; conclusion = result || 'success';},
@@ -115,4 +119,14 @@ test('failure and ambiguous timeout pause further generation without clearing th
     c.emailPilotTick(); assert.equal(h.state().active, false); assert.ok(h.state().dispatchId);
     assert.equal(h.timers, 0); c.startContinuousEmail(); c.emailPilotTick(); assert.equal(h.posts, 1);
   }
+});
+
+test('continuous scheduler accepts an intake receipt from an unlisted sender in subject-only mode', () => {
+  const h = harness(), c = h.context;
+  const config = JSON.parse(h.data.LB_ACTIVE_CONFIG); config.allowAnySender = true; config.requireMarker = false;
+  h.data.LB_ACTIVE_CONFIG = JSON.stringify(config);
+  c.startContinuousEmail(); h.receipt('guest');
+  const receipt = JSON.parse(h.data.LB_MSG_guest); receipt.job.sender = 'guest@another.example';
+  h.data.LB_MSG_guest = JSON.stringify(receipt);
+  c.emailPilotTick(); assert.equal(h.posts, 1); assert.equal(h.state().jobId, 'lb-123456789abc-guest');
 });

@@ -588,6 +588,52 @@
       "fixed delivery interval is not authenticated board acknowledgment; an offline board may miss intermediate images",
       "service/free-tier quota or ambiguous/failing workflow pauses rather than silently retrying generation",
       "after a main-branch source change rerun startContinuousEmail when no job is reserved to refresh the source pin without resetting cutoff"
-    ]
+    ],
+    "later_live_publication_observed": {
+      "jobId": "lb-29b27180b372-1a219df89bc251a5",
+      "runUrl": "https://github.com/pmartin5-gif/HelloWorld/actions/runs/45901920176",
+      "version": "ota-pilot-f656554c1ddf5347d84eb397",
+      "publishedAt": "2026-11-26T22:02:05.262Z"
+    },
+    "continuous_scheduler_returned_to_waiting_after_later_publication": true
+  },
+  "subject_only_intake": {
+    "date": "2026-11-26",
+    "live": true,
+    "function": "enableSubjectOnlyIntake",
+    "activation_local": "5:14:25\u20135:14:26 PM",
+    "result": {
+      "status": "configured",
+      "subject": "Lightboard",
+      "acceptsAnySender": true,
+      "markerRequired": false,
+      "labelRequired": false,
+      "originalCutoffPreserved": true
+    },
+    "script_sha256": {
+      "Inbox.gs": "ddd060fd067f6773d471c34ece123d3f2bc1eee5c74866b012967ed2eabfdf91",
+      "Automatic.gs": "378a1d3a500cacb4fee5d13c40969b608f667cfba9f1be6a98f3dea148838b31"
+    },
+    "continuous_status_observed_local": "5:14:58 PM",
+    "continuous_status": {
+      "status": "waiting_for_new_email",
+      "automaticEmailProcessing": true,
+      "mode": "continuous",
+      "startedAt": "2026-11-26T21:37:15.039Z",
+      "jobId": null,
+      "runUrl": null,
+      "lastPublished": {
+        "jobId": "lb-29b27180b372-1a219df89bc251a5",
+        "runUrl": "https://github.com/pmartin5-gif/HelloWorld/actions/runs/45901920176",
+        "version": "ota-pilot-f656554c1ddf5347d84eb397",
+        "publishedAt": "2026-11-26T22:02:05.262Z"
+      },
+      "deviceConfirmed": false
+    },
+    "history_and_scheduler_preserved": true,
+    "old_query_cursor_reset": true,
+    "new_scopes_tokens_billing_requests_firmware_changes": false,
+    "focused_checks_passed": 23,
+    "new_sender_markerless_live_delivery_observed": false
   }
 }

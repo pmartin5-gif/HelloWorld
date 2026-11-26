@@ -211,8 +211,52 @@ test('message-level cursor paging and inspection disclose only status and hashes
   assert.ok(!env.logs.join('').includes('Heart') && !env.logs.join('').includes('artist@'));
 });
 
-test('manifest grants read-only Gmail; no email sending, dispatch or timer service is provided', () => {
+test('intake retains read-only Gmail and has no sending, dispatch or timer calls', () => {
   const manifest = JSON.parse(readFileSync(join(__dirname, '../email/appsscript.json'), 'utf8'));
-  assert.deepEqual(manifest.oauthScopes, ['https://www.googleapis.com/auth/gmail.readonly']);
+  assert.deepEqual(manifest.oauthScopes.filter(s => s.includes('/auth/gmail')), ['https://www.googleapis.com/auth/gmail.readonly']);
   assert.doesNotMatch(script, /GmailApp|MailApp|UrlFetchApp|ScriptApp|\.send\(|\.modify\(|\.trash\(/);
+});
+
+test('subject-only policy accepts an unlisted sender without label or marker, preserving exact prompt and deduplication', () => {
+  const m = message('guest1', 'A blue star ♥\n  glowing softly', {labelIds: []});
+  m.payload.headers[0].value = 'Guest <guest@another.example>';
+  const env = environment([m]);
+  const cutoff = JSON.parse(env.data.LB_ACTIVE_CONFIG).startMs;
+  assert.equal(env.context.enableSubjectOnlyIntake().status, 'configured');
+  assert.equal(JSON.parse(env.data.LB_ACTIVE_CONFIG).startMs, cutoff);
+  assert.equal(env.context.processInbox().received, 1);
+  const job = storedJobs(env)[0].job;
+  assert.equal(job.sender, 'guest@another.example');
+  assert.equal(job.prompt, 'A blue star ♥\n  glowing softly');
+  assert.equal(env.calls.find(x => Array.isArray(x) && x[0] === 'list')[1].labelIds, undefined);
+  assert.equal(env.context.processInbox().duplicates, 1);
+  assert.equal(storedJobs(env).length, 1);
+});
+
+test('subject-only policy still rejects wrong subject, empty body, Spam, malformed sender and cross-sender marker reply', () => {
+  for (const alter of [m => {m.payload.headers[1].value = 'Lightboard extra';},
+    m => {m.payload.body.data = '';}, m => {m.labelIds.push('SPAM');},
+    m => {m.payload.headers[0].value = 'invalid sender';}]) {
+    const m = message('guest1', 'A blue star'); alter(m);
+    const env = environment([m]); env.context.enableSubjectOnlyIntake();
+    assert.equal(env.context.processInbox().received, 0);
+    assert.equal(storedJobs(env).length, 0);
+  }
+  const prior = message('design1', 'A blue star', {internalDate: '500'});
+  const marker = message('reply1', '%%%');
+  marker.payload.headers[0].value = 'other@another.example';
+  marker.payload.headers.push({name: 'In-Reply-To', value: '<design1@example.test>'});
+  const env = environment([prior, marker]); env.context.enableSubjectOnlyIntake();
+  const open = JSON.parse(env.data.LB_ACTIVE_CONFIG);
+  assert.throws(() => env.context.lbInterpret(marker, open, () => ({id: 'thread1', messages: [prior, marker]})), /design_missing/);
+});
+
+test('subject-only activation preserves all receipts and scheduler state, clearing only obsolete query cursor', () => {
+  const receipt = JSON.stringify({outcome: 'ignored', reason: 'missing_marker'});
+  const active = JSON.stringify({dispatchId: 'already_reserved'});
+  const env = environment([], {properties: {LB_MSG_old: receipt, LB_EMAIL_PILOT: active, LB_PAGE_TOKEN: 'old-query-page'}});
+  env.context.enableSubjectOnlyIntake(); env.context.enableSubjectOnlyIntake();
+  assert.equal(env.data.LB_MSG_old, receipt); assert.equal(env.data.LB_EMAIL_PILOT, active);
+  assert.equal(env.data.LB_PAGE_TOKEN, undefined);
+  assert.equal(JSON.parse(env.data.LB_ACTIVE_CONFIG).requireMarker, false);
 });

@@ -1,5 +1,9 @@
 # Lightboard remote prompting step by step
 
+## Any sender and plain email body supported
+
+Activated November26 at5:14:26PM: any valid sender may email ixdbot.beepboop@gmail.com with subject Lightboard and a plain-text creative body. No %%% or Gmail label required. Continuous processing stays active with original cutoff/history, one build at a time and6min delivery interval. No new scope/token/cloud/firmware change. Body/cutoff/dedup and Spam/Trash/Draft exclusions remain; terminal markers optional for compatibility. 23 focused intake/scheduler checks passed. See [current usage](email/automatic-pilot.md). Older allowlist/marker instructions below describe restricted mode/history.
+
 ## Continuous email intake is live
 
 Activated November26 at21:37:15.039Z: startContinuousEmail returned waiting_for_new_email/automaticEmailProcessingtrue/modecontinuous. New emails after this cutoff process one at a time, with a6min delivery interval after each successful publication; timer stays active. Same addresses/Lightboard subject/%%% marker. No board reflash, new model request, cloud workflow, token or scope change. Four focused scheduler checks passed. First automatic email/real panel change remains verified; subsequent live continuous-mode delivery is not yet observed. Reporting/fuller queues/creative and broad tests stay deferred. See [current email guide](email/automatic-pilot.md). Older sections below describe earlier checkpoints.

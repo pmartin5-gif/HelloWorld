@@ -19,6 +19,11 @@ function lbAddress(value) {
   return /^[a-z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-z0-9.-]+\.[a-z]{2,}$/i.test(address) ? address : null;
 }
 
+function lbSenderAllowed_(sender, config) {
+  return !!lbAddress(sender) && (config.allowAnySender === true ||
+    (Array.isArray(config.allowedSenders) && config.allowedSenders.includes(sender)));
+}
+
 function lbHeader(message, name) {
   const matches = ((message.payload || {}).headers || [])
     .filter(h => h.name.toLowerCase() === name.toLowerCase());
@@ -84,9 +89,10 @@ function lbEnvelope(message, config) {
   lbRequire(message && /^[a-z0-9]{1,64}$/i.test(message.id || '') && message.threadId, 'invalid_message');
   lbRequire(lbSubject(message), 'wrong_subject');
   const sender = lbAddress(lbHeader(message, 'From'));
-  lbRequire(sender && config.allowedSenders.includes(sender), 'sender_not_allowed');
+  lbRequire(lbSenderAllowed_(sender, config), 'sender_not_allowed');
   lbRequire(!['SPAM', 'TRASH', 'DRAFT'].some(label => (message.labelIds || []).includes(label)), 'excluded_message');
-  lbRequire((message.labelIds || []).includes(config.labelId), 'label_required');
+  if (config.allowAnySender !== true)
+    lbRequire((message.labelIds || []).includes(config.labelId), 'label_required');
   lbRequire(Number.isFinite(Number(message.internalDate)) && Number(message.internalDate) >= config.startMs,
     'before_start');
   return sender;
@@ -95,10 +101,12 @@ function lbEnvelope(message, config) {
 function lbInterpret(message, config, getThread) {
   const sender = lbEnvelope(message, config);
   const text = lbNewText(lbPlainBody(message));
-  if (!text.endsWith('%%%')) return {outcome: 'ignored', reason: 'missing_marker'};
-  let prompt = text.slice(0, -3).trim();
+  const hasMarker = text.endsWith('%%%');
+  if (!hasMarker && config.requireMarker !== false) return {outcome: 'ignored', reason: 'missing_marker'};
+  let prompt = hasMarker ? text.slice(0, -3).trim() : text;
   let designMessageId = null;
   if (!prompt) {
+    lbRequire(hasMarker, 'prompt_length');
     // A standalone marker must reply directly to one earlier design by this sender.
     const parent = lbHeader(message, 'In-Reply-To').trim();
     lbRequire(/^<[^<>\s]+>$/.test(parent), 'design_missing');
@@ -114,7 +122,7 @@ function lbInterpret(message, config, getThread) {
     lbRequire(prompt && !prompt.includes('%%%'), 'design_missing');
     designMessageId = design.id;
   }
-  lbRequire(!prompt.includes('%%%'), 'ambiguous_marker');
+  if (hasMarker) lbRequire(!prompt.includes('%%%'), 'ambiguous_marker');
   return {outcome: 'received', job: {id: 'lb-' + lbHash(config.account).slice(0, 12) + '-' + message.id,
     status: 'received', sender: sender, threadId: message.threadId, messageId: message.id,
     designMessageId: designMessageId, receivedAt: new Date(Number(message.internalDate)).toISOString(),
@@ -147,9 +155,10 @@ function setupInbox() {
     const raw = store.getProperty('LB_CONFIG');
     lbRequire(raw, 'Add private LB_CONFIG in Script Properties; see email/README.md');
     const requested = JSON.parse(raw);
-    lbRequire(Array.isArray(requested.allowedSenders) && requested.allowedSenders.length >= 1 &&
-      requested.allowedSenders.length <= 20, 'Configure 1 to 20 allowed senders');
-    const allowed = requested.allowedSenders.map(lbAddress);
+    lbRequire(requested.allowAnySender === true || (Array.isArray(requested.allowedSenders) &&
+      requested.allowedSenders.length >= 1 && requested.allowedSenders.length <= 20),
+      'Configure allowed senders or allowAnySender');
+    const allowed = Array.isArray(requested.allowedSenders) ? requested.allowedSenders.map(lbAddress) : [];
     lbRequire(allowed.every(Boolean), 'Invalid allowed sender');
     lbRequire(typeof requested.labelName === 'string' && requested.labelName.trim(), 'Configure an existing Gmail label');
     const label = (Gmail.Users.Labels.list('me').labels || []).find(x => x.name === requested.labelName);
@@ -157,10 +166,27 @@ function setupInbox() {
     const account = lbAddress(Gmail.Users.getProfile('me').emailAddress);
     lbRequire(account, 'Cannot identify the mailbox');
     const config = {schemaVersion: 1, account: account, allowedSenders: Array.from(new Set(allowed)),
+      allowAnySender: requested.allowAnySender === true, requireMarker: requested.requireMarker !== false,
       labelId: label.id, labelName: requested.labelName, startMs: Date.now()};
     lbSet(store, store.getProperties(), 'LB_ACTIVE_CONFIG', config);
     return lbReport({status: 'configured', startAt: new Date(config.startMs).toISOString(),
       mode: 'record_only', triggersCreated: 0});
+  } finally { lock.releaseLock(); }
+}
+
+function enableSubjectOnlyIntake() {
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(1000)) return lbReport({status: 'busy'});
+  try {
+    const store = PropertiesService.getScriptProperties(), config = lbConfig(store);
+    lbRequire(lbAddress(Gmail.Users.getProfile('me').emailAddress) === config.account, 'Wrong mailbox account');
+    config.allowAnySender = true;
+    config.requireMarker = false;
+    // Preserve the original mailbox/cutoff/receipts and continuous scheduler state.
+    lbSet(store, store.getProperties(), 'LB_ACTIVE_CONFIG', config);
+    store.deleteProperty('LB_PAGE_TOKEN'); // The old label-filtered query cursor cannot be reused.
+    return lbReport({status: 'configured', subject: 'Lightboard', acceptsAnySender: true,
+      markerRequired: false, labelRequired: false, originalCutoffPreserved: true});
   } finally { lock.releaseLock(); }
 }
 
@@ -172,8 +198,9 @@ function processInbox() {
     const store = PropertiesService.getScriptProperties();
     const config = lbConfig(store), snapshot = store.getProperties();
     lbRequire(lbAddress(Gmail.Users.getProfile('me').emailAddress) === config.account, 'Wrong mailbox account');
-    const options = {labelIds: [config.labelId], q: 'subject:Lightboard after:' + Math.floor(config.startMs / 1000),
+    const options = {q: 'subject:Lightboard after:' + Math.floor(config.startMs / 1000),
       maxResults: LB.batchSize, includeSpamTrash: false};
+    if (config.allowAnySender !== true) options.labelIds = [config.labelId];
     if (snapshot.LB_PAGE_TOKEN) options.pageToken = snapshot.LB_PAGE_TOKEN;
     const page = Gmail.Users.Messages.list('me', options);
     for (const summary of (page.messages || [])) {

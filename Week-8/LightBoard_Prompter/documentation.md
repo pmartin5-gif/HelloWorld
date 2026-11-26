@@ -2733,6 +2733,22 @@ Saved full publication marker and manual hardware evidence under ignored email-i
 
 **Saved:** .build/email-auto-pilot/continuous-activation.json plus canonical script/focused checks/current guide/resume/verification/plan. User can monitor inspectEmailProcessing or Actions. No need to keep Mac/Arduino IDE open for operation.
 
+## 127. Accept any sender with subject Lightboard and remove required marker
+
+> User asks for an email from any address with subject Lightboard to trigger the workflow. Follow-up: Also please remove the %%% marker requirement.
+
+**Intent:** Simplify submission to subject plus body from any sender, preserving working automatic delivery and historical records. Explicitly requested open-sender policy; no new credential or Gmail scope needed.
+
+**Changes:** Inbox.gs/Code.gs adds shared sender-policy helper and explicit allowAnySender/requireMarker config. In open mode a valid new sender is accepted without a label, and an unmarked plain body records as prompt. Original subject/UTF8/body/size/cutoff/Spam-Trash-Draft exclusion/dedup remain. Legacy terminal%%% is optional; marker-only directreply still requires same-sender context. Automatic.gs selection uses shared sender policy so accepted new senders pass both stages. enableSubjectOnlyIntake updates only policy under lock, without resetting mailbox/cutoff/receipts/continuous reservations; clears old Gmail page cursor because the query changed. Old ignored/rejected receipts not reinterpreted. Restricted configuration stays supported. Manifest/token/cloud/runtime/delivery spacing/generation unchanged.
+
+**Validation:** 23 focused actual intake/scheduler checks passed, including new unlabeled/nonallowlisted sender withoutmarker, exactUnicode prompt/hash/dedup, wrongsubject/emptybody/Spam/malformed sender rejection, cross-sender marker-context guard, cutoff/history/scheduler preservation and cursor-only reset, and new-sender automatic dispatch selection. Updated obsolete readonly-only manifest test to check Gmail scopes specifically since existing external/timer scopes predate this change. No fullsuite/creative review/firmware build/upload or live model request.
+
+**Live result:** Native VSCode selected canonical Inbox.gs13,298characters/244lines into existing Code.gs, then matching Automatic.gs13,779characters/244lines; saved Drive. Selected enableSubjectOnlyIntake and ran5:14:25–5:14:26PM; actual configured/subjectLightboard/acceptsAnySendertrue/markerRequiredfalse/labelRequiredfalse/originalCutoffPreservedtrue. No OAuth/token/secret/billing change. Read-only inspectEmailProcessing5:14:58PM verifies waiting_for_new_email/automaticEmailProcessingtrue/modecontinuous/original21:37:15.039Z cutoff. Fresh open-mode live delivery not separately observed; normal use available, no test resend mandated.
+
+**Additional continuous evidence:** Metadata inspection independently shows later normal-use publication22:02:05.262Z in run45901920176/joblb-29b27180b372-1a219df89bc251a5/versionf656554c1ddf5347d84eb397. Scheduler returned to waiting with no activejob. Actual later board installation/appearance not separately inspected; deviceConfirmedfalse remains. Last physical imagef502 may no longer be current. No mailbox body or credentials persisted. Don't Upload the bootstrap or claim later scene appearance.
+
+**Saved:** Current guide/resume/plan/verification and ignored .build/email-auto-pilot/subject-only-intake-activated.json. No push needed for live Apps Script-only changes. User may now email any-sender/plain-body/Lightboard. Reporting/full queues/creative/broad testing stay backlog.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.

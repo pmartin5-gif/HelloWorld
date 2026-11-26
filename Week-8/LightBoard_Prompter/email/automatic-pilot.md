@@ -1,18 +1,20 @@
 # Automatic email to the Lightboard
 
+**Current intake policy, November26:** Any sender may submit with subject **Lightboard** and a plain-text creative body. No `%%%` marker or Gmail label is required. Live activation5:14:26PM returned acceptsAnySendertrue/markerRequiredfalse/labelRequiredfalse; continuous inspection5:14:58PM confirms active and waiting with original cutoff/history. Code.gs and Automatic.gs are already saved live; no setup, push, new permission or board upload is needed. Old ignored/rejected receipts are preserved. Terminal `%%%` remains optional for compatibility.
+
 **Continuous intake is live.** On November 26, `startContinuousEmail` returned `waiting_for_new_email`, `automaticEmailProcessing:true`, `mode:"continuous"`, with a fresh-email cutoff of **2026-11-26T21:37:15.039Z**. The existing first-email pilot was preserved. No new board firmware, cloud workflow, key, token, permissions or billing setup was needed for this upgrade.
 
-The first unattended email completed [run45895333330](https://github.com/pmartin5-gif/HelloWorld/actions/runs/45895333330), installed a new image automatically, passed boot health/SDK VALID, and the user confirmed “it changed”. Subsequent normal-use delivery with the upgraded continuous handler has not yet been observed; its scheduling and duplicate guards passed four focused offline checks. No repeat test/model request is required to begin using it.
+The first unattended email completed [run45895333330](https://github.com/pmartin5-gif/HelloWorld/actions/runs/45895333330), installed a new image automatically, passed boot health/SDK VALID, and the user confirmed “it changed”. A later normal-use email published in [run45901920176](https://github.com/pmartin5-gif/HelloWorld/actions/runs/45901920176), and the scheduler returned to waiting; that later image was not separately physically inspected. The current any-sender/markerless policy passed23 focused intake/scheduler checks. No repeat live test/model request is required to begin using it.
 
 ## Send a prompt
 
-Send a new email from **pmartin5@sva.edu** to **ixdbot.beepboop@gmail.com**, subject **Lightboard**, with your creative description followed by `%%%`:
+Send a new email from **any address** to **ixdbot.beepboop@gmail.com**, subject **Lightboard**, with your creative description in the body:
 
 ```text
-A bright blue wave slowly crossing a black background%%%
+A bright blue wave slowly crossing a black background
 ```
 
-The email must arrive after continuous activation and receive the existing Lightboard label outside Spam. Older test messages are excluded. The original sender/subject/marker and plain-text limits remain. No processInbox, syncQueue, workflow dispatch, publication or install commands are needed for each email.
+The email must arrive after the existing continuous cutoff and be outside Spam/Trash/Drafts. Intake searches subject-matching messages directly, so the old sender-specific Gmail label/filter cannot block new senders. Exact subject and existing plain-text/body limits remain. No processInbox, syncQueue, workflow dispatch, publication or install commands are needed for each email.
 
 **Email → Gemini writes animation code → compile → publish → ESP32 installs it.** Gmail polling runs about once a minute; generation and compilation take additional time, and the board polls about once a minute. A stale older raw feed delayed the first installation by several minutes. Allow for that delay. Mac and Arduino IDE need not stay open; the ESP32 needs power and Wi-Fi.
 
@@ -40,9 +42,9 @@ The first continuous activation archived the completed old pilot under private `
 
 The current handler is already saved in live Apps Script **Automatic.gs** and activated. No push was necessary because the cloud workflow and sealed runtime are unchanged. Canonical local files can be committed normally. If deliberately pushing later changes to remote main, do not push during an active build; afterward run **startContinuousEmail** when no job is reserved. It verifies the same workflow/foundation lock and refreshes its source pin without resetting the cutoff or completed receipts. Otherwise a changed main source pauses fresh dispatch.
 
-For restoration only: replace the existing live **Automatic.gs** with [Automatic.gs](Automatic.gs), save, and run **startContinuousEmail**. Keep Code, Diagnose, Queue, Github and [appsscript.json](appsscript.json) unchanged. Existing script.scriptapp/Gmail-readonly/external-request permissions suffice. Do not add the local GitHub backup as another live script. Do not rerun setupInbox or wipe script properties.
+For restoration only: live **Code.gs** comes from [Inbox.gs](Inbox.gs), and live **Automatic.gs** from [Automatic.gs](Automatic.gs). Save both matching versions. Run **enableSubjectOnlyIntake** to apply the current sender/marker policy; use **startContinuousEmail** if the timer needs starting. Keep Diagnose, Queue, Github and [appsscript.json](appsscript.json) unchanged. Existing script.scriptapp/Gmail-readonly/external-request permissions suffice. Do not add the local GitHub backup as another live script. Do not rerun setupInbox or wipe script properties.
 
-**Do not upload the visible Arduino sketch:** it is the preserved heart bootstrap at `/Users/pmartin5/Documents/Arduino/LightboardEmailAuto_20261126/LightboardOTA/LightboardOTA.ino`, not the current emailed image. It was installed once to enable automatic updates. The actual board now runs the first emailed scene `ota-pilot-f502bdd7ce31e531e7b2a28f`, foundation `a529d5f9a72ca4858e0ab09ae66ec5eaecff656fdeb6d6a4f040e40633959ec1`.
+**Do not upload the visible Arduino sketch:** it is the preserved heart bootstrap at `/Users/pmartin5/Documents/Arduino/LightboardEmailAuto_20261126/LightboardOTA/LightboardOTA.ino`, not the current emailed image. It was installed once to enable automatic updates. The last physically confirmed scene was `ota-pilot-f502bdd7ce31e531e7b2a28f`, foundation `a529d5f9a72ca4858e0ab09ae66ec5eaecff656fdeb6d6a4f040e40633959ec1`; a later scene f656554c1ddf5347d84eb397 has since been published, without a separate board observation in this policy change.
 
 Authenticated reports, fuller queue/release machinery, replies, general failure recovery, comprehensive regression and creative review remain deferred. Existing publisher safeguards, exact foundation transition history, pinned toolchain and download verification remain in place. The Node20 setup-action annotation in the successful run was nonfatal; no toolchain upgrade is needed to address the first-delivery result.
 
