@@ -2719,6 +2719,20 @@ Saved full publication marker and manual hardware evidence under ignored email-i
 
 **Saved:** ignored .build/email-auto-pilot/run-45895333330 result/feed/log and automatic-delivery-verified.json; updated resume/currentboard/verification/guide/plan. No source/firmware change or test-suite run was needed for the cache delay. Preserve current new scene and don't Upload the visible heart bootstrap merely to resume.
 
+## 126. Keep email intake active for subsequent prompts
+
+> “Ok let's move on to the next thing step.”
+
+**Intent:** Extend the proven one-email milestone so the user can email new prompts whenever desired, automatically one at a time. Keep the working cloud/runtime and free-project credentials. Reporting, fuller queues, creative review and broad test suites remain deferred.
+
+**Changes:** Updated Automatic.gs with startContinuousEmail/inspectEmailProcessing/stopEmailProcessing. Initial migration archives completed firstpilot, starts a fresh receipt cutoff; repeated starts preserve cutoff/history/interval. Existing intake runs during builds and delivery intervals, selecting oldest unhandled new receipt. Completed publications receive a durable LB_EMAIL_PUBLISHED_<jobId> marker before active reservation is cleared; replay/interrupted writes cannot cause another POST/model request for that email or extend interval. Keep one existing minute timer after success, wait6min after publication before next build to accommodate observed feed delay, then accept next receipt automatically. Fixed interval is not device acknowledgment and cannot guarantee every intermediate image if board offline. Failed/ambiguous/quota run holds still stop further dispatch, no paid fallback/retry. Existing old Queue/Github/Code/Diagnose/manifest/workflow/runtime untouched. Main source pin remains checked; deliberate later main push needs startContinuousEmail when idle to refresh it, without receipt reset.
+
+**Focused validation:** Four short checks against the actual handler passed: two emails serially/no duplicate POST on lost response/timer remains; interruption after durable completion receipt resumes without regenerate/interval extension; migration and stop/start preserve history/cutoff; failure/timeout preserves reservation and holds. Syntax/diff checks passed. No fullsuite, scene preview, firmware compile/upload, live generation request or aesthetic check for this change.
+
+**Live installation/result:** Native VSCode selected correct canonical Automatic.gs and13,785characters, copied to Chrome's existing same named live file; saved and verified new source header/function dropdown. Selected startContinuousEmail and ran once4:37:12–4:37:16PM. Actual result waiting_for_new_email,automaticEmailProcessingtrue,modecontinuous,startedAt2026-11-26T21:37:15.039Z,jobIdnull,runUrlnull,deviceConfirmedfalse. No OAuth prompt/new permission, new token, scope or account/billing change. Existing remote workflow/lock source checks passed; no GitHub push needed for Apps Script-only activation. Existing healthy new scene f502/app1 remains on board with auto-on. Do not Upload the visible bootstrap. First new normal-use email after continuous cutoff is welcome; second live continuous email delivery not yet observed and no extra test/model call manufactured.
+
+**Saved:** .build/email-auto-pilot/continuous-activation.json plus canonical script/focused checks/current guide/resume/verification/plan. User can monitor inspectEmailProcessing or Actions. No need to keep Mac/Arduino IDE open for operation.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.

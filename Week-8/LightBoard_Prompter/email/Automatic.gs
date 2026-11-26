@@ -1,5 +1,6 @@
-/** First-email milestone. Independent of the historical saved-scene queue. */
+/** Automatic email intake. Independent of the historical saved-scene queue. */
 const LBAUTO = Object.freeze({key: 'LB_EMAIL_PILOT', handler: 'emailPilotTick',
+  completedPrefix: 'LB_EMAIL_PUBLISHED_', deliveryIntervalMs: 6 * 60 * 1000,
   workflow: 'lightboard-email-pilot.yml', workflowPath: '.github/workflows/lightboard-email-pilot.yml',
   workflowSha256: 'b143bdb89b20bff8a062b88cde032b6bad622cdc7e25259ded05a08116238de3',
   foundation: 'a529d5f9a72ca4858e0ab09ae66ec5eaecff656fdeb6d6a4f040e40633959ec1'});
@@ -27,8 +28,10 @@ function lbaState_(snapshot) {
 }
 function lbaReport_(state) {
   return lbReport({status: state ? state.status : 'not_started', automaticEmailProcessing: !!(state && state.active),
-    ...(state ? {startedAt: new Date(state.startMs).toISOString(), jobId: state.jobId || null,
+    ...(state ? {mode: state.mode || 'single_email', startedAt: new Date(state.startMs).toISOString(), jobId: state.jobId || null,
       runUrl: state.runId ? 'https://github.com/' + LBGH.repository + '/actions/runs/' + state.runId : null,
+      ...(state.lastPublished ? {lastPublished: state.lastPublished} : {}),
+      ...(state.notBeforeMs > Date.now() ? {nextBuildAfter: new Date(state.notBeforeMs).toISOString()} : {}),
       ...(state.result ? {published: true, version: state.result.version, modelRequests: 1} : {})} : {}),
     deviceConfirmed: false});
 }
@@ -67,6 +70,41 @@ function startEmailPilot() {
 function inspectEmailPilot() {
   return lbaLocked_((store, snapshot) => lbaReport_(lbaState_(snapshot)));
 }
+function startContinuousEmail() {
+  return lbaLocked_((store, snapshot) => {
+    const existing = lbaState_(snapshot);
+    const inbox = lbConfig(store);
+    lbaRequire_(lbAddress(Gmail.Users.getProfile('me').emailAddress) === inbox.account, 'MAILBOX');
+    if (existing && existing.mode === 'continuous' && existing.dispatchId) {
+      // A stopped/uncertain dispatch may only be reconciled, never cleared or resent.
+      lbaRequire_(!existing.status.startsWith('workflow_') &&
+        existing.status !== 'review_required_no_redispatch', 'HELD_JOB');
+      existing.active = true;
+      lbaSave_(store, snapshot, existing); lbaCreateTrigger_();
+      return lbaReport_(existing);
+    }
+    lbaRequire_(!existing || existing.mode === 'continuous' || !existing.dispatchId || existing.result,
+      'PILOT_NOT_FINISHED');
+    const head = lbghGet_(snapshot, '/commits/main');
+    const workflowId = lbghCheckSource_(snapshot, head.sha, undefined, LBAUTO);
+    lbghCheckFile_(snapshot, LBAUTO.workflowPath, head.sha, LBAUTO.workflowSha256);
+    lbghCheckFile_(snapshot, 'Week-8/LightBoard_Prompter/device/foundation-lock.json', head.sha,
+      '590255d560b163f000b29d6bb274be52fb227bee4962b0a402faf1c23be4b4fa');
+    if (existing && existing.mode !== 'continuous' && !snapshot.LB_EMAIL_FIRST_PILOT) {
+      lbSet(store, snapshot, 'LB_EMAIL_FIRST_PILOT', existing);
+    }
+    // First activation starts with NEW emails. Later starts preserve cutoff,
+    // publication receipts and delivery interval, including after a manual stop.
+    const state = existing && existing.mode === 'continuous' ? existing : {
+      schemaVersion: 1, mode: 'continuous', accountSha256: lbHash(inbox.account), startMs: Date.now()};
+    state.sourceCommit = head.sha; state.workflowId = workflowId;
+    state.active = true; state.status = 'waiting_for_new_email';
+    lbaSave_(store, snapshot, state); lbaCreateTrigger_();
+    return lbaReport_(state);
+  });
+}
+function inspectEmailProcessing() { return inspectEmailPilot(); }
+function stopEmailProcessing() { return stopEmailPilot(); }
 function stopEmailPilot() {
   return lbaLocked_((store, snapshot) => {
     const state = lbaState_(snapshot);
@@ -80,7 +118,8 @@ function lbaNext_(snapshot, state) {
   return Object.keys(snapshot).filter(k => k.startsWith('LB_MSG_')).map(k => JSON.parse(snapshot[k]))
     .filter(r => r.outcome === 'received' && r.job && Date.parse(r.job.receivedAt) > state.startMs)
     .map(r => r.job).filter(j => inbox.allowedSenders.includes(j.sender) &&
-      /^lb-[a-f0-9]{12}-[a-zA-Z0-9]{1,64}$/.test(j.id || '') && lbHash(j.prompt) === j.promptSha256)
+      /^lb-[a-f0-9]{12}-[a-zA-Z0-9]{1,64}$/.test(j.id || '') && lbHash(j.prompt) === j.promptSha256 &&
+      !snapshot[LBAUTO.completedPrefix + j.id])
     .sort((a, b) => a.receivedAt.localeCompare(b.receivedAt) || a.id.localeCompare(b.id))[0];
 }
 function lbaRun_(run, state) {
@@ -136,6 +175,22 @@ function lbaPoll_(store, snapshot, state) {
           Number.isSafeInteger(r.bytes) && r.bytes >= 288 && r.bytes <= 1310720, 'RESULT');
         state.result = r;
         state.status = 'published_awaiting_visual_confirmation';
+        if (state.mode === 'continuous') {
+          const key = LBAUTO.completedPrefix + state.jobId;
+          let completed = snapshot[key] ? JSON.parse(snapshot[key]) : null;
+          if (completed) lbaRequire_(lbHash(JSON.stringify(completed.result)) === lbHash(JSON.stringify(r)), 'RESULT');
+          else {
+            completed = {schemaVersion: 1, publishedMs: Date.now(), result: r};
+            lbSet(store, snapshot, key, completed); // Durable before clearing this reservation.
+          }
+          state.lastPublished = {jobId: state.jobId, runUrl: run.html_url, version: r.version,
+            publishedAt: new Date(completed.publishedMs).toISOString()};
+          state.notBeforeMs = completed.publishedMs + LBAUTO.deliveryIntervalMs;
+          ['jobId', 'promptSha256', 'dispatchId', 'dispatchMs', 'runId', 'result'].forEach(k => delete state[k]);
+          state.status = 'delivery_interval';
+          lbaSave_(store, snapshot, state);
+          return lbaReport_(state); // Keep the minute trigger; never start the next job in this tick.
+        }
       }
       state.active = false;
     }
@@ -149,15 +204,22 @@ function emailPilotTick() {
   // processInbox owns its own lock; do not nest it inside the dispatch lock.
   const preliminary = lbaLocked_((store, snapshot) => lbaState_(snapshot));
   if (!preliminary || !preliminary.active) return;
-  if (preliminary.status === 'waiting_for_new_email') {
+  if (preliminary.mode === 'continuous' || preliminary.status === 'waiting_for_new_email') {
     try { processInbox(); } catch (_) { return lbReport({status: 'intake_waiting'}); }
   }
   return lbaLocked_((store, snapshot) => {
     const state = lbaState_(snapshot);
     if (!state || !state.active) return lbaReport_(state);
     if (state.dispatchId) return lbaPoll_(store, snapshot, state); // Never a second POST.
+    if (state.notBeforeMs > Date.now()) {
+      state.status = 'delivery_interval'; lbaSave_(store, snapshot, state);
+      return lbaReport_(state);
+    }
     const job = lbaNext_(snapshot, state);
-    if (!job) return lbaReport_(state);
+    if (!job) {
+      state.status = 'waiting_for_new_email'; lbaSave_(store, snapshot, state);
+      return lbaReport_(state);
+    }
     try { lbghCheckSource_(snapshot, state.sourceCommit, state.workflowId, LBAUTO); }
     catch (error) {
       if (error.message === 'LB_GH_SOURCE' || error.message === 'LB_GH_WORKFLOW') {

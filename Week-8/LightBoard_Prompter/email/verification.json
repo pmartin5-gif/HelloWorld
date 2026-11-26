@@ -544,6 +544,50 @@
       "continuous_email_intake_enabled": false,
       "next_work": "User asks whether they can email whenever they want. Answered first-email mode stops; continuous one-at-a-time intake is the next change, not yet implemented."
     },
-    "continuous_email_intake_enabled": false
+    "continuous_email_intake_enabled": true,
+    "continuous_mode_note": "Upgraded live November26 21:37:15.039Z. See continuous_email_processing; historical first-email evidence retained."
+  },
+  "continuous_email_processing": {
+    "date": "2026-11-26",
+    "function": "startContinuousEmail",
+    "script_file": "Automatic.gs",
+    "saved_live": true,
+    "script_sha256": "e2c803a974cb9e51769d58b1fd395b626f2b8af9341ed93446be3a247f7fde7d",
+    "observed_execution_start_local": "4:37:12 PM",
+    "observed_execution_complete_local": "4:37:16 PM",
+    "observed_result": {
+      "status": "waiting_for_new_email",
+      "automaticEmailProcessing": true,
+      "mode": "continuous",
+      "startedAt": "2026-11-26T21:37:15.039Z",
+      "jobId": null,
+      "runUrl": null,
+      "deviceConfirmed": false
+    },
+    "workflow_changed": false,
+    "runtime_changed": false,
+    "new_permissions_or_secrets": false,
+    "new_generation_requests": 0,
+    "live_new_email_after_continuous_activation_verified": false,
+    "checks": {
+      "command": "node --test tests/test_continuous_email.cjs",
+      "passed": 4,
+      "scope": "serial consecutive emails, duplicate/lost-response prevention, interruption after completion receipt, migration and stop/start persistence, failed/ambiguous run hold"
+    },
+    "behavior": {
+      "keep_timer_after_success": true,
+      "delivery_interval_minutes": 6,
+      "one_active_build": true,
+      "completed_marker_prefix": "LB_EMAIL_PUBLISHED_",
+      "archive_prior_pilot": "LB_EMAIL_FIRST_PILOT",
+      "fresh_cutoff_at_first_continuous_start": true,
+      "preserve_cutoff_on_repeated_start": true,
+      "device_confirmation_implemented": false
+    },
+    "limitations": [
+      "fixed delivery interval is not authenticated board acknowledgment; an offline board may miss intermediate images",
+      "service/free-tier quota or ambiguous/failing workflow pauses rather than silently retrying generation",
+      "after a main-branch source change rerun startContinuousEmail when no job is reserved to refresh the source pin without resetting cutoff"
+    ]
   }
 }

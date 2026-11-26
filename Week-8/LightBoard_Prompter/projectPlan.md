@@ -1,5 +1,9 @@
 # Lightboard remote prompting step by step
 
+## Continuous email intake is live
+
+Activated November26 at21:37:15.039Z: startContinuousEmail returned waiting_for_new_email/automaticEmailProcessingtrue/modecontinuous. New emails after this cutoff process one at a time, with a6min delivery interval after each successful publication; timer stays active. Same addresses/Lightboard subject/%%% marker. No board reflash, new model request, cloud workflow, token or scope change. Four focused scheduler checks passed. First automatic email/real panel change remains verified; subsequent live continuous-mode delivery is not yet observed. Reporting/fuller queues/creative and broad tests stay deferred. See [current email guide](email/automatic-pilot.md). Older sections below describe earlier checkpoints.
+
 ## First unattended email milestone achieved; continuous intake next
 
 Run45895333330/sourceb941500 generated one new Gemini scene and published it successfully. ESP32 automatically installed `ota-pilot-f502bdd7ce31e531e7b2a28f`, app1/SDK2VALID/healthy/Wi-Fi connected, and user confirmed “it changed”. No per-email install/upload/build intervention. Arduino IDE/Mac are not required for normal operation; ESP32 needs power and Wi-Fi. First-email handler stops after one result, so **sending further emails whenever desired is not yet enabled**. Next is persistent one-at-a-time intake; reporting, fuller queues and creative/broad tests remain backlog. See [automatic email guide](email/automatic-pilot.md). Older bootstrap/manual statuses below are historical.

@@ -1,38 +1,49 @@
-# One email to the Lightboard
+# Automatic email to the Lightboard
 
-The immediate milestone is one **new email → Gemini → compile → publish → automatic ESP32 installation**, without per-email commands. Device reporting, queue release, replies, general recovery and creative review are backlog items. The existing saved-heart queue and all its historical receipts remain unchanged.
+**Continuous intake is live.** On November 26, `startContinuousEmail` returned `waiting_for_new_email`, `automaticEmailProcessing:true`, `mode:"continuous"`, with a fresh-email cutoff of **2026-11-26T21:37:15.039Z**. The existing first-email pilot was preserved. No new board firmware, cloud workflow, key, token, permissions or billing setup was needed for this upgrade.
 
-**Current result, November 26:** First new email completed the full automatic path in [run45895333330](https://github.com/pmartin5-gif/HelloWorld/actions/runs/45895333330). Generation/build/publication succeeded; the ESP32 automatically installed version `ota-pilot-f502bdd7ce31e531e7b2a28f`, passed boot health/SDK VALID, retained Wi-Fi, and the user confirmed “it changed”. Do not repeat setup or resend that prompt. This mode stops after one email; continuous intake is the next requested capability and is not yet enabled. The board remains on auto-on. A stale older feed was initially observed before a later poll got the new feed; several minutes of publication-to-board delay occurred. The Node20 action annotation was nonfatal.
+The first unattended email completed [run45895333330](https://github.com/pmartin5-gif/HelloWorld/actions/runs/45895333330), installed a new image automatically, passed boot health/SDK VALID, and the user confirmed “it changed”. Subsequent normal-use delivery with the upgraded continuous handler has not yet been observed; its scheduling and duplicate guards passed four focused offline checks. No repeat test/model request is required to begin using it.
 
-## One-time setup
+## Send a prompt
 
-1. Push the implementation commit to `main`. There is no new secret or token to create. The existing private `GEMINI_API_KEY` remains the Gemini free-project key with billing disabled, and `LB_GITHUB_TOKEN` remains in Apps Script. Keep billing disabled; there is no retry or paid fallback.
-2. Bootstrap the automatic-capable firmware once with native Arduino IDE from `/Users/pmartin5/Documents/Arduino/LightboardEmailAuto_20261126/LightboardOTA/LightboardOTA.ino`. The stage preserves the saved heart and the pinned core/profile/libraries/partition layout. Do not open an old pilot sketch for this step. Serial Monitor is 115200 / New Line. Enable `auto-on` once; `auto-off` disables automatic installation. Both persist through reboot. Never put a password or API key in the sketch.
-3. In the existing **Lightboard Inbox** Apps Script project, add **one new script file named Automatic**, using [Automatic.gs](Automatic.gs). Keep Code, Diagnose, Queue and Github unchanged. Do not add the local backup as a script file.
-4. Replace only `appsscript.json` with [the updated manifest](appsscript.json). Its new `script.scriptapp` scope allows creating/removing this project's minute timer; Gmail stays read-only and no mail-send scope is added. Save all files.
-5. Select and run **startEmailPilot** once. Complete Google's authorization if prompted. Expected status: `waiting_for_new_email`, `automaticEmailProcessing:true`, `deviceConfirmed:false`. It pins the current main commit, checks the exact workflow/foundation lock, records a fresh-email cutoff and creates one minute trigger. Repeating start preserves the same cutoff/reservation; it does not rearm a completed run.
-6. **After activation**, send one new email from the configured sender `pmartin5@sva.edu` to `ixdbot.beepboop@gmail.com`, subject **Lightboard**, with the new creative description followed by `%%%`. Example:
+Send a new email from **pmartin5@sva.edu** to **ixdbot.beepboop@gmail.com**, subject **Lightboard**, with your creative description followed by `%%%`:
 
-   ```text
-   A bright blue wave slowly crossing a black background%%%
-   ```
+```text
+A bright blue wave slowly crossing a black background%%%
+```
 
-There should be no need to run processInbox, syncQueue, a build, publication, check, arm-update or install for that email. The existing Gmail filter must label it Lightboard and deliver it outside Spam, as in the intake checks. Google timers and GitHub scheduling add delay; allow several minutes for generation/build/publication, then about a minute for the board to notice the feed.
+The email must arrive after continuous activation and receive the existing Lightboard label outside Spam. Older test messages are excluded. The original sender/subject/marker and plain-text limits remain. No processInbox, syncQueue, workflow dispatch, publication or install commands are needed for each email.
 
-## What happens automatically
+**Email → Gemini writes animation code → compile → publish → ESP32 installs it.** Gmail polling runs about once a minute; generation and compilation take additional time, and the board polls about once a minute. A stale older raw feed delayed the first installation by several minutes. Allow for that delay. Mac and Arduino IDE need not stay open; the ESP32 needs power and Wi-Fi.
 
-- The minute timer uses the existing intake reader, accepting the first valid email received **after startEmailPilot**. Old test emails and the old queue are not dispatched. Intake receipts still prevent duplicates.
-- A single durable reservation is saved **before** the GitHub POST. Lost responses are reconciled with the unique run title; the POST is never repeated. One email pilot is active at a time, without building a broader queue system.
-- `lightboard-email-pilot.yml` binds the exact prompt hash and source commit. It uses the existing free Gemini key, requests one new function without automatic corrections/retries/fallback, checks the code boundary, compiles, and uses the existing publisher's asset/hash/feed checks. There is no full test suite, visual preview, artwork scoring or Actions artifact/cache in each run. Re-running the GitHub run does not generate a second response (attempt 1 only).
-- The feed marks this package `automatic_updates:true`. A board explicitly set to `auto-on` polls every 60 seconds after boot health passes. It requires the same sealed foundation, checks the candidate twice, verifies TLS/size/SHA-256/image integrity, writes the inactive slot and reboots. Health validation stays in the firmware. A saved attempted image hash prevents a reset/rollback/download failure from causing an endless reinstall loop. `auto-on` deliberately clears that attempt hold if a manual retry is needed.
-- The Apps Script timer stops after this one publication (or a terminal workflow failure). It does not release the historical queue or claim device confirmation. The board keeps its saved auto setting and can finish installing even after the script timer stops.
+The same existing Gemini free-project key is reused with billing disabled. Each new email generates one response without automatic retries, corrective generations or paid fallback. The current public GitHub workflow carries the creative prompt; use ordinary creative descriptions, without private data or credentials. The standing creative instructions are [generationBrief.md](../generationBrief.md).
 
-The first new runtime publication permits only the exact previous heart manifest SHA `d67c09c2900be711160f05f588f7f384a896dba4e7c8f16ed4c3c1036934a667` as a foundation transition. Its full immutable manifest and assets remain preserved. The old runtime rejects the new foundation, so the one-time IDE bootstrap is necessary; no compatibility bypass is used. The old feed's image is not labeled compatible with the new runtime.
+## When more emails arrive
 
-## Observe or stop
+New email receipts are recorded while an earlier build runs. The oldest unhandled eligible receipt starts next, with only one build dispatched at a time. After each successful publication, the timer stays active and waits **six minutes before starting another build** to allow for feed propagation/download/boot. Emails sent during that interval wait automatically. A durable publication marker prevents that same email from generating again if a timer repeats or a status update is interrupted. Original receipts and the historical saved-heart queue remain unchanged.
 
-`inspectEmailPilot` shows metadata and the run URL without prompt/credentials. Success is `published_awaiting_visual_confirmation`; `deviceConfirmed` stays false because device reporting is deferred. GitHub success is publication evidence; the actual new image appearing on the panel establishes this milestone. `stopEmailPilot` removes only this pilot's timer and retains its receipt/reservation. It cannot cancel an already dispatched build or disable the board's saved auto setting; use `auto-off` in Serial Monitor for the latter.
+This delivery interval is not a report from the board. Device reporting is deferred, so an offline board may miss an intermediate image if later images are published before it reconnects. Compilation and existing code/TLS/image-size/hash/slot checks remain essential stages. There is no full test suite, visual preview or artwork assessment per prompt.
 
-If Gemini quota, generation, compilation, publication or installation fails, stop and inspect that specific stage. There is no second generation request or hidden paid fallback. After a lost dispatch response, wait for reconciliation; never dispatch again just because the POST response was missing. The timer holds after 30 minutes without a final result. This first-email mode does not automatically process another email after completion. Continuous intake, rearming, reporting/queue acknowledgment and recovery automation can follow after the milestone is observed.
+If generation, compilation or publication fails, quota is exhausted, or a dispatch result stays uncertain for 30 minutes, processing pauses with the reservation intact. Do not resend the POST or reset receipts. Inspect that specific failure before resuming. No autonomous retries or paid upgrade will occur. Property/service capacity is bounded by the existing Apps Script storage guard; broader recovery and retention are backlog items.
 
-References: [Google installable time triggers](https://developers.google.com/apps-script/guides/triggers/installable), [GitHub workflow dispatch](https://docs.github.com/en/rest/actions/workflows#create-a-workflow-dispatch-event), [ESP-IDF nonvolatile storage](https://docs.espressif.com/projects/esp-idf/en/v4.4.7/esp32/api-reference/storage/nvs_flash.html), [Gemini 3.5 Flash-Lite free-tier pricing](https://aistudio.google.com/docs/pricing#gemini-3.5-flash-lite) (rechecked November 26; account billing remains the existing disabled setup).
+## Progress and controls
+
+- [GitHub workflow](https://github.com/pmartin5-gif/HelloWorld/actions/workflows/lightboard-email-pilot.yml): open the latest run and **email-to-panel** to inspect generation, compile and publication logs. The old workflow name still says pilot; it is reused unchanged.
+- **inspectEmailProcessing** in Apps Script: logs metadata only, including active job/run URL, `lastPublished`, or `nextBuildAfter` during the delivery interval. `deviceConfirmed` remains false because no device reporting channel is implemented. Green GitHub status confirms publication; the panel changing confirms actual delivery.
+- **stopEmailProcessing**: stops this handler's timer and preserves all receipts/reservations. It cannot cancel an already dispatched build or turn off the board's saved automatic setting.
+- **startContinuousEmail**: starts/resumes intake and ensures one minute timer. Repeating it preserves the continuous cutoff and completed markers. An unresolved/failed reserved job is held for inspection rather than discarded or resent.
+- **auto-off** / **auto-on** in native Arduino Serial Monitor: control the board's persistent automatic setting. Already ON; do not repeat for normal use.
+
+The first continuous activation archived the completed old pilot under private `LB_EMAIL_FIRST_PILOT`; completed new publications use `LB_EMAIL_PUBLISHED_<jobId>`. The handler configuration remains `LB_EMAIL_PILOT` for compatibility. These keys contain provenance, not installed acknowledgment. Do not delete them to restart processing.
+
+## Source updates and restoration
+
+The current handler is already saved in live Apps Script **Automatic.gs** and activated. No push was necessary because the cloud workflow and sealed runtime are unchanged. Canonical local files can be committed normally. If deliberately pushing later changes to remote main, do not push during an active build; afterward run **startContinuousEmail** when no job is reserved. It verifies the same workflow/foundation lock and refreshes its source pin without resetting the cutoff or completed receipts. Otherwise a changed main source pauses fresh dispatch.
+
+For restoration only: replace the existing live **Automatic.gs** with [Automatic.gs](Automatic.gs), save, and run **startContinuousEmail**. Keep Code, Diagnose, Queue, Github and [appsscript.json](appsscript.json) unchanged. Existing script.scriptapp/Gmail-readonly/external-request permissions suffice. Do not add the local GitHub backup as another live script. Do not rerun setupInbox or wipe script properties.
+
+**Do not upload the visible Arduino sketch:** it is the preserved heart bootstrap at `/Users/pmartin5/Documents/Arduino/LightboardEmailAuto_20261126/LightboardOTA/LightboardOTA.ino`, not the current emailed image. It was installed once to enable automatic updates. The actual board now runs the first emailed scene `ota-pilot-f502bdd7ce31e531e7b2a28f`, foundation `a529d5f9a72ca4858e0ab09ae66ec5eaecff656fdeb6d6a4f040e40633959ec1`.
+
+Authenticated reports, fuller queue/release machinery, replies, general failure recovery, comprehensive regression and creative review remain deferred. Existing publisher safeguards, exact foundation transition history, pinned toolchain and download verification remain in place. The Node20 setup-action annotation in the successful run was nonfatal; no toolchain upgrade is needed to address the first-delivery result.
+
+References: [Google installable time triggers](https://developers.google.com/apps-script/guides/triggers/installable), [GitHub workflow dispatch](https://docs.github.com/en/rest/actions/workflows#create-a-workflow-dispatch-event), [Gemini free-tier pricing](https://aistudio.google.com/docs/pricing#gemini-3.5-flash-lite).
