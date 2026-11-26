@@ -5,7 +5,7 @@ const LBAUTO = Object.freeze({key: 'LB_EMAIL_PILOT', handler: 'emailPilotTick',
   labVersion: 1, labPrefix: 'LB_LAB_RECEIPT_',
   workflow: 'lightboard-email-pilot.yml', workflowPath: '.github/workflows/lightboard-email-pilot.yml',
   workflowSha256: '91b48cc72a1d6cb4411b92bbeed4fcaa0ceb99fe35727a737eca54d09f24c195',
-  foundation: 'a529d5f9a72ca4858e0ab09ae66ec5eaecff656fdeb6d6a4f040e40633959ec1'});
+  foundation: '65386614eb48384defc7091f1cd5f12b5b6d11feb4f6c9f3186d87ad098a094e'});
 
 function lbaLocked_(work) {
   const lock = LockService.getScriptLock();
@@ -29,13 +29,15 @@ function lbaState_(snapshot) {
   return state;
 }
 function lbaReport_(state) {
+  const delivery = typeof lbdrDelivery_ === 'function' ?
+    lbdrDelivery_(PropertiesService.getScriptProperties().getProperties(), state && state.lastPublished && state.lastPublished.jobId) : null;
   return lbReport({status: state ? state.status : 'not_started', automaticEmailProcessing: !!(state && state.active),
     ...(state ? {mode: state.mode || 'single_email', startedAt: new Date(state.startMs).toISOString(), jobId: state.jobId || null,
       runUrl: state.runId ? 'https://github.com/' + LBGH.repository + '/actions/runs/' + state.runId : null,
       ...(state.lastPublished ? {lastPublished: state.lastPublished} : {}),
       ...(state.notBeforeMs > Date.now() ? {nextBuildAfter: new Date(state.notBeforeMs).toISOString()} : {}),
       ...(state.result ? {published: true, version: state.result.version, modelRequests: 1} : {})} : {}),
-    deviceConfirmed: false});
+    ...(delivery ? {delivery} : {}), deviceConfirmed: !!(delivery && delivery.deviceConfirmed)});
 }
 function lbaSave_(store, snapshot, state) { lbSet(store, snapshot, LBAUTO.key, state); }
 function lbaRemoveTriggers_() {
@@ -61,7 +63,7 @@ function startEmailPilot() {
     const workflowId = lbghCheckSource_(snapshot, head.sha, undefined, LBAUTO);
     lbghCheckFile_(snapshot, LBAUTO.workflowPath, head.sha, LBAUTO.workflowSha256);
     lbghCheckFile_(snapshot, 'Week-8/LightBoard_Prompter/device/foundation-lock.json', head.sha,
-      '590255d560b163f000b29d6bb274be52fb227bee4962b0a402faf1c23be4b4fa');
+      'ff6368ffe050a5d60f58b102e05af6eab865f54313d3cbccdfee8a5e53860e99');
     const state = {schemaVersion: 1, active: true, status: 'waiting_for_new_email',
       accountSha256: lbHash(inbox.account), sourceCommit: head.sha, workflowId, startMs: Date.now()};
     lbaSave_(store, snapshot, state); // Reserve mode before creating the timer.
@@ -91,7 +93,7 @@ function startContinuousEmail() {
     const workflowId = lbghCheckSource_(snapshot, head.sha, undefined, LBAUTO);
     lbghCheckFile_(snapshot, LBAUTO.workflowPath, head.sha, LBAUTO.workflowSha256);
     lbghCheckFile_(snapshot, 'Week-8/LightBoard_Prompter/device/foundation-lock.json', head.sha,
-      '590255d560b163f000b29d6bb274be52fb227bee4962b0a402faf1c23be4b4fa');
+      'ff6368ffe050a5d60f58b102e05af6eab865f54313d3cbccdfee8a5e53860e99');
     if (existing && existing.mode !== 'continuous' && !snapshot.LB_EMAIL_FIRST_PILOT) {
       lbSet(store, snapshot, 'LB_EMAIL_FIRST_PILOT', existing);
     }
@@ -250,6 +252,7 @@ function emailPilotTick() {
   return lbaLocked_((store, snapshot) => {
     const state = lbaState_(snapshot);
     if (!state || !state.active) return lbaReport_(state);
+    if (typeof lbdrRefresh_ === 'function') lbdrRefresh_(store, snapshot);
     if (state.dispatchId) return lbaPoll_(store, snapshot, state); // Never a second POST.
     if (state.notBeforeMs > Date.now()) {
       state.status = 'delivery_interval'; lbaSave_(store, snapshot, state);

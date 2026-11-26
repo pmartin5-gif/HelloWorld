@@ -38,6 +38,7 @@
         <h2 id="modeTitle">Board use</h2>
         <p class="mode" id="mode">Loading…</p>
         <p class="small muted" id="modeHelp">Email submissions keep their place while you test.</p>
+        <p class="small" id="delivery">Installation confirmation is loading…</p>
         <button id="resume" type="button" class="hidden">Resume email processing</button>
       </section>
       <section class="panel" aria-labelledby="historyTitle">
@@ -75,7 +76,7 @@
       </section>
     </div>
   </main>
-  <footer>The panel is the result. A published build means the firmware is available; watch the Lightboard to judge its appearance. Device reporting is not connected, so this page does not claim installation.</footer>
+  <footer>The panel is the result. Published means the firmware is available. Installed means the authenticated board reported a healthy boot with the matching firmware hash. Watch the Lightboard to judge its appearance.</footer>
   <script>
     const $ = id => document.getElementById(id);
     const fields = ['title','prompt','brief'];
@@ -132,7 +133,7 @@
       if (!data || !data.experiments.length) {const p=document.createElement('p');p.className='empty';p.textContent='Your experiments will appear here.';root.append(p);return;}
       data.experiments.forEach(e=>{
         const b=document.createElement('button');b.className='experiment'+(e.id===selectedId?' selected':'');b.type='button';b.textContent=e.title;
-        const detail=document.createElement('span');detail.textContent=new Date(e.createdAt).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})+' · '+(e.status==='published'?'Published':e.status.replaceAll('_',' '));
+        const detail=document.createElement('span');detail.textContent=new Date(e.createdAt).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})+' · '+(e.deviceConfirmed?'Installed':e.status==='published'?'Published · awaiting board':e.status.replaceAll('_',' '));
         b.append(detail);b.onclick=()=>selectExperiment(e);root.append(b);
       });
     }
@@ -144,6 +145,9 @@
           if(draft)fields.forEach(k=>$(k).value=draft[k]||'');if(!$('brief').value)$('brief').value=defaultBrief;showRequest();}
         $('mode').textContent=next.labActive?'Testing on the Lightboard':'Email processing';
         $('modeHelp').textContent=next.labActive?'Incoming emails wait while you compare experiments. Resume them when finished.':'Emails run normally. Sending an experiment holds new email jobs.';
+        const delivery=next.delivery;
+        $('delivery').textContent=!delivery||!delivery.reportingConfigured?'Board reporting is not configured.':delivery.deviceConfirmed?'Installed · healthy boot confirmed '+new Date(delivery.installedAt).toLocaleTimeString():delivery.status==='published_awaiting_device'?'Published · awaiting board confirmation.':'No published image awaiting confirmation.';
+        if(delivery&&delivery.lastReportAt)$('delivery').textContent+=' Last board report: '+new Date(delivery.lastReportAt).toLocaleTimeString()+'.';
         $('resume').classList.toggle('hidden',!next.labActive);
         $('recovery').classList.toggle('hidden',next.processingActive||!next.activeRunUrl);
         const current=pending(), selected=next.experiments.find(e=>e.id===selectedId), run=(selected&&selected.runUrl)||(current&&current.runUrl)||next.activeRunUrl;
@@ -151,7 +155,7 @@
         if(!sending){
           if(!next.processingActive)status('Processing is paused. Open the build log to inspect the held job.',true);
           else if(current){status(next.nextBuildAfter?'Experiment saved. Next build can start after '+new Date(next.nextBuildAfter).toLocaleTimeString()+'.':current.status==='waiting'?'Experiment saved. Waiting for the workflow to start.':'Experiment in progress: '+current.status.replaceAll('_',' ')+'.');}
-          else if(next.labActive&&selected&&selected.status==='published')status('Published. Watch the actual Lightboard; feed delivery can take a few minutes.');
+          else if(next.labActive&&selected&&selected.status==='published')status(selected.deviceConfirmed?'Installed. The board confirmed a healthy boot with this firmware hash.':'Published · awaiting board confirmation. Delivery can take a few minutes.');
           else status(next.labActive?'Ready for another experiment on the Lightboard.':'Ready. Sending an experiment will hold new email jobs.');
         }
         renderHistory();updateControls();

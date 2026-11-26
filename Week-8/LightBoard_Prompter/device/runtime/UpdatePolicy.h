@@ -2,6 +2,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
+#include <stdio.h>
 
 // These pure checks are shared by the ESP32 implementation and native C++ tests.
 namespace lightboard {
@@ -9,6 +10,30 @@ static const char kFeedUrl[] = "https://raw.githubusercontent.com/pmartin5-gif/H
 static const char kDevice[] = "esp32-32x32";
 static const uint32_t kAppSlotBytes = 0x140000;
 static const size_t kMaxManifest = 8192;
+
+inline bool feedRequestUrl(char* output, size_t capacity, uint32_t boot, uint32_t sequence) {
+  int count = snprintf(output, capacity, "%s?lb=%08lx%08lx", kFeedUrl,
+      (unsigned long)boot, (unsigned long)sequence);
+  return count > 0 && (size_t)count < capacity;
+}
+inline bool reportingUrl(const char* value) {
+  static const char prefix[] = "https://script.google.com/macros/s/";
+  if (!value || strncmp(value, prefix, sizeof(prefix) - 1) != 0) return false;
+  const char* id = value + sizeof(prefix) - 1;
+  const char* end = strchr(id, '/');
+  if (!end || end - id < 20 || end - id > 200 || strcmp(end, "/exec") != 0) return false;
+  for (const char* p = id; p < end; ++p)
+    if (!((*p >= 'a' && *p <= 'z') || (*p >= 'A' && *p <= 'Z') ||
+          (*p >= '0' && *p <= '9') || *p == '_' || *p == '-')) return false;
+  return true;
+}
+inline bool reportRedirectUrl(const char* value) {
+  static const char prefix[] = "https://script.googleusercontent.com/macros/echo?";
+  if (!value || strncmp(value, prefix, sizeof(prefix) - 1) != 0 || strlen(value) >= 3072) return false;
+  for (const unsigned char* p = (const unsigned char*)value; *p; ++p)
+    if (*p < 33 || *p > 126 || *p == '\\' || *p == '#' || *p == '@') return false;
+  return true;
+}
 
 inline bool safeAscii(const char* text) {
   if (!text) return false;

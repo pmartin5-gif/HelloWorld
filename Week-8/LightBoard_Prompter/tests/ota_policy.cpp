@@ -5,6 +5,18 @@
 int main() {
   using namespace lightboard;
   assert(allowedHttps(kFeedUrl));
+  char fresh[192], otherFresh[192], tooSmall[8];
+  assert(feedRequestUrl(fresh, sizeof(fresh), 12, 1));
+  assert(feedRequestUrl(otherFresh, sizeof(otherFresh), 12, 2));
+  assert(allowedHttps(fresh) && strcmp(fresh, otherFresh) != 0);
+  assert(strncmp(fresh, kFeedUrl, strlen(kFeedUrl)) == 0);
+  assert(!feedRequestUrl(tooSmall, sizeof(tooSmall), 12, 1));
+  assert(reportingUrl("https://script.google.com/macros/s/abcdefghijklmnopqrstuv/exec"));
+  assert(!reportingUrl("https://script.google.com.evil.test/macros/s/abcdefghijklmnopqrstuv/exec"));
+  assert(!reportingUrl("https://script.google.com/macros/s/abcdefghijklmnopqrstuv/exec?key=secret"));
+  assert(reportRedirectUrl("https://script.googleusercontent.com/macros/echo?user_content_key=abc"));
+  assert(!reportRedirectUrl("https://script.googleusercontent.com.evil.test/macros/echo?x"));
+  assert(!reportRedirectUrl("https://script.googleusercontent.com/macros/echo?x#fragment"));
   assert(kMaxManifest == 8192);
   const char* forbidden[] = {
     "http://github.com/a", "https://github.com.evil.test/a", "https://user@github.com/a",

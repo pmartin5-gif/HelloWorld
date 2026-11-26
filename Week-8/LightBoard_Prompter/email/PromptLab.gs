@@ -20,6 +20,7 @@ function lblSummary_(record, snapshot, state) {
   const done = JSON.parse(snapshot[LBAUTO.completedPrefix + job.id] || 'null');
   const rejected = JSON.parse(snapshot[LBAUTO.rejectedPrefix + job.id] || 'null');
   const active = state && state.jobId === job.id;
+  const delivery = typeof lbdrDelivery_ === 'function' ? lbdrDelivery_(snapshot, job.id) : null;
   return {id: job.id, title: job.title, prompt: job.prompt, brief: job.generationBrief,
     createdAt: job.receivedAt, promptSha256: job.promptSha256, briefSha256: job.briefSha256,
     status: done ? 'published' : rejected ? 'rejected' : active ? state.status : 'waiting',
@@ -27,7 +28,8 @@ function lblSummary_(record, snapshot, state) {
       rejected ? rejected.runUrl : active && state.runId ? 'https://github.com/' + LBGH.repository + '/actions/runs/' + state.runId : null,
     version: done ? done.result.version : null,
     note: snapshot[LBLAB.notePrefix + job.id] ? JSON.parse(snapshot[LBLAB.notePrefix + job.id]).note : '',
-    deviceConfirmed: false};
+    installedAt: delivery ? delivery.installedAt : null,
+    deviceConfirmed: !!(delivery && delivery.deviceConfirmed)};
 }
 function lblBrief_(snapshot, commit) {
   const file = lbghGet_(snapshot, '/contents/Week-8/LightBoard_Prompter/generationBrief.md?ref=' + commit);
@@ -44,9 +46,11 @@ function doGet() {
 function getPromptLab(includeBrief) {
   return lbaLocked_((store, snapshot) => {
     lblOwner_(store);
+    if (typeof lbdrRefresh_ === 'function') lbdrRefresh_(store, snapshot);
     const state = lbaState_(snapshot);
     const mode = JSON.parse(snapshot[LBLAB.settings] || '{"active":false}');
     return {labActive: mode.active === true, processingActive: !!(state && state.active),
+      delivery: typeof lbdrDelivery_ === 'function' ? lbdrDelivery_(snapshot, state && state.lastPublished && state.lastPublished.jobId) : null,
       status: state ? state.status : 'not_started', activeJobId: state ? state.jobId || null : null,
       activeRunUrl: state && state.runId ? 'https://github.com/' + LBGH.repository + '/actions/runs/' + state.runId : null,
       nextBuildAfter: state && state.notBeforeMs > Date.now() ? new Date(state.notBeforeMs).toISOString() : null,

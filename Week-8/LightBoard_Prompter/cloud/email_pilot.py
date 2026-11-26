@@ -72,6 +72,10 @@ def result():
                 deviceConfirmed=False, foundation=m['foundation_id'], version=m['current']['version'],
                 sha256=m['current']['sha256'], bytes=m['current']['bytes'], feedUrl=ota.delivery.FEED_URL)
     print('LB_QUEUE_RESULT: ' + json.dumps(data, sort_keys=True, separators=(',', ':')))
+    if os.environ.get('GITHUB_STEP_SUMMARY'):
+        with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
+            summary.write('Published successfully. Installation: awaiting authenticated board confirmation.\n\n')
+            summary.write('Check the private Lightboard page for the installed status; this build result does not confirm device delivery.\n')
     return data
 
 

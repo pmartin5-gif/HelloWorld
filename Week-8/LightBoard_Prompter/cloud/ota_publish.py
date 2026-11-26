@@ -21,16 +21,16 @@ ASSETS = delivery.ASSETS
 APP = "LightboardOTA.ino.bin"
 RECOVERY_SCOPE = "Application only; preserve matching bootloader/partitions and IDE recovery source"
 RECORD = ota_build.PROJECT / "experiments/flash-lite/2026-11-09/cloud-run-42735010470/generation.json"
-# Exact manual-heart feed -> opt-in automatic runtime. Bootstrap this runtime
+# Exact current automatic feed -> fresh-feed/reporting runtime. Bootstrap this runtime
 # once through Arduino IDE; the old runtime correctly rejects a new foundation.
-PRIOR_FOUNDATION = "f1244292bbdf180ad5ea8b4ffbf46c72b9772ef8ad2407276ae26e3786132522"
-TRANSITION_FOUNDATION = "a529d5f9a72ca4858e0ab09ae66ec5eaecff656fdeb6d6a4f040e40633959ec1"
-PRIOR_MANIFEST_SHA256 = "d67c09c2900be711160f05f588f7f384a896dba4e7c8f16ed4c3c1036934a667"
+PRIOR_FOUNDATION = "a529d5f9a72ca4858e0ab09ae66ec5eaecff656fdeb6d6a4f040e40633959ec1"
+TRANSITION_FOUNDATION = "65386614eb48384defc7091f1cd5f12b5b6d11feb4f6c9f3186d87ad098a094e"
+PRIOR_MANIFEST_SHA256 = "489e2fb47993314fbd21b82ac05eb88951108a4db0787bea7f9e63365e69af37"
 
 
 def superseded_reference():
     return {"foundation_id": PRIOR_FOUNDATION,
-            "manifest_url": asset_url("lightboard-ota-45891588901-1", "manifest.json"),
+            "manifest_url": asset_url("lightboard-ota-45910268762-1", "manifest.json"),
             "manifest_sha256": PRIOR_MANIFEST_SHA256, "compatible_for_ota": False}
 
 

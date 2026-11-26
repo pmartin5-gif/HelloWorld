@@ -1,0 +1,78 @@
+name: Lightboard runtime update from saved animation
+run-name: Lightboard runtime update
+on:
+  workflow_dispatch:
+    inputs:
+      saved_response:
+        description: 'Base64 of a previously saved generation record; zero Gemini requests'
+        required: true
+        type: string
+      source_commit:
+        description: 'Exact reviewed main commit'
+        required: true
+        type: string
+      publish:
+        description: 'Publish for automatic installation on the matching bootstrapped foundation'
+        default: false
+        type: boolean
+permissions:
+  contents: read
+concurrency:
+  group: lightboard-api-test
+  cancel-in-progress: false
+jobs:
+  update-runtime:
+    if: ${{ github.repository == 'pmartin5-gif/HelloWorld' && github.event.repository.private == false && github.ref == 'refs/heads/main' && github.run_attempt == 1 }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    defaults:
+      run:
+        working-directory: Week-8/LightBoard_Prompter
+    steps:
+      - name: Check out reviewed runtime
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /Week-8/LightBoard_Prompter/cloud/
+            /Week-8/LightBoard_Prompter/device/
+            /Week-8/LightBoard_Prompter/generationBrief.md
+      - name: Recover saved animation without a model request
+        env:
+          LB_SAVED_RESPONSE: ${{ inputs.saved_response }}
+          LB_RUNTIME_SOURCE_COMMIT: ${{ inputs.source_commit }}
+        run: python3 cloud/runtime_update.py
+      - name: Verify pinned inputs
+        run: python3 cloud/build.py --verify-only
+      - name: Install pinned Arduino CLI
+        uses: arduino/setup-arduino-cli@81d310742121c928ea9c8bbd407b4217b432ae02 # v2
+        with:
+          version: '1.5.1'
+      - name: Set up pinned compiler
+        run: python3 cloud/build.py --install-core --install-only
+      - name: Compile saved animation and recovery
+        run: >-
+          python3 cloud/prompt_build.py --cli arduino-cli --data-dir .build/arduino-data
+          --work .build/prompt-ota --generation-record .build/generated/generation.json
+          --prompt-file .build/generated/creative-prompt.txt --automatic-updates
+      - name: Publish runtime update
+        if: ${{ inputs.publish }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 cloud/ota_publish.py --publish --output .build/prompt-ota/package
+      - name: Record publication separately from installation
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          m=json.loads(Path('.build/prompt-ota/package/manifest.json').read_text())
+          result={'operation':'runtime_update','modelRequests':0,'published':m['published'],
+                  'foundation':m['foundation_id'],'current':m['current'],'deviceConfirmed':False}
+          print('LB_RUNTIME_RESULT: '+json.dumps(result,sort_keys=True))
+          with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as out:
+              out.write('Published: '+str(m['published'])+'. Installation: awaiting authenticated board confirmation.\n\n')
+              out.write('No Gemini request. Monitor installation in the private Lightboard page.\n')
+          PY

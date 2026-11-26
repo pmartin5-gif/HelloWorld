@@ -11,6 +11,7 @@
 #include <esp_partition.h>
 #include <esp_log.h>
 #include <mbedtls/sha256.h>
+#include <mbedtls/md.h>
 #include <time.h>
 #include <atomic>
 
@@ -49,6 +50,17 @@ struct AutoSettings { uint32_t format; uint32_t enabled; char attemptedSha[65]; 
 AutoSettings autoSettings = {1, 0, {0}};
 uint32_t lastAutomaticCheck = 0;
 bool feedAllowsAutomatic = false;
+uint32_t feedBoot = 0, feedSequence = 0;
+struct ReportSettings { uint32_t format; char url[256]; char key[65]; };
+ReportSettings reportSettings = {};
+struct InstallReceipt { uint32_t format; uint32_t address; uint32_t bytes;
+  char version[80]; char foundation[65]; char sha256[65]; };
+InstallReceipt installReceipt = {};
+unsigned reportProvisionPhase = 0;
+char reportUrlDraft[256] = {};
+bool reportImageVerified = false;
+uint32_t lastReportAttempt = 0;
+bool reportDelivered = false;
 
 class FlashGuard {
  public:
@@ -58,6 +70,32 @@ class FlashGuard {
 void wipe(void* data, size_t bytes) {
   volatile uint8_t* p = (volatile uint8_t*)data;
   while (bytes--) *p++ = 0;
+}
+void loadReportSettings() {
+  Preferences store;
+  if (!store.begin("lightboard", true)) return;
+  ReportSettings settings = {}; InstallReceipt receipt = {};
+  if (store.getBytesLength("reporting") == sizeof(settings) &&
+      store.getBytes("reporting", &settings, sizeof(settings)) == sizeof(settings) &&
+      settings.format == 1 && settings.url[255] == 0 && settings.key[64] == 0 &&
+      reportingUrl(settings.url) && sha256Text(settings.key)) reportSettings = settings;
+  if (store.getBytesLength("image") == sizeof(receipt) &&
+      store.getBytes("image", &receipt, sizeof(receipt)) == sizeof(receipt) && receipt.format == 1 &&
+      receipt.version[79] == 0 && receipt.foundation[64] == 0 && receipt.sha256[64] == 0 &&
+      safeVersion(receipt.version) && sha256Text(receipt.foundation) && sha256Text(receipt.sha256) &&
+      receipt.bytes >= 288 && receipt.bytes <= kAppSlotBytes) installReceipt = receipt;
+  store.end(); wipe(&settings, sizeof(settings));
+}
+// Called with the existing flash guard held, after full download/hash validation.
+bool saveInstallReceipt(const Candidate& candidate, const esp_partition_t* target) {
+  InstallReceipt next = {};
+  next.format = 1; next.address = target->address; next.bytes = candidate.bytes;
+  strcpy(next.version, candidate.version); strcpy(next.foundation, LB_FOUNDATION_ID);
+  strcpy(next.sha256, candidate.sha256);
+  Preferences store;
+  if (!store.begin("lightboard", false)) return false;
+  bool saved = store.putBytes("image", &next, sizeof(next)) == sizeof(next);
+  store.end(); return saved;
 }
 void loadAutoSettings() {
   Preferences store;
@@ -231,10 +269,14 @@ bool timeReady() {
 struct Headers {
   char location[3072];
   bool rejected;
+  int cacheAge;
 };
 esp_err_t httpEvent(esp_http_client_event_t* event) {
   if (event->event_id != HTTP_EVENT_ON_HEADER || !event->header_key || !event->header_value) return ESP_OK;
   Headers* h = (Headers*)event->user_data;
+  if (strcasecmp(event->header_key, "Age") == 0 && strlen(event->header_value) < 10 &&
+      strspn(event->header_value, "0123456789") == strlen(event->header_value))
+    h->cacheAge = atoi(event->header_value);
   if (strcasecmp(event->header_key, "Location") == 0) {
     if (strlen(event->header_value) >= sizeof(h->location)) h->rejected = true;
     else strcpy(h->location, event->header_value);
@@ -249,7 +291,7 @@ class HttpsStream {
   Headers headers = {};
   ~HttpsStream() { close(); }
   void close() { if (client) { esp_http_client_cleanup(client); client = nullptr; } }
-  bool open(const char* initial) {
+  bool open(const char* initial, bool freshFeed = false) {
     char url[3072];
     if (!allowedHttps(initial) || !timeReady()) {
       Serial.println("LB_HTTPS_DIAG: initial URL policy or clock rejected"); return false;
@@ -258,6 +300,7 @@ class HttpsStream {
     for (int redirect = 0; redirect <= 3; ++redirect) {
       close();
       memset(&headers, 0, sizeof(headers));
+      headers.cacheAge = -1;
       esp_http_client_config_t config = {};
       config.url = url;
       config.timeout_ms = 8000;
@@ -274,12 +317,14 @@ class HttpsStream {
       if (!client) { Serial.println("LB_HTTPS_DIAG: client allocation failed"); return false; }
       esp_http_client_set_header(client, "Accept-Encoding", "identity");
       esp_http_client_set_header(client, "Connection", "close");
+      if (freshFeed) esp_http_client_set_header(client, "Cache-Control", "no-cache, max-age=0");
       esp_err_t openResult = esp_http_client_open(client, 0);
       Serial.printf("LB_HTTPS_DIAG {\"hop\":%d,\"open_result\":%d,\"heap_free\":%u}\n",
           redirect, (int)openResult, ESP.getFreeHeap());
       if (openResult != ESP_OK) return false;
       int64_t fetched = esp_http_client_fetch_headers(client);
       int statusCode = esp_http_client_get_status_code(client);
+      if (freshFeed) Serial.printf("LB_FEED_CACHE {\"age_seconds\":%d,\"revalidation_requested\":true}\n", headers.cacheAge);
       Serial.printf("LB_HTTPS_DIAG {\"hop\":%d,\"status\":%d,\"length\":%lld,\"chunked\":%s,\"headers_rejected\":%s,\"redirect_bytes\":%u}\n",
           redirect, statusCode, (long long)fetched,
           esp_http_client_is_chunked_response(client) ? "true" : "false",
@@ -332,7 +377,10 @@ void probeFirmware(const char* url) {
 }
 bool downloadManifest(char* output, size_t capacity) {
   HttpsStream stream;
-  if (!stream.open(kFeedUrl)) { Serial.println("LB_STOP: verified HTTPS feed unavailable (Wi-Fi/clock/certificate/status)"); return false; }
+  char requestUrl[192];
+  if (!feedBoot) feedBoot = esp_random();
+  if (!feedRequestUrl(requestUrl, sizeof(requestUrl), feedBoot, ++feedSequence) ||
+      !stream.open(requestUrl, true)) { Serial.println("LB_STOP: verified HTTPS feed unavailable (Wi-Fi/clock/certificate/status)"); return false; }
   int length = esp_http_client_get_content_length(stream.client);
   if (length > (int)capacity - 1) { Serial.println("LB_STOP: manifest exceeds bound"); return false; }
   size_t used = 0;
@@ -456,7 +504,7 @@ bool downloadAndInstall(const Candidate& candidate) {
     if (good) {
       good = esp_ota_end(handle) == ESP_OK;
       begun = false;  // esp_ota_end frees the handle on success and failure.
-      if (good) good = esp_ota_set_boot_partition(target) == ESP_OK;
+      if (good) good = saveInstallReceipt(candidate, target) && esp_ota_set_boot_partition(target) == ESP_OK;
     }
     if (begun) esp_ota_abort(handle);
   }
@@ -485,9 +533,111 @@ void healthCheck() {
     resetHealthWindow();
   }
 }
+bool verifyReportImage() {
+  const esp_partition_t* running = esp_ota_get_running_partition();
+  esp_ota_img_states_t state = ESP_OTA_IMG_UNDEFINED;
+  if (!running || installReceipt.format != 1 || running->address != installReceipt.address ||
+      strcmp(installReceipt.version, LB_FIRMWARE_VERSION) || strcmp(installReceipt.foundation, LB_FOUNDATION_ID) ||
+      esp_ota_get_state_partition(running, &state) != ESP_OK || state != ESP_OTA_IMG_VALID) return false;
+  mbedtls_sha256_context hash; mbedtls_sha256_init(&hash);
+  bool good = mbedtls_sha256_starts_ret(&hash, 0) == 0;
+  uint8_t block[1024], digest[32]; char hex[65] = {};
+  for (uint32_t offset = 0; good && offset < installReceipt.bytes;) {
+    size_t count = min((uint32_t)sizeof(block), installReceipt.bytes - offset);
+    good = esp_partition_read(running, offset, block, count) == ESP_OK &&
+      mbedtls_sha256_update_ret(&hash, block, count) == 0;
+    offset += count; vTaskDelay(1);
+  }
+  good = good && mbedtls_sha256_finish_ret(&hash, digest) == 0;
+  mbedtls_sha256_free(&hash);
+  for (size_t i = 0; good && i < 32; ++i) snprintf(hex + i * 2, 3, "%02x", digest[i]);
+  return good && strcmp(hex, installReceipt.sha256) == 0;
+}
+bool sendReport(const char* body) {
+  char url[3072]; strcpy(url, reportSettings.url);
+  const size_t bodyBytes = strlen(body);
+  for (int hop = 0; hop < 2; ++hop) {
+    Headers headers = {}; headers.cacheAge = -1;
+    esp_http_client_config_t config = {};
+    config.url = url; config.timeout_ms = 8000; config.disable_auto_redirect = true;
+    config.max_authorization_retries = -1; config.crt_bundle_attach = esp_crt_bundle_attach;
+    config.skip_cert_common_name_check = false; config.buffer_size = 4096; config.buffer_size_tx = 1024;
+    config.event_handler = httpEvent; config.user_data = &headers; config.user_agent = "Lightboard-report/1";
+    esp_http_client_handle_t client = esp_http_client_init(&config);
+    if (!client) return false;
+    esp_http_client_set_method(client, hop == 0 ? HTTP_METHOD_POST : HTTP_METHOD_GET);
+    esp_http_client_set_header(client, "Accept-Encoding", "identity");
+    esp_http_client_set_header(client, "Connection", "close");
+    if (!hop) esp_http_client_set_header(client, "Content-Type", "application/json");
+    bool good = esp_http_client_open(client, hop == 0 ? bodyBytes : 0) == ESP_OK;
+    if (good && !hop) good = esp_http_client_write(client, body, bodyBytes) == (int)bodyBytes;
+    if (good) good = esp_http_client_fetch_headers(client) >= 0 && !headers.rejected;
+    int code = esp_http_client_get_status_code(client);
+    if (good && hop == 0 && (code == 302 || code == 303) && reportRedirectUrl(headers.location)) {
+      strcpy(url, headers.location); esp_http_client_cleanup(client); continue;
+    }
+    char response[256] = {}; size_t used = 0;
+    uint32_t started = millis();
+    while (good && code == 200 && used < sizeof(response) - 1 && !expired(millis(), started, 12000)) {
+      int count = esp_http_client_read(client, response + used, sizeof(response) - 1 - used);
+      if (count < 0) { good = false; break; }
+      used += count;
+      if (esp_http_client_is_complete_data_received(client)) break;
+      vTaskDelay(1);
+    }
+    good = good && code == 200 && esp_http_client_is_complete_data_received(client) &&
+      !memchr(response, 0, used) && boundedJson(response);
+    cJSON* parsed = good ? cJSON_Parse(response) : nullptr;
+    good = parsed && cJSON_IsTrue(field(parsed, "ok"));
+    cJSON_Delete(parsed); esp_http_client_cleanup(client); return good;
+  }
+  return false;
+}
+void reportInstallation() {
+  if (reportSettings.format != 1 || !healthy || pendingVerify || terminalHealthFailure ||
+      provisionUntil || WiFi.status() != WL_CONNECTED || !timeReady() ||
+      (lastReportAttempt && !expired(millis(), lastReportAttempt, reportDelivered ? 600000 : 60000))) return;
+  lastReportAttempt = millis();
+  if (!reportImageVerified) reportImageVerified = verifyReportImage();
+  if (!reportImageVerified) return; // USB boot/no matching receipt cannot fabricate an OTA acknowledgment.
+  char nonce[33], payload[768], signature[65] = {}; uint8_t digest[32];
+  snprintf(nonce, sizeof(nonce), "%08lx%08lx%08lx%08lx", (unsigned long)esp_random(),
+    (unsigned long)esp_random(), (unsigned long)esp_random(), (unsigned long)esp_random());
+  int count = snprintf(payload, sizeof(payload),
+    "{\"schemaVersion\":1,\"action\":\"installed\",\"boardId\":\"lightboard-main\",\"reportedAt\":%lld,"
+    "\"nonce\":\"%s\",\"version\":\"%s\",\"foundation\":\"%s\",\"sha256\":\"%s\","
+    "\"bytes\":%u,\"healthy\":true,\"otaState\":2}", (long long)time(nullptr), nonce,
+    LB_FIRMWARE_VERSION, LB_FOUNDATION_ID, installReceipt.sha256, installReceipt.bytes);
+  if (count <= 0 || count >= (int)sizeof(payload) || mbedtls_md_hmac(
+      mbedtls_md_info_from_type(MBEDTLS_MD_SHA256), (const unsigned char*)reportSettings.key, 64,
+      (const unsigned char*)payload, count, digest) != 0) return;
+  for (size_t i = 0; i < 32; ++i) snprintf(signature + i * 2, 3, "%02x", digest[i]);
+  cJSON* envelope = cJSON_CreateObject();
+  if (!envelope) return;
+  cJSON_AddStringToObject(envelope, "payload", payload); cJSON_AddStringToObject(envelope, "signature", signature);
+  char* body = cJSON_PrintUnformatted(envelope);
+  bool good = body && strlen(body) <= 2048 && sendReport(body);
+  free(body); cJSON_Delete(envelope);
+  if (good) { reportDelivered = true; Serial.printf("LB_INSTALLATION_REPORTED {\"version\":\"%s\",\"healthy\":true}\n", LB_FIRMWARE_VERSION); }
+  else Serial.println("LB_REPORT_PENDING: will retry the report; no firmware download or model request");
+}
+void provisionReporting(const char* key) {
+  bool valid = provisionUntil && !expired(millis(), provisionUntil - 60000, 60000) &&
+    reportProvisionPhase == 2 && reportingUrl(reportUrlDraft) && sha256Text(key);
+  ReportSettings next = {};
+  if (valid) {
+    next.format = 1; strcpy(next.url, reportUrlDraft); strcpy(next.key, key);
+    FlashGuard guard; Preferences store;
+    valid = store.begin("lightboard", false);
+    if (valid) { valid = store.putBytes("reporting", &next, sizeof(next)) == sizeof(next); store.end(); }
+    if (valid) { reportSettings = next; lastReportAttempt = 0; reportDelivered = false; }
+  }
+  provisionUntil = 0; reportProvisionPhase = 0; wipe(reportUrlDraft, sizeof(reportUrlDraft)); wipe(&next, sizeof(next));
+  Serial.println(valid ? "LB_REPORTING_STORED_PRIVATELY" : "LB_STOP: reporting setup rejected; input omitted");
+}
 void automaticUpdate() {
   if (!autoSettings.enabled || !healthy || pendingVerify || terminalHealthFailure || provisionPhase ||
-      !reconnectEnabled || WiFi.status() != WL_CONNECTED ||
+      reportProvisionPhase || !reconnectEnabled || WiFi.status() != WL_CONNECTED ||
       !expired(millis(), lastAutomaticCheck, 60000)) return;
   lastAutomaticCheck = millis();
   if (!checkFeed(false) || !feedAllowsAutomatic ||
@@ -509,6 +659,14 @@ void automaticUpdate() {
 }
 void command(char* input) {
   if (strcmp(input, "status") == 0) status();
+  else if (strcmp(input, "report-status") == 0)
+    Serial.printf("LB_REPORT_STATUS {\"configured\":%s,\"image_verified\":%s,\"delivered\":%s}\n",
+      reportSettings.format == 1 ? "true" : "false", reportImageVerified ? "true" : "false", reportDelivered ? "true" : "false");
+  else if (strcmp(input, "report-provision") == 0) {
+    provisionUntil = millis() + 60000; provisionPhase = 0; reportProvisionPhase = 1;
+    wipe(provisionSsid, sizeof(provisionSsid)); wipe(reportUrlDraft, sizeof(reportUrlDraft));
+    Serial.println("LB_ENTER_REPORT_URL: next line is reporting-only deployment URL; 60-second window");
+  }
   else if (strcmp(input, "help") == 0)
     Serial.println("LB_COMMANDS: status | wifi-diagnose | provision | cancel-provision | offline | reconnect | forget-wifi | check | arm-update | install | auto-on | auto-off | rollback");
   else if (strcmp(input, "auto-on") == 0 || strcmp(input, "auto-off") == 0) {
@@ -523,11 +681,12 @@ void command(char* input) {
     diagnoseWifi(input + sizeof("wifi-diagnose\t") - 1);
   else if (strcmp(input, "provision") == 0) {
     provisionUntil = millis() + 60000;
-    provisionPhase = 1;
+    provisionPhase = 1; reportProvisionPhase = 0; wipe(reportUrlDraft, sizeof(reportUrlDraft));
     wipe(provisionSsid, sizeof(provisionSsid));
     Serial.println("LB_ENTER_WIFI_NAME: next line is the network name; 60-second window; no echo");
   } else if (strcmp(input, "cancel-provision") == 0) {
-    provisionUntil = 0; provisionPhase = 0; wipe(provisionSsid, sizeof(provisionSsid));
+    provisionUntil = 0; provisionPhase = 0; reportProvisionPhase = 0;
+    wipe(provisionSsid, sizeof(provisionSsid)); wipe(reportUrlDraft, sizeof(reportUrlDraft));
     Serial.println("LB_PROVISION_CANCELLED");
   } else if (strncmp(input, "wifi\t", 5) == 0) provision(input + 5);
   else if (strcmp(input, "offline") == 0) {
@@ -571,7 +730,8 @@ void command(char* input) {
 }
 void serialPoll() {
   if (provisionUntil && (int32_t)(provisionUntil - millis()) <= 0) {
-    provisionUntil = 0; provisionPhase = 0; wipe(provisionSsid, sizeof(provisionSsid));
+    provisionUntil = 0; provisionPhase = 0; reportProvisionPhase = 0;
+    wipe(provisionSsid, sizeof(provisionSsid)); wipe(reportUrlDraft, sizeof(reportUrlDraft));
     if (lineLength) { wipe(line, sizeof(line)); lineLength = 0; discardLine = true; }
     Serial.println("LB_PROVISION_EXPIRED: credentials not changed");
   }
@@ -586,6 +746,12 @@ void serialPoll() {
       if (!discardLine && lineLength) {
         line[lineLength] = 0;
         if (strcmp(line, "cancel-provision") == 0) command(line);
+        else if (reportProvisionPhase == 1) {
+          if (reportingUrl(line) && lineLength < sizeof(reportUrlDraft)) {
+            strcpy(reportUrlDraft, line); reportProvisionPhase = 2;
+            Serial.println("LB_ENTER_REPORT_KEY: next line is the private key; input is never echoed");
+          } else command((char*)"cancel-provision");
+        } else if (reportProvisionPhase == 2) provisionReporting(line);
         else if (provisionPhase == 1) {
           if (lineLength <= 32 && !strchr(line, '\t')) {
             memcpy(provisionSsid, line, lineLength + 1); provisionPhase = 2;
@@ -617,6 +783,7 @@ void worker(void*) {
   esp_log_level_set("esp-tls", ESP_LOG_NONE);
   esp_log_level_set("esp-x509-crt-bundle", ESP_LOG_NONE);
   hasCredentials = loadCredentials();
+  loadReportSettings();
   WiFi.onEvent([](arduino_event_id_t, arduino_event_info_t info) {
     lastDisconnectReason.store(info.wifi_sta_disconnected.reason, std::memory_order_relaxed);
   }, ARDUINO_EVENT_WIFI_STA_DISCONNECTED);
@@ -628,7 +795,7 @@ void worker(void*) {
   else Serial.println("LB_NEEDS_PRIVATE_WIFI_PROVISIONING");
   bool wasConnected = false;
   for (;;) {
-    serialPoll(); healthCheck(); automaticUpdate();
+    serialPoll(); healthCheck(); reportInstallation(); automaticUpdate();
     bool connected = WiFi.status() == WL_CONNECTED;
     if (connected && !wasConnected) Serial.println("LB_WIFI_CONNECTED: use status/check for diagnostics");
     if (!connected && wasConnected) { candidateReady = false; armedUntil = 0; Serial.println("LB_WIFI_DISCONNECTED"); }
