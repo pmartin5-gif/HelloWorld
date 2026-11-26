@@ -245,11 +245,12 @@ Bring back this request:
 
 **Complete the automation.**
 
-**November26 checkpoint:** Queue.gs now implements durable per-job storage, checksum-bound immutable receipt references, FIFO, shared-lock/capacity controls and one-in-flight/revisioned transitions.15 focused local checks pass; actual Google installation/persistence also passed from supplied second-run log at1:25:37PM (see email/queue.md). No dispatch/trigger/model/publication/device operation has been enabled. Workflow job-result binding and real adapter are not implemented yet.
+**November26 checkpoint:** Queue.gs now implements durable per-job storage, checksum-bound immutable receipt references, FIFO, shared-lock/capacity controls and one-in-flight/revisioned transitions.15 focused local checks pass; actual Google installation/persistence also passed from supplied second-run log at1:25:37PM (see email/queue.md). No dispatch/trigger/model/publication/device operation has been enabled. Manual saved-heart GitHub adapter and workflow job/attempt/prompt/run/commit/result binding are now implemented/tested locally; source push/private setup/live dispatch remain pending. See email/github-setup.md.
 
 - [x] Implement/test durable queue storage and internal transition rules locally, separately from the older offline simulation.
 - [x] Installed separate Queue file; user ran setupQueue and syncQueue twice. Supplied second execution1:25:37 shows imported0/jobs2, same IDs/hashes/order, revision1/attempt0, null in-flight and dispatch disabled. First-run log not captured; no repeat needed.
-- [ ] Bind workflow inputs/results to queue job ID, attempt, exact prompt hash, run and source commit before enabling dispatch.
+- [x] Implement/test local workflow inputs/results and manual saved-build adapter bound to queue job ID, dispatch attempt, exact prompt hash, run and source commit;39 focused checks pass.
+- [ ] Push source, update private Queue/GitHub files/manifest and run read-only setupGitHubConnection with privately stored credential.
 
 
 Bring back this request:

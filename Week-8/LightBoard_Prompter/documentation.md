@@ -2483,6 +2483,28 @@ User reports installing Queue and completing setup/two separate sync runs. Secon
 
 No queue/intake source change, repeated test suite, firmware build, cloud/model request, email, trigger, publication or device command. Live queue persistence checkpoint complete. Next prepare actual GitHub adapter and workflow job/attempt/prompt/run/commit/result binding locally before credential handoff. All dispatch/new model/publication/reply/trigger/device actions remain disabled; no credential needs to be shared in chat.
 
+## 110. Job-bound manual GitHub adapter implemented and tested locally
+
+**Date:** November 26, 2026
+
+### Your prompt
+
+> Great let's do it.
+
+### Intent and implementation
+
+User authorized connecting stored queue jobs to exact GitHub workflow runs. Implemented email/GitHub.gs with private fine-grained token/config, repository/workflow/main/source pinning, one approved saved-heart job and one durable reservation before HTTP. Source checks require the pushed workflow/helper hashes. Lost/204/incomplete responses stay reserved; polling searches exact job/attempt title, not latest run, with seconds precision/clock-skew tolerance. No retry POST. Failed pre-dispatch quota pauses at head; post-request uncertainty holds. Tokens never go to storage redirects, source/logs/chat.
+
+Updated prompt workflow with optional queue job/dispatch/prompt-hash inputs, nonce-bearing run name, cloud/queue_binding.py prepare before toolchain work and a dedicated structured result step. Queue requests hard-require saved heart/reuse true/publish false; independent step guards prevent new model/publication even with conflicting queue switches. No artifact, cache, callback, schedule or board command. Result includes exact prompt/job/attempt/run/commit and saved generation identity; adapter reads only one step log capped64KiB and validates provenance/nonpublication/no-model plus OTA metadata on success. Built remains distinct from installed; vessel stays waiting, never silently reusing heart or requesting generation.
+
+Updated Queue.gs for adapter compatibility check, truthful manual-versus-automatic mode reporting, persistent run/job/result checksum and same-run late-result reconciliation without clearing published holds. Kept original receipts/config/progress, foundation/runtime/recovery unchanged. Local appsscript manifest retains gmail.readonly and adds external_request for future installation. Live Google manifest remains old scope; no credentials/OAuth changed. Added full email/github-setup.md handoff, updated guides/checkpoint/verification/plan.
+
+### Validation and limits
+
+30 focused Node checks pass (15adapter+15durable queue),9 Python binding checks pass, including real existing manifest validation and unchanged manual prompt behavior. YAML parses with Ruby/Psych; syntax/diff checks pass. Covered source drift, compatibility, durable pre-HTTP reservation/crashes, lost responses, run/commit/nonce/model/publication mismatches, quota, false/duplicate/missing/oversize logs, redirect credential isolation, original receipt/FIFO preservation, failure reconciliation and late results. An initial test wrongly expected empty stdout from the existing manifest validator, which prints pin notices; corrected to require no eligible result marker on failure. No full firmware suite/compiler, live HTTP dispatch, model call, email, trigger, publication or device operation.
+
+Primary GitHub workflow dispatch/job-step logs/fine-grained token docs and Google UrlFetch docs checked. New response shapes remain unverified live. Source changes are local only; connector write403/shell network limitations were already established, so no ineffective retry. Next user pushes main, then privately installs updated Queue/new GitHub/manifest, stores HelloWorld-only Actions write token and exact pushed commit, runs GET-only setup. Manual dispatch/poll is concretely prepared for subsequent live verification. No token should be shared in chat and no prior passing intake/queue test needs repetition.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.

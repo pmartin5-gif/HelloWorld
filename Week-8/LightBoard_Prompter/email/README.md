@@ -4,6 +4,10 @@
 
 `Inbox.gs` reads selected Gmail messages and saves private durable receipts in Script Properties. It never sends email, marks messages read, changes labels, calls a model, starts GitHub Actions or commands the board. There is no trigger or background processing. `Queue.gs` now adds persistent queue records and one-in-flight transition rules; 15 focused local checks pass, and supplied second-run log at1:25:37PM verifies live persistence of both original jobs with zero duplicate imports and dispatch disabled. See [queue setup and behavior](queue.md) for the separate Queue-file handoff and next GitHub integration work. `queue-simulation.cjs` remains a separate older offline status contract.
 
+## Current next step: manual GitHub build connection
+
+The local manual saved-build adapter and job-bound workflow are ready;39 focused checks pass. Source push, private file/manifest/credential setup and actual live dispatch/result verification are pending. Follow [GitHub setup](github-setup.md). This first connection approves only the saved heart, with reuse enabled and publication disabled. Queue.gs needs the prepared update; existing receipts/progress are preserved. Local manifest now adds external_request, while the last live-verified manifest still has Gmail read-only only. Do not send a token in chat. No trigger or board delivery is enabled.
+
 ## Initial setup
 
 1. Choose the Gmail account you control. Create a Gmail label named `Lightboard` (or another dedicated name). Use a dedicated label/filter so test messages and new replies receive that label individually. Gmail labels can differ between messages in one thread.

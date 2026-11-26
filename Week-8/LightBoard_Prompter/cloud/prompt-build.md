@@ -1,6 +1,6 @@
 # Manual prompt-to-OTA pipeline
 
-**Updated November 26, 2026.** Routine prompt build and the saved-response publication test now use the physically proven sealed OTA foundation. Local integration and saved-response cloud run45858227133 passed on commit289ef02. Publication was skipped. New Wi-Fi setup is pending and does not block compilation or public package verification.
+**Updated November 26, 2026.** Routine prompt build and the saved-response publication test now use the physically proven sealed OTA foundation. Local integration and saved-response cloud run45858227133 passed on commit289ef02. Publication was skipped. New Wi-Fi is verified connected. A local manual queue binding/adapter is now prepared; push/private setup/live dispatch are pending (see email/github-setup.md).
 
 ## Behavior
 
@@ -9,6 +9,10 @@
 The workflow uses `cloud/prompt_build.py` to compile both the recovery baseline and the recorded function against foundation `f1244292bbdf180ad5ea8b4ffbf46c72b9772ef8ad2407276ae26e3786132522`. It prepares schema-2 OTA metadata through the same publisher as the controlled known-scene tests. **Publish** defaults off. There are no Actions artifacts, caches, schedules, serial commands or automatic device updates.
 
 The saved-response **Lightboard publication test** workflow calls the same builder/publisher. The original non-OTA `cloud/build.py` and `cloud/publish.py` remain for historical baseline tests and legacy metadata checks. They are no longer the routine prompt/publication entry points. The Desktop USB helper still uses the old foundation: do not deploy it onto the OTA board; migrating that helper remains separate work.
+
+## Queued saved-build binding
+
+Optional queue_job_id/queue_dispatch_id/queue_prompt_sha256 inputs bind one request to a saved receipt/attempt/exact UTF-8 prompt. cloud/queue_binding.py preflights queue inputs/source/run before toolchain setup; queue requests require the exact saved heart, reuse true and publish false. Independent step conditions also block model generation/publication whenever any queue field is present. The workflow emits one structured result in Record queue result; the manual Apps Script adapter verifies only that step's log against pinned source/run/job/prompt/provenance. No artifact/cache or API callback was added. No queue inputs preserves the earlier manual behavior and 2000-character limit. The local integration is tested, not yet pushed/run live.
 
 ## Check scope
 

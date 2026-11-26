@@ -1,4 +1,5 @@
 name: Lightboard prompt build
+run-name: ${{ inputs.queue_job_id != '' && format('Lightboard queue {0} {1}', inputs.queue_job_id, inputs.queue_dispatch_id) || 'Lightboard manual prompt build' }}
 
 # Manual prompt preparation/publication. Device delivery remains separately armed.
 on:
@@ -19,6 +20,18 @@ on:
         type: boolean
         required: true
         default: true
+      queue_job_id:
+        description: 'Optional queue job ID; queue requests enforce saved reuse and no publication'
+        type: string
+        default: ''
+      queue_dispatch_id:
+        description: 'Queue dispatch reservation ID; leave blank for manual builds'
+        type: string
+        default: ''
+      queue_prompt_sha256:
+        description: 'Exact UTF-8 prompt checksum for a queued build'
+        type: string
+        default: ''
 
 permissions:
   contents: read
@@ -37,6 +50,12 @@ jobs:
     defaults:
       run:
         working-directory: Week-8/LightBoard_Prompter
+    env:
+      LB_QUEUE_JOB_ID: ${{ inputs.queue_job_id }}
+      LB_QUEUE_DISPATCH_ID: ${{ inputs.queue_dispatch_id }}
+      LB_QUEUE_PROMPT_SHA256: ${{ inputs.queue_prompt_sha256 }}
+      LB_PUBLISH: ${{ inputs.publish }}
+      LB_REUSE: ${{ inputs.reuse_saved_generation }}
     steps:
       - name: Check out only Lightboard inputs
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -50,6 +69,11 @@ jobs:
             /Week-8/LightBoard_Prompter/generationBrief.md
             /Week-8/LightBoard_Prompter/experiments/flash-lite/2026-11-09/cloud-run-42735010470/generation.json
 
+      - name: Save prompt and verify queue binding
+        env:
+          CREATIVE_PROMPT: ${{ inputs.prompt }}
+        run: python3 cloud/queue_binding.py prepare
+
       - name: Verify the pinned foundation and libraries
         run: python3 cloud/build.py --verify-only
 
@@ -57,21 +81,6 @@ jobs:
         uses: arduino/setup-arduino-cli@81d310742121c928ea9c8bbd407b4217b432ae02 # v2
         with:
           version: '1.5.1'
-
-      - name: Save the submitted prompt as data
-        env:
-          CREATIVE_PROMPT: ${{ inputs.prompt }}
-        run: |
-          python3 - <<'PY'
-          import os
-          from pathlib import Path
-          prompt = os.environ['CREATIVE_PROMPT'].strip()
-          if not 1 <= len(prompt) <= 2000:
-              raise SystemExit('STOP: Enter a prompt between 1 and 2000 characters.')
-          folder = Path('.build/generated')
-          folder.mkdir(parents=True, exist_ok=True)
-          (folder / 'creative-prompt.txt').write_text(prompt + '\n')
-          PY
 
       - name: Reuse the saved generation without an API request
         if: ${{ inputs.reuse_saved_generation }}
@@ -82,7 +91,7 @@ jobs:
           --prompt-file .build/generated/creative-prompt.txt --brief generationBrief.md
 
       - name: Generate one restState using the saved brief
-        if: ${{ !inputs.reuse_saved_generation }}
+        if: ${{ !inputs.reuse_saved_generation && inputs.queue_job_id == '' && inputs.queue_dispatch_id == '' && inputs.queue_prompt_sha256 == '' }}
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: >-
@@ -105,7 +114,7 @@ jobs:
           --prompt-file .build/generated/creative-prompt.txt
 
       - name: Publish verified OTA assets and feed
-        if: ${{ success() && inputs.publish }}
+        if: ${{ success() && inputs.publish && inputs.queue_job_id == '' && inputs.queue_dispatch_id == '' && inputs.queue_prompt_sha256 == '' }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: python3 cloud/ota_publish.py --publish --output .build/prompt-ota/package
@@ -128,3 +137,9 @@ jobs:
               out.write('Model request in this run: ' + str(m['generation']['model_request_in_this_run']) + '.\n\n')
               out.write('No device command, Actions artifact or cache. Publication does not confirm installation.\n')
           PY_SUMMARY
+
+      - name: Record queue result
+        if: ${{ always() && inputs.queue_job_id != '' }}
+        env:
+          LB_BUILD_OUTCOME: ${{ job.status }}
+        run: python3 cloud/queue_binding.py result

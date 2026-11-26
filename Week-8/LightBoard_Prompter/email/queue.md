@@ -24,7 +24,7 @@ Queue operations and processInbox share the script lock. Each job's state is one
 
 ## Progress rules prepared for a future adapter
 
-The three public functions only configure, import and inspect. They do not simulate a build or contact GitHub. Internal transition helpers are for a future trusted adapter and focused local tests; do not run them manually to mark progress.
+The three public queue functions only configure, import and inspect; they do not contact GitHub. Internal transition helpers now support the separate manual saved-build adapter and focused tests. Generic publication/device delivery remain future work; do not invoke helpers manually to mark progress.
 
 | State | Meaning and scheduling effect |
 | --- | --- |
@@ -44,15 +44,15 @@ An unsuccessful workflow can have published before failing, and a timed-out requ
 
 `inspectIntake` continues to show original receipt snapshots. `inspectQueue` is the separate progress view. Neither sends status emails. Email replies, scheduling, model requests, publication and board commands remain off.
 
-## GitHub connection findings and next work
+## GitHub connection prepared locally
 
-The current `lightboard-prompt-build.yml` accepts only prompt, publish and reuse_saved_generation. It has no queue job/attempt ID or queue-bound machine result. Add those bindings before dispatch integration. Do not infer association from the latest run or prompt text alone. The saved heart response can only be reused for its exact prompt; the queued vessel must not receive that response or silently cause a new model call.
+The manual saved-build connection now lives in GitHub.gs and the job-bound prompt workflow. Follow [the concrete GitHub setup](github-setup.md): source push, updated Queue file, new GitHub file, manifest external-request scope and privately stored repository-scoped Actions credential, then GET-only setup and one manual saved-heart build. All those latest changes are still local; original Queue live persistence remains passed and stored records remain intact. No new generation, publication, mail, scheduling or device command is enabled. Saved heart reuse cannot process the queued vessel.
 
-The next adapter must pin owner/repository/workflow/ref, include queue job/attempt/prompt hash, bind the returned or reconciled run and source commit, and verify output before updating queue progress. Add only the Google external-request scope when the actual adapter is ready for review. No token or OAuth change is needed now.
+Queue mode remains record_only until the explicit manual dispatch function reserves the approved job; it then becomes manual_saved_build. inspectQueue reports that mode and manual dispatchEnabled flag, always automaticDispatchEnabledfalse. It additionally shows run/commit/result checksum when available. setupQueue continues to preserve configuration. Updated Queue.gs has a compatibility flag so the adapter refuses an older copy before HTTP. Same-run late verified results may reconcile an uncertain review hold; published holds are never cleared by this build-only adapter. Generic publication transitions remain future delivery support, not something this adapter invokes.
 
-GitHub's current [workflow dispatch documentation](https://docs.github.com/en/rest/actions/workflows#create-a-workflow-dispatch-event) specifies fine-grained **Actions:write** for the repository and a response with run ID/URLs for API version 2026-03-10. Verify actual responses when connecting; an ambiguous response must retain the reservation. Repository permission is not a token restriction to a single workflow: enforce the intended workflow in the adapter and do not describe the credential as workflow-specific. If stronger enforcement is required, use a constrained intermediary. Keep any future credential only in private Script Properties, never source/logs/chat.
+The adapter verifies pinned workflow/helper source, repository/workflow/ref/run attempt/nonce/exact prompt/commit, and only the result step's bounded log. Signed storage redirects never receive the API bearer token. It persists run/job/result hash and distinguishes built from installed; no device-confirmed transition exists. Tokens are repository-scoped, not single-workflow-scoped; code pins the intended workflow. See the setup guide for credential scope, uncertainty/quotas and actual live work still pending.
 
-Storage/locking use Google's [Properties service](https://developers.google.com/apps-script/reference/properties/properties) and [script lock](https://developers.google.com/apps-script/reference/lock/lock). This queue adds no network calls or Gmail operations.
+Storage and lock operations continue to use Google's [Properties service](https://developers.google.com/apps-script/reference/properties/properties) and [script lock](https://developers.google.com/apps-script/reference/lock/lock). Queue public functions still perform no HTTP; the separate manually invoked GitHub adapter does.
 
 ## Focused validation
 

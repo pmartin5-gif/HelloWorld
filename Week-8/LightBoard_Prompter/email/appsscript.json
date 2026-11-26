@@ -1,7 +1,10 @@
 {
   "timeZone": "America/New_York",
   "runtimeVersion": "V8",
-  "oauthScopes": ["https://www.googleapis.com/auth/gmail.readonly"],
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/gmail.readonly",
+    "https://www.googleapis.com/auth/script.external_request"
+  ],
   "dependencies": {
     "enabledAdvancedServices": [
       {"userSymbol": "Gmail", "serviceId": "gmail", "version": "v1"}

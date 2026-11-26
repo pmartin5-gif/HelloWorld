@@ -1,5 +1,6 @@
 /** Durable queue, installed alongside Code.gs. No network, dispatch, triggers or mail writes. */
-const LBQ = Object.freeze({schemaVersion: 1, prefix: 'LB_QUEUE_JOB_', configKey: 'LB_QUEUE_CONFIG',
+const LBQ = Object.freeze({schemaVersion: 1, githubAdapterVersion: 1,
+  prefix: 'LB_QUEUE_JOB_', configKey: 'LB_QUEUE_CONFIG',
   active: ['dispatch_pending', 'dispatch_unknown', 'building', 'published', 'review_required'],
   statuses: ['received', 'quota_paused', 'dispatch_pending', 'dispatch_unknown', 'building',
     'built', 'published', 'review_required', 'failed']});
@@ -16,7 +17,7 @@ function lbqConfig_(snapshot) {
   const inbox = JSON.parse(snapshot.LB_ACTIVE_CONFIG || 'null');
   lbqRequire_(inbox && lbAddress(inbox.account) === inbox.account);
   const config = JSON.parse(snapshot[LBQ.configKey] || 'null');
-  lbqRequire_(config && config.schemaVersion === 1 && config.mode === 'record_only' &&
+  lbqRequire_(config && config.schemaVersion === 1 && ['record_only', 'manual_saved_build'].includes(config.mode) &&
     config.accountSha256 === lbHash(inbox.account) && config.board === 'esp32-32x32');
   lbqTime_(config.createdAt);
   return config;
@@ -60,6 +61,10 @@ function lbqRead_(snapshot, config) {
         lbqRequire_(/^[1-9][0-9]{0,19}$/.test(q.dispatch.runId || '') &&
           /^[a-f0-9]{40}$/.test(q.dispatch.commitSha || ''));
       }
+      if (q.dispatch.resultSha256 !== undefined || q.dispatch.workflowJobId !== undefined) {
+        lbqRequire_(/^[a-f0-9]{64}$/.test(q.dispatch.resultSha256 || '') &&
+          /^[1-9][0-9]{0,19}$/.test(q.dispatch.workflowJobId || ''));
+      }
     }
     if (q.publication !== null) {
       lbqRequire_(q.status === 'published' || q.status === 'review_required');
@@ -93,13 +98,17 @@ function lbqImport_(store, snapshot, config, now) {
   return imported;
 }
 
-function lbqSummary_(rows) {
+function lbqSummary_(rows, config) {
   const active = rows.find(q => LBQ.active.includes(q.status));
   const head = active || rows.find(q => ['received', 'quota_paused'].includes(q.status));
-  return {mode: 'record_only', dispatchEnabled: false, jobs: rows.length,
+  const mode = config ? config.mode : 'record_only';
+  return {mode, dispatchEnabled: mode === 'manual_saved_build', automaticDispatchEnabled: false, jobs: rows.length,
     headJobId: head ? head.jobId : null, inFlightJobId: active ? active.jobId : null,
     items: rows.map((q, index) => ({jobId: q.jobId, position: index + 1, status: q.status,
       promptSha256: q.promptSha256, revision: q.revision, attempt: q.attempt,
+      runId: q.dispatch ? q.dispatch.runId : null,
+      commitSha: q.dispatch ? q.dispatch.commitSha : null,
+      resultSha256: q.dispatch ? (q.dispatch.resultSha256 || null) : null,
       published: q.publication !== null, deviceConfirmed: false}))};
 }
 
@@ -121,8 +130,9 @@ function lbqLocked_(work) {
 function setupQueue() {
   return lbqLocked_((store, snapshot, now) => {
     if (snapshot[LBQ.configKey]) {
-      lbqConfig_(snapshot);
-      return lbReport({status: 'already_configured', mode: 'record_only', dispatchEnabled: false});
+      const config = lbqConfig_(snapshot);
+      return lbReport({status: 'already_configured', mode: config.mode,
+        dispatchEnabled: config.mode === 'manual_saved_build', automaticDispatchEnabled: false});
     }
     const config = lbConfig(store);
     lbqRequire_(config && lbAddress(config.account) === config.account);
@@ -136,14 +146,15 @@ function syncQueue() {
   return lbqLocked_((store, snapshot, now) => {
     const config = lbqConfig_(snapshot);
     const imported = lbqImport_(store, snapshot, config, now);
-    return lbReport({status: 'synced', imported, ...lbqSummary_(lbqRead_(snapshot, config))});
+    return lbReport({status: 'synced', imported, ...lbqSummary_(lbqRead_(snapshot, config), config)});
   });
 }
 
 function inspectQueue() {
   return lbqLocked_((store, snapshot) => {
-    const rows = lbqRead_(snapshot, lbqConfig_(snapshot));
-    return lbReport({status: 'snapshot', ...lbqSummary_(rows)});
+    const config = lbqConfig_(snapshot);
+    const rows = lbqRead_(snapshot, config);
+    return lbReport({status: 'snapshot', ...lbqSummary_(rows, config)});
   });
 }
 
@@ -180,10 +191,16 @@ function lbqTransition_(rows, jobId, event, now) {
   } else if (event.type === 'dispatch_unknown') {
     lbqRequire_(q.status === 'dispatch_pending'); q.status = 'dispatch_unknown';
   } else if (event.type === 'bind_run') {
-    lbqRequire_(['dispatch_pending', 'dispatch_unknown'].includes(q.status) &&
+    lbqRequire_(['dispatch_pending', 'dispatch_unknown', 'review_required'].includes(q.status) &&
+      q.dispatch.runId === null && q.publication === null &&
       event.dispatchId === q.dispatch.id && event.promptSha256 === q.promptSha256 &&
       /^[1-9][0-9]{0,19}$/.test(event.runId || '') && /^[a-f0-9]{40}$/.test(event.commitSha || ''));
     q.dispatch.runId = event.runId; q.dispatch.commitSha = event.commitSha; q.status = 'building';
+  } else if (event.type === 'reconcile_run') {
+    lbqRequire_(q.status === 'review_required' && q.publication === null &&
+      q.dispatch.runId !== null && event.runId === q.dispatch.runId &&
+      event.commitSha === q.dispatch.commitSha && event.promptSha256 === q.promptSha256);
+    q.status = 'building';
   } else if (event.type === 'build_result') {
     lbqRequire_(q.status === 'building' && event.runId === q.dispatch.runId &&
       event.commitSha === q.dispatch.commitSha && event.promptSha256 === q.promptSha256);
@@ -197,6 +214,12 @@ function lbqTransition_(rows, jobId, event, now) {
       lbqRequire_(event.published === true); lbqPublication_(event.publication);
       q.publication = lbqCopy_(event.publication); q.status = 'published';
     } else lbqRequire_(false);
+    if (event.resultSha256 !== undefined || event.workflowJobId !== undefined) {
+      lbqRequire_(/^[a-f0-9]{64}$/.test(event.resultSha256 || '') &&
+        /^[1-9][0-9]{0,19}$/.test(event.workflowJobId || ''));
+      q.dispatch.resultSha256 = event.resultSha256;
+      q.dispatch.workflowJobId = event.workflowJobId;
+    }
   } else if (event.type === 'timeout') {
     lbqRequire_(LBQ.active.includes(q.status) && q.status !== 'review_required');
     // Never release an uncertain build/publication/board timeout to a later job.
