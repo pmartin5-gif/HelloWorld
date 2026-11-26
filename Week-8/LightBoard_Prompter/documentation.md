@@ -2417,6 +2417,21 @@ User supplied the delivery explanation and manually recovered the messages. Scri
 
 Saved private evidence and expected direct-reply vessel hash; updated current checkpoint/guide/verification/plan. Next from approved sender directly reply to one original unmarked vessel-design email, addressed to bot, with only %%% as new text; verify reply outside Spam/with Lightboard label, process and inspect for one additional job matching the prior prompt. No repeat successful tests, source change, test run, build, model call, email sent by assistant, trigger or device action. No Spam-filter exception configured or verified.
 
+## 106. Reply-only marker preserves the exact prior design
+
+**Date:** November 26, 2026
+
+### Your prompt
+
+> processInbox1:06:51–1:06:52: record_only/received1/ignored0/rejected0/duplicates5.
+> inspectIntake1:07:14–1:07:15: original heart job plus new received job, SHAbe1a0347163954561f0f5285c09828881c7d772a05cda0092903aa13d2655665; both publishedfalse/deviceConfirmedfalse.
+
+### Intent, changes and result
+
+Compared new hash with SHA256 of exact expected prior design A warm light in a blue vessel; match. Original heart job/ID/hash/time remains unchanged. This verifies the requested direct-reply-only marker case from supplied execution logs. Parent reference/full private receipt not independently captured. Saved full supplied results privately and comparison outcomes in verification/guide/checkpoint/plan.
+
+No source edit, regression tests, cloud run, model request, email sent by assistant, trigger, publication or device operation. Next final live context guard: freshly compose subject Lightboard/body only %%%, not a reply, ensure outside Spam/labelled and process; expect zero new jobs and one rejection. Passing positive prompt/hash/replay cases need no repetition. Durable queue/workflow integration remains future work with delivery disabled.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.
