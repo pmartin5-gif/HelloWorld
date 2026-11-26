@@ -4,7 +4,7 @@ const LBAUTO = Object.freeze({key: 'LB_EMAIL_PILOT', handler: 'emailPilotTick',
   rejectedPrefix: 'LB_EMAIL_REJECTED_',
   labVersion: 1, labPrefix: 'LB_LAB_RECEIPT_',
   workflow: 'lightboard-email-pilot.yml', workflowPath: '.github/workflows/lightboard-email-pilot.yml',
-  workflowSha256: '27f17e47ef6b2537499aab8ec9bd2c7d3d5778a73684ae11ce1f2a1679151f88',
+  workflowSha256: '91b48cc72a1d6cb4411b92bbeed4fcaa0ceb99fe35727a737eca54d09f24c195',
   foundation: 'a529d5f9a72ca4858e0ab09ae66ec5eaecff656fdeb6d6a4f040e40633959ec1'});
 
 function lbaLocked_(work) {

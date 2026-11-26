@@ -78,6 +78,15 @@ class SceneTests(unittest.TestCase):
             with self.subTest(call=call), self.assertRaisesRegex(ValueError, 'unsupported function'):
                 scene.validate_function('void restState(unsigned long now) { ' + call + '; }')
 
+    def test_elapsed_time_read_without_timer_control(self):
+        function = ('void restState(unsigned long now) { '
+                    'unsigned long elapsed = millis(); '
+                    'display.fillScreen(0); display.drawPixel((elapsed / 100) % 32, 5, 31); }')
+        self.assertEqual(scene.validate_function(function), function)
+        for call in ['delay(10)', 'timerAlarmWrite(0, 1, true)', 'settimeofday(0, 0)']:
+            with self.subTest(call=call), self.assertRaisesRegex(ValueError, 'unsupported function'):
+                scene.validate_function('void restState(unsigned long now) { ' + call + '; }')
+
     def test_exact_recovered_cloud_response_accepts_numeric_rand(self):
         path = Path(__file__).resolve().parents[1] / 'experiments/flash-lite/2026-11-09/cloud-run-42735010470/generation.json'
         record, function = scene.load_generation(path)

@@ -2797,6 +2797,18 @@ Saved full publication marker and manual hardware evidence under ignored email-i
 
 **Focused result:** Two Python checks and two Node actual-handler checks passed, covering allowed numeric call, retained dangerous-call restrictions, exact original prompt, duplicate retry action/ticks and tampered/missing-rejection/lab refusal. No fullsuite, model request, build, publication or board action. Source prepared for user Terminal push; next install matching Automatic, refresh idle source pin, queue one retry and follow its actual build/panel result. No successful retry is claimed before that evidence.
 
+## 132. Run the saved-email retry; diagnose its next validator blocker
+
+> “pushed”
+
+**Intent:** Activate the esp_random repair and retry the saved rejected email once, retaining the original record and leaving prompt-lab testing aside.
+
+**Live actions/results:** Verified remote b7432a5cfe8bf387370b3cca2e6d3adb0e3f581e and idle Actions. Saved canonical matching Automatic.gs through native VSCode/Chrome. startContinuousEmail6:03:24PM preserved cutoff/history and returned active/nojob. retryLastRejectedEmail6:03:47PM queuedlb-29b27180b372-retry45905216109 without POST. Timer dispatched45908717233/job140211638198 on exactsource; one new Gemini request returned in3.823s. Validation failed23:05:11Z on unsupported millis; compile/publication/result skipped. No automatic extra request or board change. Read-only native Arduino showed feed polling; no serial command/USB upload. inspectEmailProcessing6:07:40PM confirms failure held/inactive/continuous/originalcutoff/lastPublished45904143531/deviceConfirmedfalse.
+
+**Next repair prepared:** Allow only millis elapsed-time read, retaining delay/timer/ESP-control rejection. Enable existing --log-result on cloud generator to preserve complete checksum-bound response in base64 log markers, with existing credential check/workflow-command isolation. No artifacts/cache or additional services. The failed run did not retain code; another generation will be required after push. Matching Automatic workflowSHA91b48cc72a1d6cb4411b92bbeed4fcaa0ceb99fe35727a737eca54d09f24c195 prepared locally. Three focused offline checks passed plus exact hash/flag/diff; no fullsuite or second new API request.
+
+**Remaining:** User push, matching live scheduler, continueAfterRejectedBuild verifying this failed child and publication skipped, then one explicit retry of the same saved prompt. Do not delete/overwrite original rejection or rerun guarded attempt2. Future candidate will be recoverable if further diagnosis is needed. Actual successful compilation/publication/panel result still pending. Prompt lab remains preserved and set aside.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.

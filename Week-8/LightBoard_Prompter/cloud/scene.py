@@ -76,7 +76,8 @@ DRAWING_METHODS = set("fillScreen drawPixel drawLine drawFastHLine drawFastVLine
 # Arduino.h includes stdlib.h; rand() is a numeric PRNG, like the already allowed random().
 # The pinned ESP32 core exposes esp_random() through Arduino.h and uses it in random().
 # Allow that numeric result only; ESP initialization/control APIs remain unsupported.
-PURE_CALLS = set("if for while switch return sizeof alignof static_cast int float double bool char short long unsigned signed uint8_t uint16_t uint32_t int8_t int16_t int32_t min max abs constrain map random rand esp_random sin sinf cos cosf tan tanf atan2 atan2f sqrt sqrtf pow powf floor floorf ceil ceilf round roundf fabs fabsf fmod fmodf fmin fminf fmax fmaxf exp expf log logf".split())
+# millis() only reads elapsed time; it does not delay or change the refresh timer.
+PURE_CALLS = set("if for while switch return sizeof alignof static_cast int float double bool char short long unsigned signed uint8_t uint16_t uint32_t int8_t int16_t int32_t min max abs constrain map random rand esp_random millis sin sinf cos cosf tan tanf atan2 atan2f sqrt sqrtf pow powf floor floorf ceil ceilf round roundf fabs fabsf fmod fmodf fmin fminf fmax fmaxf exp expf log logf".split())
 
 
 def validate_function(candidate):
