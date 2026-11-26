@@ -2749,6 +2749,20 @@ Saved full publication marker and manual hardware evidence under ignored email-i
 
 **Saved:** Current guide/resume/plan/verification and ignored .build/email-auto-pilot/subject-only-intake-activated.json. No push needed for live Apps Script-only changes. User may now email any-sender/plain-body/Lightboard. Reporting/full queues/creative/broad testing stay backlog.
 
+## 128. Prepare a prompt lab that sends experiments to the actual panel
+
+> User wants to dig further into Gemini interpretation and test prompts/results easily. Follow-up: instead of generating a preview, see it on the actual Lightboard.
+
+**Intent:** Owner edits instructions and test prompt in a convenient page, sends one experiment through the existing generation/build/publication/automatic-install path, compares the physical result, and saves observations/version history. No preview renderer and no extra AI explanation request needed.
+
+**Implementation prepared:** PromptLab.gs/PromptLabPage.html private Apps Script webapp with exact combined request, per-experiment brief/prompt/hash binding, immutable receipts and separate notes/export. One pending experiment; testing mode holds new email jobs without canceling an already active build; Resume email processing restores normal intake. API keys/tokens remain server-side. Optional workflow generation_brief freezes its own brief.md before generation and passes same file to build; default email uses standing brief unchanged. Matching Auto selects only lab receipts while testing and binds result briefSHA. No changes to sealed firmware, existing email sender/marker policy, manifest or publisher asset checks. Private owner-only deployment required, still pending; no new model request or board change.
+
+**Preexisting failure found:** Latest run45905216109/job140200232089 validation failed on unsupported esp_random, before compile or publication. Lab adds explicit continuation only after original run binding and code-validation/compile failure plus publication skipped are verified; rejected receipt saved before release, no regenerate. Failed publication is refused. This is needed to move past the currently held email; no attempt to rerun it or silently repair generation.
+
+**Focused evidence:** 10 Node actual scheduler/lab checks,3 Python default/custom brief/tamper/rejection checks, syntax/YAML/diff passed. Browser inspected real local HTML form only; its disconnected state correctly cannot dispatch. No fullsuite, model request, firmware build/upload or physical lab experiment. UI/source prepare status saved in .build/email-auto-pilot/prompt-lab-prepared.json.
+
+**Remaining:** User push required by established network/connector boundary; then matching script/HTML installation, source refresh, owner-only Web app deployment and real UI verification. New Automatic must not precede workflow push. Actual edited-brief generation and panel result remain unverified until user sends an experiment. Current normal email history and previous successes remain intact. Keep source/creative data/credentials boundaries documented in email/prompt-lab.md.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.

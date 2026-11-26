@@ -7,6 +7,7 @@ const {join} = require('node:path');
 const crypto = require('node:crypto');
 const vm = require('node:vm');
 const source = readFileSync(join(__dirname, '../email/Automatic.gs'), 'utf8');
+const labSource = readFileSync(join(__dirname, '../email/PromptLab.gs'), 'utf8');
 const inboxSource = readFileSync(join(__dirname, '../email/Inbox.gs'), 'utf8');
 const senderPolicySource = inboxSource.slice(inboxSource.indexOf('function lbSenderAllowed_('),
   inboxSource.indexOf('function lbHeader('));
@@ -16,6 +17,7 @@ const foundation = JSON.parse(readFileSync(join(__dirname, '../device/foundation
 
 function harness() {
   let now = Date.parse('2026-11-26T22:00:00Z'), timers = [], uuid = 0, posts = 0, complete = false;
+  const payloads = [];
   let conclusion = 'success', crashAfterMarker = false;
   const data = {LB_ACTIVE_CONFIG: JSON.stringify({account: 'bot@example.test', allowedSenders: ['owner@example.test']}),
     LB_QUEUE_JOB_old: 'untouched'};
@@ -31,7 +33,8 @@ function harness() {
     commitSha: state().sourceCommit, runId: String(run().id), runAttempt: 1, repository,
     workflowPath: '.github/workflows/lightboard-email-pilot.yml', foundation, published: true,
     modelRequests: 1, automaticUpdates: true, deviceConfirmed: false,
-    version: 'ota-pilot-' + 'b'.repeat(24), sha256: 'c'.repeat(64), bytes: 1000000});
+    version: 'ota-pilot-' + 'b'.repeat(24), sha256: 'c'.repeat(64), bytes: 1000000,
+    ...(state().briefSha256 ? {briefSha256: state().briefSha256} : {})});
   const store = {getProperties: () => ({...data}), getProperty: k => data[k] || null,
     setProperty: (k, v) => {data[k] = v;}};
   const context = vm.createContext({Date: class extends Date {static now() {return now;}},
@@ -43,6 +46,7 @@ function harness() {
     Utilities: {getUuid: () => (++uuid).toString(16).padStart(32, '0')},
     Gmail: {Users: {getProfile: () => ({emailAddress: 'bot@example.test'})}},
     lbReport: x => x, lbHash: hash, lbAddress: x => x, lbConfig: () => JSON.parse(data.LB_ACTIVE_CONFIG),
+    lbBytes: x => Buffer.byteLength(x), lbPrompt: x => x,
     lbSet(st, snapshot, key, value) {
       const text = JSON.stringify(value); st.setProperty(key, text); snapshot[key] = text;
       if (crashAfterMarker && key.startsWith('LB_EMAIL_PUBLISHED_')) {
@@ -51,17 +55,21 @@ function harness() {
     },
     LBGH: {repository}, processInbox: () => ({status: 'record_only'}),
     lbghCheckSource_: () => '7', lbghCheckFile_() {},
-    lbghApi_() {posts++; throw new Error('lost POST response');},
+    lbghApi_(snapshot, method, path, body) {posts++; payloads.push(body); throw new Error('lost POST response');},
     lbghStepLog_: () => report(),
     lbghGet_(snapshot, path) {
       if (path === '/commits/main') return {sha: commit};
       if (path.includes('/jobs?')) return {total_count: 1, jobs: [{id: 200, run_id: run().id,
-        name: 'email-to-panel', conclusion, steps: [{name: 'Record email publication', conclusion: 'success', number: 11}]}]};
+        name: 'email-to-panel', conclusion, steps: conclusion === 'failure' ? [
+          {name: 'Validate animation code boundary', conclusion: 'failure'},
+          {name: 'Publish firmware for automatic installation', conclusion: 'skipped'}
+        ] : [{name: 'Record email publication', conclusion: 'success', number: 11}]}]};
       return path.includes('/runs?') ? {workflow_runs: [run()]} : run();
     }});
   vm.runInContext(senderPolicySource, context);
   vm.runInContext(source, context);
-  return {context, data, state, get posts() {return posts;}, get timers() {return timers.length;},
+  vm.runInContext(labSource, context);
+  return {context, data, state, payloads, get posts() {return posts;}, get timers() {return timers.length;},
     advance: ms => {now += ms;}, finish: result => {complete = true; conclusion = result || 'success';},
     crashNextMarker: () => {crashAfterMarker = true;},
     receipt(id, offset = 1) {
@@ -129,4 +137,71 @@ test('continuous scheduler accepts an intake receipt from an unlisted sender in 
   const receipt = JSON.parse(h.data.LB_MSG_guest); receipt.job.sender = 'guest@another.example';
   h.data.LB_MSG_guest = JSON.stringify(receipt);
   c.emailPilotTick(); assert.equal(h.posts, 1); assert.equal(h.state().jobId, 'lb-123456789abc-guest');
+});
+
+const labInput = {requestId: '1'.repeat(32), title: 'Blue, slow', prompt: 'An ocean wave',
+  brief: 'Return one restState function. Use blue. Creative prompt: {{creative_prompt}}'};
+
+test('lab submit saves one immutable experiment; lost browser reply never sends or creates a second one', () => {
+  const h = harness(), c = h.context; c.startContinuousEmail(); h.advance(1);
+  const first = c.submitLabExperiment(labInput);
+  assert.equal(first.accepted, true); assert.equal(h.posts, 0);
+  assert.equal(c.submitLabExperiment(labInput).experiment.id, first.experiment.id);
+  const rows = Object.keys(h.data).filter(k => k.startsWith('LB_LAB_RECEIPT_'));
+  assert.equal(rows.length, 1); assert.equal(JSON.parse(h.data.LB_PROMPT_LAB).active, true);
+  assert.equal(c.submitLabExperiment({...labInput, prompt: 'Changed'}).reason, 'LB_AUTO_EXPERIMENT');
+  assert.equal(c.submitLabExperiment({...labInput, requestId: '2'.repeat(32)}).reason, 'LB_AUTO_EXPERIMENT_PENDING');
+});
+
+test('lab holds email jobs, sends exact edited brief through same reservation, then resumes email after interval', () => {
+  const h = harness(), c = h.context; c.startContinuousEmail(); h.receipt('email'); h.advance(2);
+  const first = c.submitLabExperiment(labInput).experiment;
+  c.emailPilotTick(); assert.equal(h.state().jobId, first.id);
+  assert.equal(h.payloads[0].inputs.generation_brief, labInput.brief);
+  assert.equal(h.state().briefSha256, hash('```text\n'+labInput.brief+'\n```\n'));
+  assert.equal(c.resumeEmailFromLab().reason, 'LB_AUTO_EXPERIMENT_PENDING');
+  h.finish(); c.emailPilotTick(); assert.equal(c.getPromptLab(false).experiments[0].status, 'published');
+  h.advance(6*60*1000); c.emailPilotTick(); assert.equal(h.posts, 1); // Email is held in testing mode.
+  assert.equal(c.resumeEmailFromLab().labActive, false);
+  c.emailPilotTick(); assert.equal(h.posts, 2); assert.equal(h.state().jobId, 'lb-123456789abc-email');
+  assert.equal(h.payloads[1].inputs.generation_brief, undefined);
+});
+
+test('lab preserves exact request/version history and keeps observations separate from installation claims', () => {
+  const h = harness(), c = h.context; c.startContinuousEmail(); h.advance(1);
+  const e = c.submitLabExperiment(labInput).experiment;
+  const key = 'LB_LAB_RECEIPT_'+e.id, original = h.data[key];
+  assert.equal(c.saveLabObservation(e.id, 'The light is too fast.').saved, true);
+  assert.equal(h.data[key], original);
+  const view = c.getPromptLab(false).experiments[0];
+  assert.equal(view.prompt, labInput.prompt); assert.equal(view.brief, labInput.brief);
+  assert.equal(view.note, 'The light is too fast.'); assert.equal(view.deviceConfirmed, false);
+  for (const brief of ['Missing placeholder', '{{creative_prompt}} {{creative_prompt}}',
+    '```text\n{{creative_prompt}}\n```', 'x'.repeat(4000)+'{{creative_prompt}}']) {
+    assert.equal(c.submitLabExperiment({...labInput, requestId: '3'.repeat(32), brief}).reason, 'LB_AUTO_BRIEF');
+  }
+  assert.equal(h.posts, 0);
+});
+
+test('explicit continuation archives a pre-publication code rejection and never regenerates that email', () => {
+  const h = harness(), c = h.context; c.startContinuousEmail(); h.receipt('bad'); c.emailPilotTick();
+  h.finish('failure'); c.emailPilotTick(); assert.equal(h.state().active, false);
+  c.continueAfterRejectedBuild(); assert.equal(h.state().active, true);
+  const rejected = JSON.parse(h.data['LB_EMAIL_REJECTED_lb-123456789abc-bad']);
+  assert.equal(rejected.published, false); assert.equal(rejected.failedStep, 'Validate animation code boundary');
+  c.emailPilotTick(); assert.equal(h.posts, 1); assert.equal(h.state().jobId, undefined);
+});
+
+test('continuation cannot release a failed publication or invent absence of publication', () => {
+  const h = harness(), c = h.context; c.startContinuousEmail(); h.receipt('uncertain'); c.emailPilotTick();
+  h.finish('failure'); c.emailPilotTick(); const get = c.lbghGet_;
+  c.lbghGet_ = (snapshot,path) => {
+    const data = get(snapshot,path);
+    if (path.includes('/jobs?')) data.jobs[0].steps[1].conclusion = 'failure';
+    return data;
+  };
+  assert.equal(c.continueAfterRejectedBuild().reason, 'LB_AUTO_PUBLICATION_UNCERTAIN');
+  assert.equal(h.state().active, false); assert.ok(h.state().dispatchId);
+  assert.equal(h.data['LB_EMAIL_REJECTED_lb-123456789abc-uncertain'], undefined);
+  assert.equal(h.posts, 1);
 });

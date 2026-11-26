@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lightboard Prompt Lab</title>
+  <style>
+    :root{color-scheme:dark;--bg:#0d1217;--panel:#151d25;--line:#2c3a46;--text:#edf3f6;--muted:#afbdc8;--accent:#91f1ce;--error:#ffb4a6}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,sans-serif}
+    header{border-bottom:1px solid var(--line);padding:30px 5vw;display:flex;justify-content:space-between;align-items:center;gap:24px}
+    h1{font-size:clamp(26px,4vw,40px);line-height:1.15;margin:5px 0 10px;letter-spacing:-.035em}h2{font-size:20px;margin:0 0 14px}
+    p{margin:0 0 12px}.eyebrow{color:var(--accent);text-transform:uppercase;letter-spacing:.12em;font-size:14px;font-weight:650}.muted{color:var(--muted)}
+    main{max-width:1460px;margin:auto;padding:28px 5vw;display:grid;grid-template-columns:minmax(230px,300px) minmax(0,1fr);gap:28px}
+    .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:20px}
+    .mode{font-weight:650}.status{padding:18px 22px;background:#172b27;border:1px solid #315a4e;border-radius:12px;margin-bottom:22px}.status.error{background:#30201f;border-color:#775148;color:var(--error)}
+    label{display:block;font-weight:650;margin:18px 0 8px}input,textarea{width:100%;border:1px solid #4b5d6c;border-radius:8px;background:#0e161d;color:var(--text);padding:12px;font:inherit}
+    textarea{resize:vertical;min-height:160px}#brief{min-height:400px;font:15px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace}#notes{min-height:110px}
+    input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:2px}button{border:1px solid var(--line);border-radius:8px;background:#23323d;color:var(--text);padding:11px 16px;font:600 16px/1.35 system-ui;cursor:pointer}
+    button:hover{border-color:var(--accent)}button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}button:disabled{opacity:.5;cursor:default}
+    button.primary{color:#10251d;background:var(--accent);border-color:var(--accent)}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;align-items:center}
+    .small{font-size:14px}.hint{color:var(--muted);font-size:14px;margin-top:6px}.rule{height:1px;background:var(--line);margin:22px 0}.history{display:flex;flex-direction:column;gap:10px}
+    .experiment{width:100%;text-align:left;background:#101920;padding:13px}.experiment.selected{border-color:var(--accent)}.experiment span{display:block;font-weight:400;margin-top:4px;color:var(--muted);font-size:14px}
+    a{color:var(--accent)}details{border-top:1px solid var(--line);margin-top:24px;padding-top:16px}summary{cursor:pointer;font-weight:650}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#0e161d;border-radius:8px;padding:16px;font:14px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;max-height:480px;overflow:auto}
+    .row{display:flex;align-items:center;justify-content:space-between;gap:16px}.counter{font-size:14px;color:var(--muted)}.empty{padding:16px 0;color:var(--muted)}.notice{max-width:630px}
+    footer{padding:8px 5vw 32px;color:var(--muted);font-size:14px;max-width:1460px;margin:auto}.hidden{display:none!important}
+    @media(max-width:850px){header{align-items:flex-start;flex-direction:column}main{grid-template-columns:1fr}aside{order:2}#brief{min-height:300px}.panel{padding:18px}}
+  </style>
+</head>
+<body>
+  <header>
+    <div><div class="eyebrow">Lightboard · Prompt Lab</div><h1>Try an idea on the real panel.</h1><p class="muted">Edit the instructions. Send one experiment. Look at the Lightboard.</p></div>
+    <div class="notice small muted">Gemini 3.5 Flash-Lite · existing free-tier key<br>One generation per experiment. Normal compilation and Wi-Fi installation.</div>
+  </header>
+  <main>
+    <aside>
+      <section class="panel" aria-labelledby="modeTitle">
+        <h2 id="modeTitle">Board use</h2>
+        <p class="mode" id="mode">Loading…</p>
+        <p class="small muted" id="modeHelp">Email submissions keep their place while you test.</p>
+        <button id="resume" type="button" class="hidden">Resume email processing</button>
+      </section>
+      <section class="panel" aria-labelledby="historyTitle">
+        <div class="row"><h2 id="historyTitle">Experiments</h2><button id="new" type="button">New</button></div>
+        <div class="history" id="history"><p class="empty">Your experiments will appear here.</p></div>
+      </section>
+    </aside>
+    <div>
+      <div id="status" class="status" role="status" aria-live="polite">Connecting to your Lightboard workflow…</div>
+      <div class="actions hidden" id="recovery"><button id="continue" type="button">Continue after rejected build</button><p class="small muted">Available only when the code was rejected before publication. The failed experiment will not be retried.</p></div>
+      <section class="panel" aria-labelledby="composeTitle">
+        <h2 id="composeTitle">Compose an experiment</h2>
+        <label for="title">Name this version</label>
+        <input id="title" maxlength="64" placeholder="For example: simple shapes, slower movement">
+        <label for="prompt">Test prompt</label>
+        <textarea id="prompt" placeholder="Describe what you want to express on the Lightboard."></textarea>
+        <div class="hint">Use the same prompt across versions to compare changes to the instructions.</div>
+        <div class="row"><label for="brief">Instructions sent to Gemini</label><span id="briefCount" class="counter"></span></div>
+        <textarea id="brief" spellcheck="false" aria-describedby="briefHelp"></textarea>
+        <div class="hint" id="briefHelp">Keep one {{creative_prompt}} placeholder. Your test prompt is inserted there. These edits belong to this experiment; the normal email brief stays unchanged.</div>
+        <div class="actions">
+          <button class="primary" id="send" type="button" disabled>Send to Lightboard</button>
+          <button id="default" type="button" disabled>Load standing instructions</button>
+          <a id="run" class="hidden" target="_blank" rel="noopener">Open build progress</a>
+        </div>
+        <p class="hint">Sending switches to testing mode and holds new email jobs. A build already underway finishes first. Allow several minutes for compilation and delivery.</p>
+        <details><summary>Exact request Gemini will receive</summary><pre id="request"></pre></details>
+      </section>
+      <section class="panel" id="observation" aria-labelledby="observationTitle">
+        <h2 id="observationTitle">What appeared on the panel?</h2>
+        <p class="muted small" id="selectedInfo">Select a submitted experiment to record observations.</p>
+        <label for="notes">Observations</label>
+        <textarea id="notes" maxlength="500" placeholder="What changed? Did it capture the intended feeling, color, brightness, and movement?"></textarea>
+        <div class="actions"><button id="saveNote" type="button" disabled>Save observations</button><button id="export" type="button" disabled>Download experiment</button></div>
+      </section>
+    </div>
+  </main>
+  <footer>The panel is the result. A published build means the firmware is available; watch the Lightboard to judge its appearance. Device reporting is not connected, so this page does not claim installation.</footer>
+  <script>
+    const $ = id => document.getElementById(id);
+    const fields = ['title','prompt','brief'];
+    let data = null, defaultBrief = '', selectedId = null, pendingRequest = null, sending = false;
+    const errors = {
+      LB_AUTO_PROCESSING_PAUSED: 'Processing is paused. Inspect the current workflow failure before sending another experiment.',
+      LB_AUTO_EXPERIMENT_PENDING: 'An experiment is still waiting or running. Let it finish before sending another or resuming emails.',
+      LB_AUTO_LAB_UPDATE_REQUIRED: 'The prompt-lab connection needs its one-time setup.',
+      LB_AUTO_BRIEF: 'Keep one {{creative_prompt}} placeholder, no code fences, and stay within the displayed text limits.',
+      LB_AUTO_EXPERIMENT_TOO_LARGE: 'This experiment is too long to save. Shorten the instructions or prompt.',
+      LB_GH_SOURCE: 'The repository changed. Refresh the source connection when the current job is finished.',
+      LB_GH_QUOTA: 'GitHub has reached a service limit. Wait for it to reset; no new generation was requested.',
+      LB_AUTO_PUBLICATION_UNCERTAIN: 'This failure may involve publication. Inspect the build log before continuing; the held job has not been released.'
+    };
+    function status(text, error=false) {$('status').textContent=text;$('status').classList.toggle('error',error);}
+    function rpc(name,...args) {
+      return new Promise((resolve,reject) => {
+        if (!window.google || !google.script || !google.script.run) {
+          reject(new Error('Open the private Apps Script lab to send experiments.')); return;
+        }
+        const runner = google.script.run.withSuccessHandler(result => {
+          if (result && result.reason) reject(new Error(errors[result.reason] || result.reason));
+          else resolve(result);
+        }).withFailureHandler(() => reject(new Error('The connection did not complete. Your pending send is preserved; retrying uses the same experiment ID.')));
+        runner[name](...args);
+      });
+    }
+    function storeDraft() {
+      try {localStorage.setItem('lightboard-lab-draft',JSON.stringify(Object.fromEntries(fields.map(k=>[k,$(k).value]))));} catch (_) {}
+    }
+    function showRequest() {
+      const brief=$('brief').value.trim(), prompt=$('prompt').value.trim();
+      $('request').textContent=brief.replace('{{creative_prompt}}',prompt || '[your test prompt]');
+      const bytes=new TextEncoder().encode(brief).length;
+      $('briefCount').textContent=bytes+' / 4,000 bytes';
+      $('briefCount').style.color=bytes>4000?'var(--error)':'var(--muted)';
+      storeDraft(); updateControls();
+    }
+    function pending() {return data ? data.experiments.find(e=>!['published','rejected'].includes(e.status)) : null;}
+    function updateControls() {
+      const canSend=data && data.processingActive && !pending() && !sending && $('prompt').value.trim() &&
+        $('brief').value.split('{{creative_prompt}}').length===2 && new TextEncoder().encode($('brief').value.trim()).length<=4000 &&
+        new TextEncoder().encode($('prompt').value.trim()).length<=2000;
+      $('send').disabled=!canSend;$('default').disabled=!defaultBrief;$('resume').disabled=!!pending()||sending;
+      $('saveNote').disabled=!selectedId;$('export').disabled=!selectedId;
+    }
+    function selectExperiment(e) {
+      selectedId=e.id;fields.forEach(k=>$(k).value=e[k]||'');$('notes').value=e.note||'';
+      $('selectedInfo').textContent=e.title+' · '+new Date(e.createdAt).toLocaleString()+(e.version?' · '+e.version:'');
+      showRequest(); renderHistory();
+    }
+    function renderHistory() {
+      const root=$('history'); root.replaceChildren();
+      if (!data || !data.experiments.length) {const p=document.createElement('p');p.className='empty';p.textContent='Your experiments will appear here.';root.append(p);return;}
+      data.experiments.forEach(e=>{
+        const b=document.createElement('button');b.className='experiment'+(e.id===selectedId?' selected':'');b.type='button';b.textContent=e.title;
+        const detail=document.createElement('span');detail.textContent=new Date(e.createdAt).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})+' · '+(e.status==='published'?'Published':e.status.replaceAll('_',' '));
+        b.append(detail);b.onclick=()=>selectExperiment(e);root.append(b);
+      });
+    }
+    async function refresh(initial=false) {
+      try {
+        const next=await rpc('getPromptLab',initial); if(!next || !next.experiments)throw new Error('The lab connection is not ready.');
+        data=next;
+        if(initial){defaultBrief=next.defaultBrief||'';let draft=null;try{draft=JSON.parse(localStorage.getItem('lightboard-lab-draft')||'null');pendingRequest=JSON.parse(localStorage.getItem('lightboard-lab-pending')||'null');}catch(_){}
+          if(draft)fields.forEach(k=>$(k).value=draft[k]||'');if(!$('brief').value)$('brief').value=defaultBrief;showRequest();}
+        $('mode').textContent=next.labActive?'Testing on the Lightboard':'Email processing';
+        $('modeHelp').textContent=next.labActive?'Incoming emails wait while you compare experiments. Resume them when finished.':'Emails run normally. Sending an experiment holds new email jobs.';
+        $('resume').classList.toggle('hidden',!next.labActive);
+        $('recovery').classList.toggle('hidden',next.processingActive||!next.activeRunUrl);
+        const current=pending(), selected=next.experiments.find(e=>e.id===selectedId), run=(selected&&selected.runUrl)||(current&&current.runUrl)||next.activeRunUrl;
+        $('run').classList.toggle('hidden',!run);if(run)$('run').href=run;
+        if(!sending){
+          if(!next.processingActive)status('Processing is paused. Open the build log to inspect the held job.',true);
+          else if(current){status(next.nextBuildAfter?'Experiment saved. Next build can start after '+new Date(next.nextBuildAfter).toLocaleTimeString()+'.':current.status==='waiting'?'Experiment saved. Waiting for the workflow to start.':'Experiment in progress: '+current.status.replaceAll('_',' ')+'.');}
+          else if(next.labActive&&selected&&selected.status==='published')status('Published. Watch the actual Lightboard; feed delivery can take a few minutes.');
+          else status(next.labActive?'Ready for another experiment on the Lightboard.':'Ready. Sending an experiment will hold new email jobs.');
+        }
+        renderHistory();updateControls();
+      }catch(e){status(e.message,true);}
+    }
+    $('send').onclick=async()=>{
+      if(sending)return;sending=true;updateControls();
+      const input=Object.fromEntries(fields.map(k=>[k,$(k).value]));
+      const signature=JSON.stringify(input);
+      if(!pendingRequest||pendingRequest.signature!==signature)pendingRequest={signature,requestId:crypto.randomUUID().replaceAll('-','')};
+      try{localStorage.setItem('lightboard-lab-pending',JSON.stringify(pendingRequest));}catch(_){}
+      status('Saving your experiment for the Lightboard…');
+      let sendError=null;
+      try{const result=await rpc('submitLabExperiment',{...input,requestId:pendingRequest.requestId});
+        if(!result.accepted)throw new Error('The experiment was not accepted.');selectedId=result.experiment.id;
+        pendingRequest=null;try{localStorage.removeItem('lightboard-lab-pending');}catch(_){}
+        status('Experiment saved. The workflow will generate, compile and publish it for automatic installation.');
+      }catch(e){sendError=e.message;}finally{sending=false;await refresh();if(sendError)status(sendError,true);}
+    };
+    $('resume').onclick=async()=>{try{await rpc('resumeEmailFromLab');await refresh();}catch(e){status(e.message,true);}};
+    $('continue').onclick=async()=>{try{await rpc('continueAfterRejectedBuild');await refresh();}catch(e){status(e.message,true);}};
+    $('default').onclick=()=>{$('brief').value=defaultBrief;showRequest();};
+    $('new').onclick=()=>{selectedId=null;$('title').value='';$('prompt').value='';$('notes').value='';$('selectedInfo').textContent='Select a submitted experiment to record observations.';showRequest();renderHistory();};
+    $('saveNote').onclick=async()=>{try{await rpc('saveLabObservation',selectedId,$('notes').value);status('Observations saved.');await refresh();}catch(e){status(e.message,true);}};
+    $('export').onclick=()=>{const e=data&&data.experiments.find(x=>x.id===selectedId);if(!e)return;
+      const url=URL.createObjectURL(new Blob([JSON.stringify(e,null,2)],{type:'application/json'}));
+      const a=document.createElement('a');a.href=url;a.download=e.id+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
+    fields.forEach(k=>$(k).addEventListener('input',showRequest));
+    refresh(true);setInterval(()=>{if(!sending)refresh();},15000);
+  </script>
+</body>
+</html>

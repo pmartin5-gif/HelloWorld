@@ -1,8 +1,10 @@
 /** Automatic email intake. Independent of the historical saved-scene queue. */
 const LBAUTO = Object.freeze({key: 'LB_EMAIL_PILOT', handler: 'emailPilotTick',
   completedPrefix: 'LB_EMAIL_PUBLISHED_', deliveryIntervalMs: 6 * 60 * 1000,
+  rejectedPrefix: 'LB_EMAIL_REJECTED_',
+  labVersion: 1, labPrefix: 'LB_LAB_RECEIPT_',
   workflow: 'lightboard-email-pilot.yml', workflowPath: '.github/workflows/lightboard-email-pilot.yml',
-  workflowSha256: 'b143bdb89b20bff8a062b88cde032b6bad622cdc7e25259ded05a08116238de3',
+  workflowSha256: '27f17e47ef6b2537499aab8ec9bd2c7d3d5778a73684ae11ce1f2a1679151f88',
   foundation: 'a529d5f9a72ca4858e0ab09ae66ec5eaecff656fdeb6d6a4f040e40633959ec1'});
 
 function lbaLocked_(work) {
@@ -115,11 +117,13 @@ function stopEmailPilot() {
 }
 function lbaNext_(snapshot, state) {
   const inbox = JSON.parse(snapshot.LB_ACTIVE_CONFIG);
-  return Object.keys(snapshot).filter(k => k.startsWith('LB_MSG_')).map(k => JSON.parse(snapshot[k]))
+  const labMode = JSON.parse(snapshot.LB_PROMPT_LAB || 'null');
+  const prefix = labMode && labMode.active ? LBAUTO.labPrefix : 'LB_MSG_';
+  return Object.keys(snapshot).filter(k => k.startsWith(prefix)).map(k => JSON.parse(snapshot[k]))
     .filter(r => r.outcome === 'received' && r.job && Date.parse(r.job.receivedAt) > state.startMs)
-    .map(r => r.job).filter(j => lbSenderAllowed_(j.sender, inbox) &&
+    .map(r => r.job).filter(j => (prefix === LBAUTO.labPrefix || lbSenderAllowed_(j.sender, inbox)) &&
       /^lb-[a-f0-9]{12}-[a-zA-Z0-9]{1,64}$/.test(j.id || '') && lbHash(j.prompt) === j.promptSha256 &&
-      !snapshot[LBAUTO.completedPrefix + j.id])
+      !snapshot[LBAUTO.completedPrefix + j.id] && !snapshot[LBAUTO.rejectedPrefix + j.id])
     .sort((a, b) => a.receivedAt.localeCompare(b.receivedAt) || a.id.localeCompare(b.id))[0];
 }
 function lbaRun_(run, state) {
@@ -173,6 +177,7 @@ function lbaPoll_(store, snapshot, state) {
           r.automaticUpdates === true && r.deviceConfirmed === false &&
           /^ota-pilot-[a-f0-9]{24}$/.test(r.version || '') && /^[a-f0-9]{64}$/.test(r.sha256 || '') &&
           Number.isSafeInteger(r.bytes) && r.bytes >= 288 && r.bytes <= 1310720, 'RESULT');
+        if (state.briefSha256) lbaRequire_(r.briefSha256 === state.briefSha256, 'RESULT');
         state.result = r;
         state.status = 'published_awaiting_visual_confirmation';
         if (state.mode === 'continuous') {
@@ -186,7 +191,7 @@ function lbaPoll_(store, snapshot, state) {
           state.lastPublished = {jobId: state.jobId, runUrl: run.html_url, version: r.version,
             publishedAt: new Date(completed.publishedMs).toISOString()};
           state.notBeforeMs = completed.publishedMs + LBAUTO.deliveryIntervalMs;
-          ['jobId', 'promptSha256', 'dispatchId', 'dispatchMs', 'runId', 'result'].forEach(k => delete state[k]);
+          ['jobId', 'promptSha256', 'dispatchId', 'dispatchMs', 'runId', 'result', 'briefSha256'].forEach(k => delete state[k]);
           state.status = 'delivery_interval';
           lbaSave_(store, snapshot, state);
           return lbaReport_(state); // Keep the minute trigger; never start the next job in this tick.
@@ -229,13 +234,19 @@ function emailPilotTick() {
       throw error;
     }
     state.jobId = job.id; state.promptSha256 = job.promptSha256;
+    if (job.generationBrief) {
+      lbaRequire_(typeof job.generationBrief === 'string' && lbBytes(job.generationBrief) <= 4000 &&
+        lbHash('```text\n' + job.generationBrief + '\n```\n') === job.briefSha256, 'CONFIG');
+      state.briefSha256 = job.briefSha256;
+    }
     state.dispatchId = 'email_' + Utilities.getUuid().replace(/-/g, '');
     state.dispatchMs = Date.now(); state.status = 'dispatch_reserved';
     lbaSave_(store, snapshot, state); // Durable BEFORE HTTP, even on lost responses.
     try {
       lbghApi_(snapshot, 'post', '/repos/' + LBGH.repository + '/actions/workflows/' + LBAUTO.workflow +
         '/dispatches', {ref: 'main', inputs: {prompt: job.prompt, email_job_id: job.id,
-          dispatch_id: state.dispatchId, prompt_sha256: job.promptSha256, source_commit: state.sourceCommit}});
+          dispatch_id: state.dispatchId, prompt_sha256: job.promptSha256, source_commit: state.sourceCommit,
+          ...(job.generationBrief ? {generation_brief: job.generationBrief} : {})}});
     } catch (_) { /* Unknown delivery: reconcile by unique title, never resend. */ }
     state.status = 'dispatch_sent_or_unknown';
     lbaSave_(store, snapshot, state);

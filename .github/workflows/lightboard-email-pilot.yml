@@ -20,6 +20,10 @@ on:
       source_commit:
         required: true
         type: string
+      generation_brief:
+        description: 'Optional prompt-lab brief with one creative_prompt placeholder; empty uses the standing brief'
+        default: ''
+        type: string
 
 permissions:
   contents: read
@@ -45,6 +49,7 @@ jobs:
       LB_EMAIL_PROMPT_SHA256: ${{ inputs.prompt_sha256 }}
       LB_EMAIL_SOURCE_COMMIT: ${{ inputs.source_commit }}
       CREATIVE_PROMPT: ${{ inputs.prompt }}
+      LB_GENERATION_BRIEF: ${{ inputs.generation_brief }}
     steps:
       - name: Check out Lightboard inputs
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -71,6 +76,7 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: >-
           python3 generate_candidate.py --actions-secret
+          --brief .build/generated/brief.md
           --prompt-file .build/generated/creative-prompt.txt
           --output .build/generated/generation.json
       - name: Validate animation code boundary
@@ -82,6 +88,7 @@ jobs:
           python3 cloud/prompt_build.py --cli arduino-cli --data-dir .build/arduino-data
           --work .build/prompt-ota --generation-record .build/generated/generation.json
           --prompt-file .build/generated/creative-prompt.txt --automatic-updates
+          --brief .build/generated/brief.md
       - name: Publish firmware for automatic installation
         env:
           GH_TOKEN: ${{ github.token }}
