@@ -2775,6 +2775,16 @@ Saved full publication marker and manual hardware evidence under ignored email-i
 
 **Verification boundary:** Actual deployed form/default brief/status/history await owner sign-in. Earlier13 focused checks remain passed; no changed source requiring a repeat. No new Gemini request, build, firmware install, preview or aesthetic test. Testing mode remains off; continuous email active. First live edited-brief experiment belongs to user's explicit Send action. Checkpoint and guide updated; evidence-only local commit must not automatically move remote source pin.
 
+## 130. Verify the live owner prompt lab after sign-in
+
+> “it's open”
+
+**Intent:** Complete the private deployment check without an unsolicited experiment.
+
+**Observed result:** Native Chrome inspection confirms Lightboard Prompt Lab at the real deployed URL in Incognito. Standing instructions loaded from the pinned source (2,417 / 4,000 bytes); Board use shows Email processing and Ready. Experiment history is empty. Name and creative prompt are blank; Send to Lightboard is disabled as expected. Instruction editor, exact-request disclosure and observation controls are present. No error or unfinished experiment shown. User completed Google authentication privately; credentials were not read.
+
+**Completion:** Private lab setup and live form check complete. First custom-brief generation and actual panel result await user's explicit Send. No form edits, Send click, Gemini request, workflow dispatch, firmware operation or repeated tests. Updated checkpoint/guide/private evidence. Normal email processing remains active until a submitted experiment selects testing mode; user resumes email processing after testing. Evidence-only notes remain local to preserve live source pin.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.

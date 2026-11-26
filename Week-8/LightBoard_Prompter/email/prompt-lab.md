@@ -4,7 +4,7 @@ The lab lets the owner edit Gemini's standing instructions and a creative prompt
 
 ## Setup status
 
-Implementation commit `77e702d` is pushed and verified. The matching scheduler, server and HTML are saved in the existing Apps Script project. Web app Version1 is deployed as the bot owner with access **Only myself**. Owner sign-in and the real deployed form check are pending; no new model request or board update has been made while building the lab. The private deployment URL is kept in local ignored evidence and supplied directly to the owner.
+Implementation commit `77e702d` is pushed and verified. The matching scheduler, server and HTML are saved in the existing Apps Script project. Web app Version1 is deployed as the bot owner with access **Only myself**. Owner sign-in and the real deployed form check are complete; no new model request or board update has been made while building the lab. The private deployment URL is kept in local ignored evidence and supplied directly to the owner.
 
 - Existing workflow: optional `generation_brief` input. Empty uses the standing file byte-for-byte. An experiment freezes its edited brief and exact SHA before generation and binds the same file at generation, compilation and result recording.
 - Existing **Automatic.gs**: updated matching workflow hash, isolated lab receipts and testing-mode selection. Do not install this ahead of the workflow push.
@@ -36,6 +36,6 @@ Each explicit experiment sends one Gemini3.5Flash-Lite request through the exist
 
 Prompts/instructions/observations stay as private experiment records in the Apps Script project; only the existing publisher's firmware assets/feed are released. Existing history/storage limits remain. The HTML receives no API key or GitHub token. UI status never fabricates a device report, and observations are personal notes, not queue installation events. Full regression and creative-quality tests are not run on every experiment.
 
-Focused checks cover brief freezing/default compatibility/tampering, lab/email isolation, duplicate sends, experiment history and notes, and truthful pre-publication rejection release. The interface was inspected locally without dispatching. The private deployment is complete; owner sign-in and its live form check are pending. A live edited-brief generation/install remains unverified until the user sends an experiment.
+Focused checks cover brief freezing/default compatibility/tampering, lab/email isolation, duplicate sends, experiment history and notes, and truthful pre-publication rejection release. The interface was inspected locally without dispatching. The private deployment and live form check are complete: standing instructions loaded (2,417 bytes), email processing active, empty experiment history and blank prompt with Send disabled as expected. No experiment was submitted during verification. A live edited-brief generation/install remains unverified until the user sends an experiment.
 
 References: [Apps Script web apps](https://developers.google.com/apps-script/guides/web), [HTML server calls](https://developers.google.com/apps-script/guides/html/communication), [HTML restrictions](https://developers.google.com/apps-script/guides/html/restrictions).
