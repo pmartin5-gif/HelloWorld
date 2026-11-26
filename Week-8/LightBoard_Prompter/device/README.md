@@ -1,5 +1,7 @@
 # Wi-Fi/OTA pilot foundation
 
+**Current November26 result:** Queued publication45891588901 and native-IDE manual OTA passed. Current board is heart ota-pilot-709f1f9cc6fe30951ccdd977/f124foundation/app1/SDK2 VALID/healthtrue/wifi3; minheap211168/maxgap75ms. User reports panel resembles heart. Firmware candidate size/SHA matched the exact initial queued build before installation; pending→health pass observed. No USB upload or foundation change. Queue stays published/deviceConfirmedfalse until an authenticated report channel is implemented; manual evidence is separate. See RESUME.md and ignored queue-board-install-verified.json. Older baseline-app0 results below are historical.
+
 **Verified November 23,2026:** Two known scenes installed over Wi-Fi, deferred boot validation passed for each, SDK manual rollback returned the prior image, and baseline reinstallation restored normal stones. Automatic checking/installing remains disabled. Regular prompt/publication integration passed locally and in cloud run45858227133 November26; new routine publication and physical confirmation remain pending. Email delivery is later work. Current handoff: [RESUME.md](../RESUME.md).
 
 ## Running firmware and evidence

@@ -243,6 +243,9 @@ Bring back this request:
 
 ## Step 9 — Connect email to the tested cloud workflow
 
+**Latest completed November26:** Manual email→queue→bound build→exact-rebuild publication45891588901→native-IDE Wi-Fi install and app1/SDK VALID/health/heart-like scene all passed. No new model request. Queue remains published/deviceConfirmedfalse until authenticated device reporting and release are implemented; no triggers/replies/automatic install yet. See RESUME.md for current board/source/evidence; do not repeat passed controlled tests.
+
+
 **Latest publication phase:** Separate queue publication implemented/tested locally (45 focused checks) but not pushed/installed/run. It rebuilds saved heart, refuses any image mismatch with prior verified build, preserves original build/config/receipt, reserves one publication and verifies feed plus four release digests. Holds queue published/unconfirmed; no new generation, automatic device reporting or installation. Next email/queued-publication.md handoff; manual native-IDE OTA/status after publication passes.
 
 

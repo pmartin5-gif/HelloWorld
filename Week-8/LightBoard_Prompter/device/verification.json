@@ -1,6 +1,6 @@
 {
-  "date": "2026-11-23",
-  "status": "Two-scene controlled OTA, deferred health, SDK manual rollback and baseline reinstallation verified; final stones normal",
+  "date": "2026-11-26",
+  "status": "Queued saved-heart publication, native-IDE Wi-Fi install, pending-to-VALID health and physical heart-like scene verified; automatic device reports remain unimplemented",
   "local_compile": {
     "built_at_utc": "2026-11-20T00:18:14.039754+00:00",
     "foundation_id": "737b7d0e5f8d6a21c65c5f9e3aee6a126f46e732b79a61aff2b0713e47419309",
@@ -75,13 +75,13 @@
     "erase_all_flash": false,
     "upload_baud": 921600
   },
-  "runtime_boot_status": "LB_BOOT_HEALTH_PASSED; restored baseline app0 SDK state2 VALID",
+  "runtime_boot_status": "LB_BOOT_HEALTH_PASSED; queued heart app1 SDK2 VALID, Wi-Fi connected and healthtrue",
   "recovery_started": true,
   "recovery_verified": true,
   "failed_hardware_evidence": ".build/ota-pilot-2026-11-18-v2/failed-hardware-test",
   "provisional_fault_hypothesis": "Display refresh/SPI blocking while scheduler is suspended during network/NVS startup; exact caller unresolved",
   "pilot_was_installed": true,
-  "running_firmware": "ota-pilot-89b604df9ec0048cd0ea9b1f",
+  "running_firmware": "ota-pilot-709f1f9cc6fe30951ccdd977",
   "recovery_application_bytes": 290944,
   "recovery_application_sha256": "95827a8df388874eccf0594faaf98ce36b65869c2255e0ba5d602b20fc6085a8",
   "recovery_evidence": ".build/ota-pilot-2026-11-18-v2/recovery-evidence",
@@ -1233,5 +1233,84 @@
       "status",
       "wifi-diagnose<TAB>martin apple"
     ]
-  }
+  },
+  "current_controlled_queue_install": {
+    "date": "2026-11-26",
+    "transport": "Native Arduino IDE Serial Monitor, /dev/cu.usbserial-0001,115200/New Line",
+    "pre_install": {
+      "version": "ota-pilot-f2e92e43697828ea9cf37401",
+      "foundation": "f1244292bbdf180ad5ea8b4ffbf46c72b9772ef8ad2407276ae26e3786132522",
+      "running": "app0",
+      "target": "app1",
+      "ota_state": 2,
+      "wifi_status": 3,
+      "health_ok": true,
+      "heap_min": 199600,
+      "max_frame_gap_ms": 71
+    },
+    "candidate": {
+      "version": "ota-pilot-709f1f9cc6fe30951ccdd977",
+      "bytes": 1012016,
+      "sha256": "524ca739f55cffb3063d7a408dc4ccfc98181ee79fc75780e8b4ec701f183cb0"
+    },
+    "commands": [
+      "status",
+      "check",
+      "arm-update",
+      "install",
+      "status",
+      "status"
+    ],
+    "arm_observed": "LB_UPDATE_ARMED_FOR_60_SECONDS",
+    "download": {
+      "redirect_header_bytes": 907,
+      "final_http_status": 200,
+      "declared_application_bytes": 1012016
+    },
+    "new_boot": {
+      "version": "ota-pilot-709f1f9cc6fe30951ccdd977",
+      "foundation": "f1244292bbdf180ad5ea8b4ffbf46c72b9772ef8ad2407276ae26e3786132522",
+      "automatic_updates": false,
+      "wifi_connected_event": true
+    },
+    "pending_status": {
+      "running": "app1",
+      "ota_state": 1,
+      "health_ok": false,
+      "wifi_status": 3,
+      "frames": 631,
+      "max_frame_gap_ms": 34
+    },
+    "health_event": "LB_BOOT_HEALTH_PASSED",
+    "final_status_seen_fields": {
+      "version": "ota-pilot-709f1f9cc6fe30951ccdd977",
+      "foundation": "f1244292bbdf180ad5ea8b4ffbf46c72b9772ef8ad2407276ae26e3786132522",
+      "flash_bytes": 4194304,
+      "layout_ok": true,
+      "running": "app1",
+      "running_offset": 1376256,
+      "slot_bytes": 1310720,
+      "target": "app0",
+      "ota_state": 2,
+      "credentials_set": true,
+      "wifi_status": 3,
+      "rssi": -55,
+      "heap_free": 218396,
+      "heap_min": 211168,
+      "heap_largest": 110580,
+      "worker_stack_free": 22272,
+      "refresh_stack_free": 3452,
+      "refresh_cycles": 54695,
+      "frames": 1642,
+      "max_frame_gap_ms": 75,
+      "health_ok": true
+    },
+    "status_line_tail_truncated": true,
+    "physical_user_quote": "the panel resembles the heart animation",
+    "manual_installation_verified": true,
+    "automatic_device_confirmation_implemented": false,
+    "queue_deviceConfirmed": false,
+    "limits": "Firmware enforces full download size/SHA before boot, then observed new slot/version/VALID/health. No independent running-partition hash/flash read or animation-quality judgment; no repeated rollback test."
+  },
+  "current_publication_run": "45891588901"
 }

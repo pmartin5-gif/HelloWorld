@@ -1,6 +1,6 @@
 # Controlled queue publication and manual board check
 
-November26: prepared/tested locally, not yet pushed or executed. The saved heart build45886859649 is verified built, with zero model requests and no publication. This phase publishes only an identical rebuilt image and keeps installation manual.
+November26: publication source push independently verified on main33e405d67f108627d814fe229ff43efbab73df72; private update/setup and publication now passed live. Run45891588901 succeeded; native-IDE OTA then booted heart in app1/SDK VALID/healthtrue with retained Wi-Fi. User observed heart-like animation. Manual hardware evidence is complete, authenticated queue-device reporting remains pending. Do not repeat these passed steps. The saved heart build45886859649 is verified built, with zero model requests and no publication. This phase publishes only an identical rebuilt image and keeps installation manual.
 
 ## Push and install two matching files
 
@@ -47,7 +47,7 @@ Use the native Arduino IDE Serial Monitor only, existing USB port115200/New Line
 4. After reboot and LB_BOOT_HEALTH_PASSED (the health window is at least30seconds), send `status`. Verify expected heart version, f124 foundation, intended running slot, ota_state2 VALID, health_oktrue and wifi_status3.
 5. Record observed physical display and serial evidence. Creative geometry/clipping refinement remains deferred. Do not repeat earlier rollback/known-scene tests without a new infrastructure concern.
 
-This phase adds no automatic device reporter or remote authentication channel. Manual serial/display evidence will be recorded separately; deviceConfirmed remains false in the automated queue until a later authenticated confirmation implementation. Published work therefore stays held. Do not send an installed acknowledgment or enable polling/install triggers. Publication is ready for a controlled live test; installation/physical verification remain pending afterward.
+This phase adds no automatic device reporter or remote authentication channel. Manual serial/display evidence will be recorded separately; deviceConfirmed remains false in the automated queue until a later authenticated confirmation implementation. Published work therefore stays held. Do not send an installed acknowledgment or enable polling/install triggers. This controlled live publication/install/physical check is now complete. These instructions remain recovery/reference guidance, not a request to repeat it. Next implement authenticated device reporting/queue acknowledgment before automatic operation.
 
 ## Focused checks
 

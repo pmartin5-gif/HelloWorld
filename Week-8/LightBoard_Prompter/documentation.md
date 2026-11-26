@@ -2634,6 +2634,63 @@ Extended Queue/GitHub with a separate publication reservation/run/source/result 
 
 Local work complete; next user pushes prepared main, updates ONLY live Queue/Github, adds LB_PUBLICATION_SETUP with exact new pushed commit, runs GET-only setupPublication, then manual publishApprovedBuild once/pollPublication. Keep old LB_GITHUB_ACTIVE and all history. After publication is independently verified, use existing native Arduino Serial status/check/arm-update/install/health-status procedure; older opened sketch must not be uploaded. Manual physical evidence stays separate from future authenticated device reporting, so queue does not automatically declare installation. All new API generation/automatic delivery/scheduling/replies remain off.
 
+## 120. Queued publication source push verified
+
+**Date:** November 26, 2026
+
+### Your prompt
+
+> it is pushed
+
+### Result and next action
+
+Read-only GitHub connector fetch_commit(main) confirms33e405d67f108627d814fe229ff43efbab73df72, exact prepared publication source. Saved compact evidence; no tests/build/dispatch/model/publication/device action repeated. Next user updates ONLY live Queue/Github with matching sources, Saves/reloads, adds separate LB_PUBLICATION_SETUP with verified new SHA and runs GET-only setupPublication. Old build pin/config/token/receipts preserved. Private source update/setup and publication remain pending. Keep source/main pin unchanged; evidence-only notes uncommitted until this publication completes.
+
+## 121. Live publication setup verifies original build/result chain
+
+**Date:** November 26, 2026
+
+### Your prompt
+
+> setupPublication3:29:48–3:29:51: configured/manual_saved_publication, original heart job, source33e405d, prior run45886859649 and exact checksum6e4a1985…f68fe7, dispatchSentfalse/automaticDispatchEnabledfalse/deviceConfirmedfalse.
+
+### Result and next action
+
+User found the publication function in live dropdown and ran setup. Supplied result matches intended old job/build/proof and new source pin. Configuration/source/proof checks succeeded; publication has not started. Saved private full log and public comparison/checkpoint. No new tests/build/model request/publication/device/email/trigger action. Next manually run publishApprovedBuild once; pollPublication handles either normal or uncertain dispatch response and verifies exact run/feed/release. No reset/reissue/direct GitHub workflow or source push while pinned. Existing build config/token/receipts retained; progress notes uncommitted.
+
+## 122. Publication attempt reserved and GitHub run located
+
+**Date:** November 26, 2026
+
+### Your prompt
+
+> publishApprovedBuild3:30:56–3:30:59: publication_unknown, original heart job, nextActionpollPublication, automaticDispatchEnabledfalse/deviceConfirmedfalse.
+
+### Evidence and next step
+
+Read GitHub actions/runs metadata and found publication workflow run45891588901, created20:30:58Z, same intended heart job with unique publication nonce, source33e405d/attempt1/in_progress. Shared canonical run URL. Queue's saved nonce still needs pollPublication validation; actual publication has not yet been verified. No second POST or workflow rerun. Next poll same attempt, then after completion verify feed/release/result. No tests, model call, board/email/trigger action; preserve source pin and uncommitted progress notes.
+
+## 123. Queued publication and manual Wi-Fi installation verified on the board
+
+**Date:** November 26, 2026
+
+### Your prompts
+
+> pollPublication3:32:02–3:32:03: publishing/run45891588901/deviceConfirmedfalse.
+> the panel resembles the heart animation
+
+### Publication result
+
+GitHub run/job140155328686 completed success20:32:21Z/source33e405d/attempt1. Read actual structured result: publishedtrue/modelRequests0, original build45886859649/result SHA bound, exact original app1,012,016bytes/SHA524ca739…183cb0, heart709f/f124. Manifest4,781bytes/SHAd67c09…a667, four asset digests/sizes reported, recovery1,011,840bytes/SHAf7f623…a0859. With pollPublication visibly selected, assistant ran it once3:32:56–3:32:58: live log published for exact job/run/image. Client AX tail truncated; full remote marker retained privately. Publisher readbacks and script feed/release validation passed; no independent assistant binary download.
+
+### Actual hardware work
+
+Found native IDE running with Serial Monitor/dev/cu.usbserial-0001/115200/New Line. Read-only status confirmed baseline stones/app0/SDK VALID/healthtrue/wifi3. check returned exact new heart version/bytes/SHA. Announced controlled manual OTA, sent arm-update, observed60-second arm, then install. Feed/907byte redirect/finalHTTP200/declared1,012,016bytes observed. New boot heart/f124, retained Wi-Fi, app1/SDK1 pending/healthfalse observed. Asked for physical confirmation; user said panel resembles heart animation. After deferred window observed LB_BOOT_HEALTH_PASSED and fresh status app1/SDK2 VALID/healthtrue/wifi3/RSSI-55,heapfree218396/min211168,worker/refresh stacks22272/3452,frames1642/refresh54695,maxgap75ms. Only seen status fields recorded; tail truncated. Boot explicitly automatic_updatesfalse. No USB Upload, new credentials/foundation, design repair, full tests, new model call or repeated rollback.
+
+### Saved checkpoint and remaining work
+
+Saved full publication marker and manual hardware evidence under ignored email-intake folder; updated current board/resume/verification/hardware guide. Controlled email/queue/build/publication/manual-board path complete. Firmware enforces full download hash before boot; no independent running-partition extraction is claimed. Automated queue remains published/deviceConfirmedfalse because authenticated reporting has not been built; no fake installed event or automatic queue release. Next implement authenticated device reports/acknowledgment/release before computer-off automatic operation. New generation/replies/triggers/automatic installation remain off. No repetition of this passed pilot is needed. Publication is finished, so evidence-only notes may now be committed locally without automatically moving remote pins.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.
