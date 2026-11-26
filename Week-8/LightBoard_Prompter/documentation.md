@@ -2306,6 +2306,21 @@ Created a Gmail filter in the dedicated account: approved sender plus subject se
 
 Next request is one fresh plain-text email from the approved sender to the dedicated inbox, subject Lightboard, body An overflowing heart that keeps giving%%%. Saved expected prompt/hash privately for comparison. Need processInbox receipt/exact prompt hash, rerun deduplication, then unmarked/context checks. No test email sent by assistant, no processInbox run yet, no acknowledgment/build/model call/trigger/device action or firmware tests. Saved setup/filter checkpoint; do not recreate these on resume.
 
+## 99. First email delivered and labelled; intake rejected it
+
+**Date:** November 26, 2026
+
+### Your prompts
+
+> sent
+> i've selected processInbox and run it once.
+
+### Intent and observed result
+
+Verify one live prompt receipt and duplicate prevention. Actual dedicated inbox shows the new Lightboard subject and exact expected heart snippet at12:06PM, automatically bearing the Lightboard label. Did not open/mark the message read. Function selector remained unreliable through native controls, so user selected processInbox/Run. Read live log12:07:29–12:07:30: record_only, received0, ignored0, rejected1, duplicates0, completed. No accepted job or duplicate-prevention result is claimed.
+
+Attempted to read durable rejection reason through Project Settings; native route/AX content became stale, then direct navigation yielded blank/loading page. Asked user for only the reason field of the existing LB_MSG_ property, without edits/deletion. No parser change or speculative cause accepted. Private expected prompt hash/arrival/run result and public verification/checkpoint updated. Preserve original record, diagnose exact reason first. No second processing run, email sent by assistant, build, model request, trigger, publication, device command, firmware compile or full suite. Delivery/filter stages work; validation diagnosis and live accepted receipt/deduplication remain pending.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.
