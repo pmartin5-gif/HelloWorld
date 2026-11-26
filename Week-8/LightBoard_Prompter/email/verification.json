@@ -1,6 +1,6 @@
 {
   "date": "2026-11-26",
-  "status": "Live rejection is missing_inline_text; metadata-only MIME diagnostic prepared/tested locally, live diagnosis pending",
+  "status": "Live MIME diagnosis identifies byte-array body; local reader fix passes focused checks; live code update/acceptance pending",
   "focused_tests_passed": 15,
   "test_command": "node --test tests/test_email_intake.cjs tests/test_queue_simulation.cjs",
   "full_firmware_regression_suite_run": false,
@@ -21,22 +21,22 @@
   "live_installed_acknowledgments_implemented": false,
   "network_change_pending": false,
   "limitations": [
-    "Gmail API, Script Properties and locks were mocked locally; no live Gmail acceptance yet.",
+    "Gmail setup and MIME diagnostic ran live; accepted prompt receipt/deduplication remain unverified. Prior local tests used mocked Gmail/properties/locks.",
     "Conservative plain-text boundaries require simple test messages; no universal email/signature parser is claimed.",
     "Standalone marker requires direct In-Reply-To to one eligible earlier design from the same sender/thread.",
     "Script Properties capacity is finite; processing pauses rather than deleting receipts or buying storage.",
     "Queue reducer is an offline contract, not a durable live dispatcher or authenticated device-report channel."
   ],
   "files_sha256": {
-    "email/Inbox.gs": "521207bc97629a8a330e9e6b000dc6944e727df443fedcea34d84278520b14d3",
+    "email/Inbox.gs": "41fce61d7dc91116f3c46564d5209cb420416c041f7fb43e20af8a3074399e28",
     "email/appsscript.json": "e1839aee34c2e75f2d4635f2918b16e2b6d39a2d0864be09bb4c3461ec6053b4",
     "email/queue-simulation.cjs": "c43e662141f895296be51f2fec32b986d68582373a580e7fc3e7389374f498b2",
-    "tests/test_email_intake.cjs": "a9227699ca8ee45c5d542b1c31e0091dda25c1a15a7dbf6bc544d7b49a201130",
+    "tests/test_email_intake.cjs": "efc1712e902e3d43f70bdfecac37856a3f1684c34b697bddb7a837a75f55ac22",
     "tests/test_queue_simulation.cjs": "49404451ab0eca3f15d43f606cb82bd2063aacf448f4f7cefaef690f25100a7c",
     "email/Diagnose.gs": "85140a496d25b22dab5d3b1a10a3f57d045e2958959f152b7656ba6b7a1adb05",
     "tests/test_email_diagnostics.cjs": "4077b99f6584286f618a94f202c8a46a817761892ede3d12b9746de5640aba5f"
   },
-  "next_action": "Add Diagnose.gs to private project, run diagnoseIntake once and inspect MIME metadata before changing the body reader. Preserve rejection and mailbox state.",
+  "next_action": "Replace private-project Code.gs with updated Inbox.gs, save, send a fresh separate identical test email and run processInbox. Preserve original rejection. Then inspect exact prompt/hash and rerun for deduplication.",
   "mailbox_choice": "Separate Gmail inbox, selected by user; account/setup still pending",
   "network_connection_verified": "martin apple, wifi_status3, configured_matches_expectedtrue, healthtrue; November26",
   "script_project_created": true,
@@ -73,6 +73,19 @@
   "live_deduplication_verified": false,
   "diagnostic_tests_passed": 3,
   "diagnostic_test_command": "node --test tests/test_email_diagnostics.cjs",
-  "live_mime_shape_verified": false,
-  "reader_fix_applied": false
+  "live_mime_shape_verified": true,
+  "reader_fix_applied": true,
+  "live_mime_shape": {
+    "plain_mime_type": "text/plain",
+    "data_type": "object",
+    "data_is_array": true,
+    "declared_body_bytes": 43,
+    "external_body_present": false,
+    "filename_present": false,
+    "child_count": 0
+  },
+  "reader_fix_scope": "Local source only; live Apps Script replacement not yet verified",
+  "reader_fix_saved_in_apps_script_verified": false,
+  "focused_inbox_tests_for_fix_passed": 15,
+  "focused_inbox_test_command": "node --test tests/test_email_intake.cjs"
 }

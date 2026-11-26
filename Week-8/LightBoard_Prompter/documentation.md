@@ -2337,6 +2337,27 @@ Prepared separate `email/Diagnose.gs` for one bounded, read-only diagnostic of t
 
 Next user-assisted step: add the exact local helper as separate Apps Script file Diagnose, Save, run diagnoseIntake once, share its JSON. The prior browser editor/selector/capture failures justify this small manual handoff; no additional UI retry loop. Live MIME shape, targeted reader fix and accepted receipt/deduplication remain pending. Preserve original rejected receipt; no rerun/delete or new model/build/reply/trigger/device operation.
 
+## 101. Live MIME shape found; byte-array reader correction tested locally
+
+**Date:** November 26, 2026
+
+### Your prompts
+
+> where do i find these options or the apps script?
+> great. i did all of that and ran successfully.
+
+### Observed diagnosis and correction
+
+Provided direct existing-project link and Files+/Script/Diagnose instructions. Read live diagnoseIntake log12:21:47–12:21:50: completed diagnostic_only, root multipart/alternative with2children and no data; actual plain-text part has data typeofobject, Array.isArraytrue, declared43bytes, no filename/external reference/children. AX truncates the remaining HTML-part tail; no full data bytes or prompt were logged/captured. This establishes the integration gap: the body reader insisted on a REST-shaped base64 string, while the live Advanced Gmail service supplied a byte array. Prior fixtures exercised only strings. No claim that the real cause was an external attachment/reference.
+
+Corrected local Inbox.gs to accept numeric byte arrays directly, validate integer byte range/32KiB bound, normalize signed bytes, and convert to UTF-8 without double base64 decoding. Retained string branch and existing envelope/subject/allowlist/marker/MIME/size/privacy/deduplication behavior; malformed arrays get durable invalid_body_bytes rejection. No new scopes or provider APIs. Primary Utilities signed-byte/newBlob documentation checked.
+
+All15 focused inbox checks pass in110ms reported by Node. Added actual-shaped multipart/plain-array test with43byte expected prompt+marker+CRLF, exact saved-prompt SHA and single receipt on replay; signed/unsigned Unicode parity; malformed/oversized arrays with original rejection preserved. No unrelated queue/full firmware suite, preview, compile, model request or cloud/device operation.
+
+### Next checkpoint
+
+Local code corrected; live replacement/acceptance not yet verified. Existing original rejected receipt stays immutable. User should replace only existing Code.gs from updated Inbox.gs, Save, send a fresh separate identical email and run processInbox once. Keep manifest, Diagnose.gs, setup/private properties and old rejection. No setup rerun or deletion to force replay. Then inspect exact accepted prompt/hash and rerun for deduplication. Private observed diagnostic/next actions saved; guides/verification updated. Browser editing remains unreliable, so use one concrete file replacement rather than another retry loop.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.

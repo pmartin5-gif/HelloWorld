@@ -33,7 +33,7 @@ function environment(messages = [], options = {}) {
       newBlob: value => ({getBytes: () => [...Buffer.from(value)],
         getDataAsString: () => Buffer.from(value).toString('utf8')}),
       computeDigest: (_, value) => [...crypto.createHash('sha256').update(value).digest()],
-      base64DecodeWebSafe: value => [...Buffer.from(value, 'base64url')]
+      base64DecodeWebSafe: value => { calls.push('base64Decode'); return [...Buffer.from(value, 'base64url')]; }
     }, Gmail: {Users: {
       getProfile: () => ({emailAddress: options.account || config.account}),
       Labels: {list: () => ({labels: [{id: 'Label_1', name: 'Lightboard'}]})},
@@ -67,6 +67,50 @@ test('the exact prompt survives MIME decoding, boundary trimming and receipt sto
   assert.equal(job.status, 'received');
   assert.equal(job.buildDispatched, false); assert.equal(job.deviceConfirmed, false);
   assert.ok(!env.logs.join('').includes(prompt) && !env.logs.join('').includes('artist@example'));
+});
+
+test('observed 43-byte Advanced Gmail body records the exact saved prompt once without double decoding', () => {
+  const prompt = 'An overflowing heart that keeps giving';
+  const m = message('ab1', 'unused');
+  const bytes = [...Buffer.from(prompt + '%%%\r\n')];
+  assert.equal(bytes.length, 43);
+  const headers = m.payload.headers;
+  m.payload = {mimeType: 'multipart/alternative', headers, body: {size: 0}, parts: [
+    {mimeType: 'text/plain', filename: '', body: {size: 43, data: bytes}},
+    {mimeType: 'text/html', filename: '', body: {data: [...Buffer.from('<p>ignored</p>')]}}
+  ]};
+  const env = environment([m]);
+  assert.equal(env.context.processInbox().received, 1);
+  const job = storedJobs(env)[0].job;
+  assert.equal(job.prompt, prompt);
+  assert.equal(job.promptSha256, '738a280e61392c053d167c0ee30656c85712e1a021fab1bc2d1b54dc0718da63');
+  assert.equal(env.context.processInbox().duplicates, 1);
+  assert.equal(storedJobs(env).length, 1);
+  assert.equal(env.calls.includes('base64Decode'), false);
+});
+
+test('signed and unsigned UTF-8 byte arrays preserve the same Unicode prompt and hash as base64', () => {
+  const prompt = 'Blue light ♥\n  静かな海';
+  const bytes = [...Buffer.from(prompt + '%%%')];
+  const encoded = parse(environment(), message('ab1', prompt + '%%%')).job;
+  for (const data of [bytes, bytes.map(n => n > 127 ? n - 256 : n)]) {
+    const m = message('ab1', 'unused'); m.payload.body = {size: bytes.length, data};
+    const env = environment(); const job = parse(env, m).job;
+    assert.equal(job.prompt, prompt); assert.equal(job.promptSha256, encoded.promptSha256);
+    assert.equal(env.calls.includes('base64Decode'), false);
+  }
+});
+
+test('malformed and oversized byte arrays reject without creating a job or changing prior rejection history', () => {
+  for (const data of [[256], [-129], [NaN], [1.5], ['65'], [null], Array(2), Array(32769).fill(65)]) {
+    const m = message('ab2', 'unused'); m.payload.body = {data};
+    const prior = JSON.stringify({messageId: 'ab1', outcome: 'rejected', reason: 'missing_inline_text'});
+    const env = environment([m], {properties: {LB_MSG_ab1: prior}});
+    const result = env.context.processInbox();
+    assert.equal(result.rejected, 1); assert.equal(result.received, 0);
+    assert.equal(storedJobs(env).length, 0); assert.equal(env.data.LB_MSG_ab1, prior);
+    assert.equal(env.calls.includes('base64Decode'), false);
+  }
 });
 
 test('reprocessing and interruption after a durable receipt cannot duplicate a job', () => {

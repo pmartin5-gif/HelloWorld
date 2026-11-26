@@ -39,9 +39,21 @@ function lbPlainBody(message) {
       const contentType = (part.headers || []).find(h => h.name.toLowerCase() === 'content-type');
       const charset = contentType && contentType.value.match(/charset\s*=\s*["']?([^\s;"']+)/i);
       lbRequire(!charset || /^(utf-8|us-ascii)$/i.test(charset[1]), 'unsupported_charset');
-      lbRequire(part.body && !part.body.attachmentId && typeof part.body.data === 'string', 'missing_inline_text');
-      lbRequire(part.body.data.length <= 45000, 'body_too_large');
-      const bytes = Utilities.base64DecodeWebSafe(part.body.data);
+      lbRequire(part.body && !part.body.attachmentId, 'missing_inline_text');
+      const data = part.body.data;
+      lbRequire(typeof data === 'string' || Array.isArray(data), 'missing_inline_text');
+      let bytes;
+      if (Array.isArray(data)) {
+        // Observed Advanced Gmail service representation: bytes are already decoded.
+        lbRequire(data.length <= LB.maxBodyBytes, 'body_too_large');
+        lbRequire(Array.from(data).every(n => Number.isInteger(n) && n >= -128 && n <= 255),
+          'invalid_body_bytes');
+        bytes = data.map(n => n > 127 ? n - 256 : n); // Apps Script Byte[] uses signed bytes.
+      } else {
+        // REST-shaped fixtures/clients provide base64url strings instead.
+        lbRequire(data.length <= 45000, 'body_too_large');
+        bytes = Utilities.base64DecodeWebSafe(data);
+      }
       lbRequire(bytes.length <= LB.maxBodyBytes, 'body_too_large');
       bodies.push(Utilities.newBlob(bytes).getDataAsString('UTF-8'));
     }
@@ -174,7 +186,7 @@ function processInbox() {
         outcome = lbInterpret(message, config, id => Gmail.Users.Threads.get('me', id, {format: 'full'}));
       } catch (error) {
         // API failures must retry; only explicit parser decisions become durable rejections.
-        const expected = /^(ambiguous_headers|message_too_large|unsupported_charset|missing_inline_text|body_too_large|plain_text_required|prompt_length|unsupported_text|invalid_message|wrong_subject|sender_not_allowed|excluded_message|label_required|before_start|design_missing|ambiguous_thread|ambiguous_marker)$/;
+        const expected = /^(ambiguous_headers|message_too_large|unsupported_charset|missing_inline_text|invalid_body_bytes|body_too_large|plain_text_required|prompt_length|unsupported_text|invalid_message|wrong_subject|sender_not_allowed|excluded_message|label_required|before_start|design_missing|ambiguous_thread|ambiguous_marker)$/;
         if (!expected.test(error.message)) throw error;
         outcome = {outcome: 'rejected', reason: error.message};
       }
