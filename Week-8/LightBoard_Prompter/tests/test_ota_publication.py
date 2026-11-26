@@ -34,6 +34,8 @@ def bundle(folder, name):
     binaries = {}
     for filename in (ota.APP, 'LightboardOTA.ino.bootloader.bin', 'LightboardOTA.ino.partitions.bin'):
         data = b'\xe9' + (name + filename).encode() * 30
+        if filename == ota.APP:
+            data += b'\0' + foundation.encode() + b'\0' + version.encode() + b'\0'
         (folder / filename).write_bytes(data)
         binaries[filename] = {'bytes': len(data), 'sha256': ota.sha(data)}
     report = {'build_lock_sha256': build.sha256(build.ROOT / 'build-lock.json'),
@@ -162,6 +164,7 @@ class OtaPublicationTests(unittest.TestCase):
 
     def test_next_ota_publication_keeps_previous_compatible_release(self):
         prior = self.prepare(); prior['published'] = True
+        prior['build']['run_id'] = '122'
         for key, filename in (('current', 'firmware.bin'), ('usb_recovery', 'recovery.bin')):
             prior[key]['release_tag'] = 'lightboard-ota-122-1'
             prior[key]['url'] = ota.asset_url('lightboard-ota-122-1', filename)

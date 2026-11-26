@@ -1,5 +1,7 @@
 # Lightboard baseline cloud build
 
+**Current routine delivery:** See [prompt-build.md](prompt-build.md). This document describes the historical non-OTA baseline build, which must not overwrite the OTA board.
+
 **Verified:** November 9, 2026
 
 This is Step 4: compile a known working scene on GitHub. It needs no Lightboard, USB connection, model key, or Gemini request. It has no upload, OTA, email, release-publication, or deployment step.

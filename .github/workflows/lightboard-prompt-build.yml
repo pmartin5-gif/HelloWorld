@@ -1,6 +1,6 @@
 name: Lightboard prompt build
 
-# Manual infrastructure milestone. No visual approval, publication, or device upload.
+# Manual prompt preparation/publication. Device delivery remains separately armed.
 on:
   workflow_dispatch:
     inputs:
@@ -9,8 +9,8 @@ on:
         type: string
         required: true
         default: An overflowing heart that keeps giving
-      save_firmware:
-        description: 'Save a 1-day download ONLY after checking free storage and the $0 spending stop'
+      publish:
+        description: 'Publish verified OTA assets/feed after checking free use and the $0 stop; no device install'
         type: boolean
         required: true
         default: false
@@ -18,7 +18,7 @@ on:
         description: 'Reuse the saved heart test response to check the build without another API call'
         type: boolean
         required: true
-        default: false
+        default: true
 
 permissions:
   contents: read
@@ -29,9 +29,11 @@ concurrency:
 
 jobs:
   generate-and-compile:
-    if: ${{ github.event.repository.private == false }}
+    if: ${{ github.repository == 'pmartin5-gif/HelloWorld' && github.event.repository.private == false && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 20
+    permissions:
+      contents: write
     defaults:
       run:
         working-directory: Week-8/LightBoard_Prompter
@@ -43,12 +45,19 @@ jobs:
           sparse-checkout-cone-mode: false
           sparse-checkout: |
             /Week-8/LightBoard_Prompter/cloud/
+            /Week-8/LightBoard_Prompter/device/
+            /Week-8/LightBoard_Prompter/tests/
             /Week-8/LightBoard_Prompter/generate_candidate.py
             /Week-8/LightBoard_Prompter/generationBrief.md
             /Week-8/LightBoard_Prompter/experiments/flash-lite/2026-11-09/cloud-run-42735010470/generation.json
 
       - name: Verify the pinned foundation and libraries
         run: python3 cloud/build.py --verify-only
+
+      - name: Test OTA source and publication gates offline
+        run: |
+          python3 -m unittest discover -s tests -p 'test_ota*.py'
+          python3 -m unittest discover -s tests -p 'test_prompt_ota.py'
 
       - name: Install the pinned Arduino CLI
         uses: arduino/setup-arduino-cli@81d310742121c928ea9c8bbd407b4217b432ae02 # v2
@@ -92,18 +101,36 @@ jobs:
           python3 cloud/scene.py --record .build/generated/generation.json
           --output .build/generated/restState.cpp
 
-      - name: Compile against the pinned foundation
-        run: >-
-          python3 cloud/build.py --install-core
-          --candidate .build/generated/restState.cpp
-          --generation-record .build/generated/generation.json
+      - name: Set up the pinned ESP32 toolchain
+        run: python3 cloud/build.py --install-core --install-only
 
-      - name: Save the compiled firmware bundle
-        if: ${{ success() && inputs.save_firmware }}
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
-        with:
-          name: lightboard-candidate-${{ github.run_id }}-${{ github.run_attempt }}
-          path: Week-8/LightBoard_Prompter/.build/candidate-artifact/
-          if-no-files-found: error
-          retention-days: 1
-          include-hidden-files: false
+      - name: Compile prompt and recovery against the sealed OTA foundation
+        run: >-
+          python3 cloud/prompt_build.py --cli arduino-cli --data-dir .build/arduino-data
+          --work .build/prompt-ota --generation-record .build/generated/generation.json
+          --prompt-file .build/generated/creative-prompt.txt
+
+      - name: Publish verified OTA assets and feed
+        if: ${{ success() && inputs.publish }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 cloud/ota_publish.py --publish --output .build/prompt-ota/package
+
+      - name: Record package state without claiming installation
+        if: ${{ success() }}
+        run: |
+          python3 - <<'PY_SUMMARY'
+          import json, os
+          from pathlib import Path
+          m = json.loads(Path('.build/prompt-ota/package/manifest.json').read_text())
+          print(json.dumps(m, indent=2))
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as out:
+              out.write('## Lightboard prompt OTA package\n\n')
+              out.write('Published: ' + str(m['published']) + '. Automatic updates: false.\n\n')
+              out.write('Foundation: `' + m['foundation_id'] + '`.\n\n')
+              out.write('Commit: `' + m['build']['commit_sha'] + '`.\n\n')
+              out.write('Version: `' + m['current']['version'] + '`.\n\n')
+              out.write('Application: ' + str(m['current']['bytes']) + ' bytes; SHA-256: `' + m['current']['sha256'] + '`.\n\n')
+              out.write('Model request in this run: ' + str(m['generation']['model_request_in_this_run']) + '.\n\n')
+              out.write('No device command, Actions artifact or cache. Publication does not confirm installation.\n')
+          PY_SUMMARY

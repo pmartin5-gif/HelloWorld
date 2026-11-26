@@ -4,6 +4,7 @@ import argparse
 from datetime import datetime, timezone
 import hashlib
 import json
+import os
 from pathlib import Path
 import re
 import shutil
@@ -115,6 +116,24 @@ def write_checked(path, data):
         path.write_bytes(data)
 
 
+def generation_source(record_path):
+    """Bind a complete saved response to the same sealed source as the OTA pilot."""
+    record, function = scene.load_generation(record_path)
+    require(isinstance(record.get("run_id"), str) and
+            re.fullmatch(r"[1-9][0-9]*", record["run_id"]), "Generation origin run is required")
+    lock = json.loads((build.ROOT / "build-lock.json").read_text())
+    build.verify(lock)
+    baseline, foundation = verify_foundation(lock)
+    source = scene.compose(baseline, function, scene.protected_hash(baseline))
+    version = "ota-pilot-" + scene.digest((foundation + "\0" + source).encode())[:24]
+    return lock, source, foundation, version, record, function
+
+
+def generation_metadata(record, requested):
+    return {"run_id": record["run_id"], "response_sha256": record["response_sha256"],
+            "model_request_in_this_run": requested}
+
+
 def stage(work, candidate=None):
     lock = json.loads((build.ROOT / "build-lock.json").read_text())
     build.verify(lock)
@@ -137,7 +156,12 @@ def stage(work, candidate=None):
     return folder, lock, foundation, version
 
 
-def compile_pilot(work, cli, data_dir, candidate=None, release_tag=None):
+def compile_pilot(work, cli, data_dir, candidate=None, release_tag=None, generation_record=None):
+    record = None
+    if generation_record is not None:
+        _, _, _, _, record, function = generation_source(generation_record)
+        require(candidate is not None and scene.validate_function(candidate) == function,
+                "Candidate differs from the recorded model response")
     folder, lock, foundation, version = stage(work, candidate)
     artifact = work / "artifact"
     require(not artifact.exists(), "OTA artifact already exists; preserve it and choose another work directory")
@@ -161,6 +185,8 @@ def compile_pilot(work, cli, data_dir, candidate=None, release_tag=None):
             "OTA image missing, invalid, or too large")
     build.verify(lock)
     verify_foundation(lock)
+    # The compiler must not leave a changed source/identity in an eligible bundle.
+    stage(work, candidate)
     # Files are staged atomically only after compiler and foundation checks succeeded.
     pending = work / "artifact.pending"
     require(not pending.exists(), "Incomplete artifact exists; inspect before retrying")
@@ -173,6 +199,9 @@ def compile_pilot(work, cli, data_dir, candidate=None, release_tag=None):
     # Retain the exact reviewed inputs for publication validation; never release these files.
     for path in folder.iterdir():
         shutil.copyfile(path, pending / path.name)
+    requested = bool(record and record["run_id"] == os.environ.get("GITHUB_RUN_ID"))
+    if record is not None:
+        (pending / "generation.json").write_text(json.dumps(record, indent=2) + "\n")
     tag = release_tag or "lightboard-ota-local-" + version.removeprefix("ota-pilot-")
     require(re.fullmatch(r"lightboard-ota-[a-z0-9-]{1,96}", tag), "Invalid OTA release tag")
     manifest = {"schema_version": 2, "repository": "pmartin5-gif/HelloWorld", "channel": "ota-pilot",
@@ -188,8 +217,10 @@ def compile_pilot(work, cli, data_dir, candidate=None, release_tag=None):
         "arduino_cli": lock["arduino_cli_version"], "fqbn": lock["fqbn"], "binaries": binaries,
         "application_slot_bytes": lock["application_slot_bytes"],
         "application_headroom_bytes": lock["application_slot_bytes"] - app.stat().st_size,
-        "model_requests": 0, "uploaded_to_board": False, "automatic_updates": False,
+        "model_requests": int(requested), "uploaded_to_board": False, "automatic_updates": False,
         "physical_flash_partitions_heap_timing_tls_and_recovery_verified": False}
+    if record is not None:
+        report["generation"] = generation_metadata(record, requested)
     dram = re.search(r"Global variables use ([\d,]+) bytes", result.stdout)
     if dram:
         report["static_dram_bytes_reported"] = int(dram[1].replace(",", ""))
@@ -207,6 +238,7 @@ def main():
     parser.add_argument("--work", type=Path, required=True)
     parser.add_argument("--prepare-only", action="store_true")
     parser.add_argument("--candidate", type=Path)
+    parser.add_argument("--generation-record", type=Path)
     parser.add_argument("--cli", type=Path, default=Path('/Applications/Arduino IDE.app/Contents/Resources/app/lib/backend/resources/arduino-cli'))
     parser.add_argument("--data-dir", type=Path, default=Path.home() / 'Library/Arduino15')
     parser.add_argument("--release-tag")
@@ -217,11 +249,13 @@ def main():
     require(work != live and live not in work.parents, "Cannot stage into the live sketch")
     work.mkdir(parents=True, exist_ok=True)
     candidate = scene.validate_function(args.candidate.read_text()) if args.candidate else None
+    require(not args.generation_record or (args.candidate and not args.prepare_only),
+            "--generation-record requires --candidate and compilation")
     if args.prepare_only:
         folder, _, _, version = stage(work, candidate)
         print(f"OTA_PILOT_PREPARED: {folder}; {version}; no compile/upload/network request")
     else:
-        compile_pilot(work, args.cli, args.data_dir, candidate, args.release_tag)
+        compile_pilot(work, args.cli, args.data_dir, candidate, args.release_tag, args.generation_record)
     return 0
 
 

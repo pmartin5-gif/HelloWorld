@@ -1,0 +1,128 @@
+{
+  "checked_at_utc": "2026-11-26T16:12:48.735691+00:00",
+  "status": "Routine prompt-to-sealed-OTA local integration passed; revised cloud execution and publication pending",
+  "evidence": ".build/prompt-ota-integration-2026-11-26",
+  "offline_tests_passed": 88,
+  "new_model_requests": 0,
+  "billing_changes": false,
+  "release_published": false,
+  "workflow_dispatched": false,
+  "device_command_sent": false,
+  "uploaded_to_board": false,
+  "automatic_updates": false,
+  "actions_artifact_or_cache_created": false,
+  "workflow_yaml_shell_embedded_python_verified": true,
+  "foundation_id": "f1244292bbdf180ad5ea8b4ffbf46c72b9772ef8ad2407276ae26e3786132522",
+  "generation": {
+    "run_id": "42735010470",
+    "response_sha256": "ca9f5d73467bb02aab6278c8db4c03d5d643c960e5f2ea7221cea7d6263f1171",
+    "model_request_in_this_run": false
+  },
+  "candidate_build_report": {
+    "built_at_utc": "2026-11-26T16:09:35.738729+00:00",
+    "foundation_id": "f1244292bbdf180ad5ea8b4ffbf46c72b9772ef8ad2407276ae26e3786132522",
+    "build_lock_sha256": "d49bcc12704f6748ea380a560a38de7163998a4419b51e1cf00b35458f24cd5e",
+    "foundation_lock_sha256": "c8664c52ae788ae7580c046f0d6144159cc3ecd3890f93967585d66b3e0b288c",
+    "firmware_version": "ota-pilot-709f1f9cc6fe30951ccdd977",
+    "source_sha256": "1781c37da34807016f2d4d91e7badc5d75819d94a7c387566a40f451e886e442",
+    "ota_protected_sha256": "48b4f4c52aa0abf520e16e292fc0fee71ae3b46de12670eea5a5b03d2e694791",
+    "baseline_source_sha256": "d90e1b58d47ad841c7ef6c737afac802da1e34e0a4810e43ca7ae7e05173bb46",
+    "core": "esp32:esp32@2.0.17",
+    "arduino_cli": "1.5.1",
+    "fqbn": "esp32:esp32:esp32:UploadSpeed=921600,CPUFreq=240,FlashFreq=80,FlashMode=qio,FlashSize=4M,PartitionScheme=default,DebugLevel=none,PSRAM=disabled,LoopCore=1,EventsCore=1,EraseFlash=none,JTAGAdapter=default",
+    "binaries": {
+      "LightboardOTA.ino.bin": {
+        "bytes": 1012080,
+        "sha256": "2dec6e1a896f2a1bd6cd4cab5cb46397c74cde90942cfdb7561fbd49369bd3d1"
+      },
+      "LightboardOTA.ino.bootloader.bin": {
+        "bytes": 18992,
+        "sha256": "3d97b71a61331ebaddef2a74e090c35299650f395f1387f85130010e84e46563"
+      },
+      "LightboardOTA.ino.partitions.bin": {
+        "bytes": 3072,
+        "sha256": "148b959cbff1c38aa8e1d5c0ba9d612c54997b945e56a63f41223eef650653a1"
+      }
+    },
+    "application_slot_bytes": 1310720,
+    "application_headroom_bytes": 298640,
+    "model_requests": 0,
+    "uploaded_to_board": false,
+    "automatic_updates": false,
+    "physical_flash_partitions_heap_timing_tls_and_recovery_verified": false,
+    "generation": {
+      "run_id": "42735010470",
+      "response_sha256": "ca9f5d73467bb02aab6278c8db4c03d5d643c960e5f2ea7221cea7d6263f1171",
+      "model_request_in_this_run": false
+    },
+    "static_dram_bytes_reported": 47968
+  },
+  "baseline_build_report": {
+    "built_at_utc": "2026-11-26T16:08:56.353250+00:00",
+    "foundation_id": "f1244292bbdf180ad5ea8b4ffbf46c72b9772ef8ad2407276ae26e3786132522",
+    "build_lock_sha256": "d49bcc12704f6748ea380a560a38de7163998a4419b51e1cf00b35458f24cd5e",
+    "foundation_lock_sha256": "c8664c52ae788ae7580c046f0d6144159cc3ecd3890f93967585d66b3e0b288c",
+    "firmware_version": "ota-pilot-f2e92e43697828ea9cf37401",
+    "source_sha256": "74dd87bbec18694cc78024a76bc045c177ee4958bd8fe8f9bfa18f9975df7724",
+    "ota_protected_sha256": "48b4f4c52aa0abf520e16e292fc0fee71ae3b46de12670eea5a5b03d2e694791",
+    "baseline_source_sha256": "d90e1b58d47ad841c7ef6c737afac802da1e34e0a4810e43ca7ae7e05173bb46",
+    "core": "esp32:esp32@2.0.17",
+    "arduino_cli": "1.5.1",
+    "fqbn": "esp32:esp32:esp32:UploadSpeed=921600,CPUFreq=240,FlashFreq=80,FlashMode=qio,FlashSize=4M,PartitionScheme=default,DebugLevel=none,PSRAM=disabled,LoopCore=1,EventsCore=1,EraseFlash=none,JTAGAdapter=default",
+    "binaries": {
+      "LightboardOTA.ino.bin": {
+        "bytes": 1011872,
+        "sha256": "90bd96a5d240049b7f868044900093e258e4641de6850474cbfa42aca9118d34"
+      },
+      "LightboardOTA.ino.bootloader.bin": {
+        "bytes": 18992,
+        "sha256": "3d97b71a61331ebaddef2a74e090c35299650f395f1387f85130010e84e46563"
+      },
+      "LightboardOTA.ino.partitions.bin": {
+        "bytes": 3072,
+        "sha256": "148b959cbff1c38aa8e1d5c0ba9d612c54997b945e56a63f41223eef650653a1"
+      }
+    },
+    "application_slot_bytes": 1310720,
+    "application_headroom_bytes": 298848,
+    "model_requests": 0,
+    "uploaded_to_board": false,
+    "automatic_updates": false,
+    "physical_flash_partitions_heap_timing_tls_and_recovery_verified": false,
+    "static_dram_bytes_reported": 47352
+  },
+  "package_assets": {
+    "SHA256SUMS": {
+      "bytes": 238,
+      "sha256": "700c6b631c67d5e90db0a1c4e62a220de5c16ebbeb5831561060b22774646b08"
+    },
+    "firmware.bin": {
+      "bytes": 1012080,
+      "sha256": "2dec6e1a896f2a1bd6cd4cab5cb46397c74cde90942cfdb7561fbd49369bd3d1"
+    },
+    "manifest.json": {
+      "bytes": 1815,
+      "sha256": "f6277ce9181b68fa1500f4a97506b060d962b717a3f7c78ef1761ca049f5da08"
+    },
+    "recovery.bin": {
+      "bytes": 1011872,
+      "sha256": "90bd96a5d240049b7f868044900093e258e4641de6850474cbfa42aca9118d34"
+    }
+  },
+  "hypothetical_run_id": "123",
+  "hypothetical_urls_are_live": false,
+  "exact_function_source_identity_and_checksums_verified": true,
+  "protected_runtime_and_foundation_lock_changed": false,
+  "desktop_helper_migrated": false,
+  "network_change": {
+    "requested_by_user": "2026-11-26",
+    "status": "Different network planned; not configured yet",
+    "network_name": null,
+    "band_and_security_verified": false,
+    "provisioned": false,
+    "credential_or_network_command_sent": false,
+    "last_observed_network": "Hello World (2.4 GHz), November 23",
+    "current_association_freshly_observed": false
+  },
+  "next_action": "Review/push scoped source; run Lightboard prompt build on main with default prompt, reuse on and Publish off after free-use/$0-stop checks. Configure/provision the new Wi-Fi privately when ready. Publication, physical install/health and email intake remain later checkpoints."
+}

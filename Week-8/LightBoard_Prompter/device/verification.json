@@ -33,7 +33,7 @@
     "physical_flash_partitions_heap_timing_tls_and_recovery_verified": false,
     "static_dram_bytes_reported": 47352
   },
-  "offline_tests_passed": 79,
+  "offline_tests_passed": 88,
   "saved_api_key_absent": true,
   "staged_ide_sketch": ".build/ota-https-large-header-2026-11-23/LightboardOTA/LightboardOTA.ino",
   "live_recovery_source_unchanged": true,
@@ -203,10 +203,10 @@
     "health_ok": true
   },
   "wifi_retry_result": "One explicit reconnect attempt; LB_WIFI_ASSOCIATION_NOT_CONFIRMED and wifi_status 1 again",
-  "session_paused_by_user": true,
+  "session_paused_by_user": false,
   "pause_date": "2026-11-23",
   "assistant_background_continuation_scheduled": false,
-  "resume_next_action": "When user resumes, read RESUME.md. Controlled OTA hardware checkpoint is complete. Adapt regular prompt-build/publication to exact proven foundation using saved response, zero spending and no new model calls. Do not repeat completed installs/rollback, USB flashing or provisioning by default.",
+  "resume_next_action": "Review/push scoped source; run Lightboard prompt build on main with default prompt, reuse on and Publish off after free-use/$0-stop checks. Configure/provision the new Wi-Fi privately when ready. Publication, physical install/health and email intake remain later checkpoints.",
   "offline_observed_status": {
     "version": "ota-pilot-de9996a65a5fa1a5c80b0219",
     "foundation": "3f6b7d269af316c8006155fdb9deb6711f4a0b18f2bf1294613c8784bb81343b",
@@ -229,7 +229,7 @@
     "max_frame_gap_ms": 60,
     "health_ok": true
   },
-  "resumed_date": "2026-11-19",
+  "resumed_date": "2026-11-26",
   "network_testing_constraint": "User now authorizes alternate 2.4GHz network Hello World; supersedes previous MFA-IxD-only constraint",
   "mac_target_network_observation": "System Settings: MFA IxD connected, signal 3 of 3. Band/security not exposed by available read-only tools.",
   "mac_radio_query": "system_profiler reports interface inactive; CoreWLAN returns interface_unavailable; does not contradict observed UI connection.",
@@ -368,8 +368,8 @@
     "security": "WPA2 Personal"
   },
   "usb_connection_last_report": "User confirmed plugged back in; helper rediscovered /dev/cu.usbserial-0001; fresh v4 status read",
-  "next_network": "Hello World",
-  "next_network_band_reported_by_user": "2.4 GHz",
+  "next_network": null,
+  "next_network_band_reported_by_user": null,
   "target_wifi_credentials_provisioned": true,
   "existing_wifi_credentials_present": true,
   "existing_provisioned_network_reported_by_user": "Hello World",
@@ -484,7 +484,7 @@
     "device_download_verified": true,
     "installed_version_verified": true
   },
-  "pause_reason": "User taking a break; will resume in a new context window",
+  "pause_reason": null,
   "signal_after_move": {
     "rssi_dbm": -62,
     "previous_rssi_dbm": -81,
@@ -1149,5 +1149,21 @@
   },
   "baseline_restored_after_rollback": true,
   "controlled_ota_hardware_sequence_verified": true,
-  "automatic_crash_or_power_loss_recovery_tested": false
+  "automatic_crash_or_power_loss_recovery_tested": false,
+  "routine_prompt_integration": {
+    "status": "Local build/package passed; revised cloud check pending",
+    "verification": "cloud/prompt-ota-verification.json",
+    "new_model_requests": 0,
+    "hardware_state_freshly_observed": false
+  },
+  "network_transition": {
+    "requested_by_user": "2026-11-26",
+    "status": "Different network planned; not configured yet",
+    "network_name": null,
+    "band_and_security_verified": false,
+    "provisioned": false,
+    "credential_or_network_command_sent": false,
+    "last_observed_network": "Hello World (2.4 GHz), November 23",
+    "current_association_freshly_observed": false
+  }
 }

@@ -2146,6 +2146,35 @@ Marked RESUME.md and device verification paused. Completion evidence/guides are 
 
 Next resume task is regular prompt-build/publication integration with the proven sealed foundation, using the saved response and no new model API call/spending, followed by email intake. No repeat hardware test/upload/provisioning or workflow is a prerequisite. Preserve unrelated repository work; rediscover hardware only when needed. No board command, network setting, credential operation, remote push/publication, workflow or model call occurred for this pause. No assistant background continuation is scheduled; firmware association behavior is unchanged. Saved the three scoped pause files locally.
 
+## 91. Routine prompt-to-OTA integration and pending Wi-Fi change
+
+**Date:** November 26, 2026
+
+### Your prompts
+
+> Resume LightBoard_Prompter. Read /Users/pmartin5/Documents/GitHub/HelloWorld/Week-8/LightBoard_Prompter/RESUME.md and continue from the saved checkpoint.
+> There's a change we'll have to accommodate for. We are going to connect to a different wifi network but I don't yet have it configured.
+
+### Intent
+
+Resume the next engineering checkpoint using the saved response, with zero new model calls/spending. Accommodate a future network change without changing the board or requesting credentials before that network is ready.
+
+### Changes made and verification
+
+Added `cloud/prompt_build.py`: verifies the exact prompt/brief and saved generation, builds sealed baseline and candidate in new isolated directories, then prepares the shared four-asset OTA package. Extended `ota_build.py` and `ota_publish.py` to bind generated candidates to their complete response, exact composed source, protected/runtime/identity/partition checks and model-request provenance. Recheck staged inputs after compilation; require actual application bytes to contain the expected sealed foundation/version. Retained schema2 compatible previous/recovery, pinned foundation migration, immutable releases/history, exact Actions source/run gates, SHA/size/server/anonymous-readback/feed-conflict checks. Historical generated records retain compact provenance and hashes without requiring public source or a local copy of every previous prompt. Added the new OTA display-task/mutex/flash-pause globals to the generator's forbidden hardware state.
+
+Both routine prompt and saved-response publication-test workflows now use this shared OTA path. Saved-response reuse defaults on; Publish defaults off. Removed optional Actions artifact storage from the routine workflow. Generation remains a separate explicit workflow option and was not used. The known-scene workflow and sealed runtime/foundation lock are unchanged. Historical non-OTA builder/publisher remain for baseline/legacy tests; Desktop helper and its standing instructions were not migrated and must not overwrite the OTA board.
+
+All **88 offline tests passed**, including nine new routine integration tests covering saved and other validated responses, response/source/runtime/identity tampering, provenance, failure/oversize isolation, historical generated manifests, immutable previous handling and publication failure before feed mutation. Corrected the older test fixture to give its simulated previous release the matching build run/tag. Both workflow YAML files parse, Bash syntax and embedded Python parse, safe defaults and absence of artifacts/caches are verified. `git diff --check` passes.
+
+Real pinned local routine-path compilation and exact package validation passed under `.build/prompt-ota-integration-2026-11-26/`. Heart source/version remain the previously tested 709f1f9c…/f124 foundation: application **1,012,080 bytes**, SHA **2dec6e1a896f2a1bd6cd4cab5cb46397c74cde90942cfdb7561fbd49369bd3d1**, headroom **298,640**, static DRAM47,968. Baseline application **1,011,872 bytes**, SHA **90bd96a5d240049b7f868044900093e258e4641de6850474cbfa42aca9118d34**. Local paths can change binary hashes without changing source/version. Response42735010470, exact source/protected identity, package checksums and recovery verified. Local run123 URLs are hypothetical and unpublished. Full reports, compile/test logs and four-file package retained; machine-readable checkpoint is `cloud/prompt-ota-verification.json`.
+
+### Result and next checkpoint
+
+Local integration passed; revised cloud execution/publication and physical routine-path confirmation are pending. Review/push scoped source, then manually run **Lightboard prompt build**, main, default prompt, reuse on, Publish off, after verifying free public runner use and the existing $0 stop. Keep publication/installation separate. Email intake/queue/dispatch/accurate installed acknowledgments follow that verification; no background continuation is scheduled.
+
+Recorded new Wi-Fi as planned/not configured, with unknown name/band/security. No network credentials requested, no provisioning/forget/reconnect/serial/upload/device command, no hardware rediscovery or new observation. Existing Hello World2.4GHz credentials and last observed November23 baseline state are historical, not freshly verified. Once the new network is ready, privately provision through native Arduino IDE and verify fresh association/health; network changes do not require a firmware build. Software/cloud verification can continue independently. Updated resume, plan, device/cloud guides and verification; preserved unrelated Final/ and .DS_Store edits. Zero model calls, spending, billing changes, cloud dispatch, publication or device operations occurred.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.

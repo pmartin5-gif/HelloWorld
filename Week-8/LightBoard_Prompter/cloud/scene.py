@@ -94,7 +94,7 @@ def validate_function(candidate):
     body = masked[start:end]
     if "#" in body or "\\\n" in body or "\\\r" in body or "::" in body:
         raise ValueError("Directives, line splicing, and external namespaces are not allowed")
-    forbidden = r"\b(?:new|delete|malloc|calloc|realloc|free|extern|volatile|asm|__asm__|reinterpret_cast|const_cast|throw|try|catch|goto|displayTimer|timerMux|lastFrame|FRAME_INTERVAL_MS|setup|loop|display_updater|Serial\w*|ESP|WiFi\w*|HTTPClient|FS|SPIFFS|LittleFS|SD|SPI|Wire|String|P_[A-Z0-9_]+)\b"
+    forbidden = r"\b(?:new|delete|malloc|calloc|realloc|free|extern|volatile|asm|__asm__|reinterpret_cast|const_cast|throw|try|catch|goto|displayTimer|timerMux|displayAccess|displayRefreshTask|lightboardFlashPaused|displayRefreshCount|lastFrame|FRAME_INTERVAL_MS|setup|loop|display_updater|Serial\w*|ESP|WiFi\w*|HTTPClient|FS|SPIFFS|LittleFS|SD|SPI|Wire|String|P_[A-Z0-9_]+)\b"
     if re.search(forbidden, body):
         raise ValueError("Candidate uses unsupported hardware, external state, allocation, or control flow")
     if re.search(r"\([^()]*\*\s*\)", body):

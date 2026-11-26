@@ -1,20 +1,22 @@
 # Resume Lightboard Prompter
 
-**Updated:** November 23, 2026. **Paused at the user’s request.** Controlled OTA hardware checkpoint is complete.
+**Updated:** November 26, 2026. Resumed; routine prompt-to-OTA integration now passes locally. Different Wi-Fi network planned, not configured yet.
 
-Wait for the user to resume. No assistant background continuation, workflow dispatch, publication, device command or model request is scheduled. The last verified board state is the normal stones baseline; existing firmware Wi-Fi association behavior is unchanged.
+## Current checkpoint and next work
 
-## Resume in a new context window
+Regular **Lightboard prompt build** and **Lightboard publication test** now call `cloud/prompt_build.py` and the proven sealed OTA builder/publisher. Local real baseline/heart builds, source/identity/size/hash checks and all **88 offline tests** pass. Both workflow YAML files, shell and embedded Python parse. Source/runtime/foundation lock are unchanged. Changes are local; revised GitHub execution/publication has not happened. Current evidence: `cloud/prompt-ota-verification.json` and `.build/prompt-ota-integration-2026-11-26/`.
 
-Read this file and continue with the regular prompt-build/publication integration described below. Completed OTA/rollback tests do not need repeating. Verify repository state before edits; source051a334 is remote, and completion/pause notes are newer local commits. Keep zero additional spending and no new model API calls; reuse the saved response. Hardware may be disconnected during the break—rediscover USB and read fresh state only when hardware work is actually needed. Do not upload or reprovision by default.
+Saved-response reuse defaults on, Publish off. No Actions artifact/cache, model request, billing change, cloud dispatch, release publication, device command, USB upload or provisioning occurred. Use zero new model calls/spending. The local package's run-123 URLs are hypothetical, never live releases. Heart version remains the previously tested 709f1f9c… with identical source, local application1,012,080bytes/SHA2dec6e1a896f2a1bd6cd4cab5cb46397c74cde90942cfdb7561fbd49369bd3d1; local baseline1,011,872bytes. Binary hashes vary with build paths. Automatic delivery stays off.
 
-## Current state and next work
+**Next:** Review/push the scoped source, then manually run **Lightboard prompt build** on main with the default heart prompt, **Reuse saved generation on**, **Publish off**, after verifying public standard runner/free-use settings and the existing $0 spending stop. Inspect the exact source commit, foundation/version/size/hash and skipped model generation. A successful local build is not a cloud verification. Publication remains a separate later step; preserve exact compatible previous/recovery/history. Then routine physical confirmation and email intake (Step8), queue/dispatch and truthful installed acknowledgments follow. Do not repeat the completed known-scene OTA/rollback sequence merely to resume.
 
-**Two known scenes installed over Wi-Fi, deferred boot validation, manual rollback and baseline restoration all passed.** The board is left displaying the normal warm-stone baseline. User's final confirmation: “the stones are back and displaying normally”. No more workflow dispatch, USB upload, provisioning, model request or repeated hardware test is required merely to resume.
+**Network change:** User says a different Wi-Fi network will be used, but it is not configured yet. Network name, band/security and credentials are unknown. Historical Hello World2.4GHz results below remain the last observed state; no fresh hardware state was read November26. Continue build/cloud work independently. Keep existing NVS credentials until the replacement is ready. When ready, use private native Arduino IDE provisioning, verify compatible2.4GHz shared-password Wi-Fi and fresh actual association/health; no firmware rebuild/upload is needed solely for the network change. Do not ask for passwords in chat. Rediscover USB only when hardware work is needed.
 
-**Next engineering task:** Adopt the proven sealed OTA foundation into the regular prompt-build/publication path. That older path and the Desktop helper still build the original non-OTA foundation; known-scene OTA testing is a separate workflow. Reuse the already saved generation record for the first integration test—**zero new model API calls or spending**. Retain exact restState/protected-source/identity/size/hash checks and immutable recovery/history, and keep automatic delivery off. After this integration is verified, proceed to email intake (Step 8), then queue/dispatch and truthful installed acknowledgments. Do not jump to automatic email deployment using the old publisher/helper.
+Desktop helper is **not migrated** and still stages old non-OTA source. Do not deploy it onto the OTA board. `cloud/build.py`/`cloud/publish.py` remain historical baseline/legacy tools; routine workflows now use the sealed path. No standing skill/helper instructions were changed.
 
-Read `projectPlan.md`, `device/README.md`, `cloud/ota-publication.md` and the machine-readable device/cloud verification files. Chronological work/results are in `documentation.md`, entries84 onward. Notes/evidence have been updated locally after the source push; do not reset unrelated repository work.
+## Preserved completed hardware checkpoint
+
+Two known scenes installed over Wi-Fi, deferred boot validation, manual rollback and baseline restoration all passed November23. Last verified board state is normal warm stones; user confirmed “the stones are back and displaying normally”. No repeated hardware test, upload or provisioning is a resume prerequisite. Last verified source051a334 is remote; newer checkpoint and integration work is local. Preserve unrelated Final/ and .DS_Store edits. Read `projectPlan.md`, `device/README.md`, `cloud/prompt-build.md`, `cloud/ota-publication.md` and verification JSON. Chronological results continue in `documentation.md`, entries84 onward.
 
 ## Running firmware and actual results
 

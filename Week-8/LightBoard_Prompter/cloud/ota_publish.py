@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Publish controlled known scenes for the sealed OTA pilot; never command a device."""
+"""Publish validated scenes for the sealed OTA foundation; never command a device."""
 import argparse
 import base64
 import json
@@ -56,11 +56,24 @@ def known_source(name):
     return lock, source, foundation, version, generation
 
 
+def validate_image_identity(data, foundation, version):
+    require(all(b"\0" + value.encode() + b"\0" in data for value in (foundation, version)),
+            "OTA binary does not contain the expected sealed identity")
+
+
 def checked_bundle(folder, name):
-    lock, source, foundation, version, generation = known_source(name)
+    if name == "generated":
+        lock, source, foundation, version, record, _ = ota_build.generation_source(folder / "generation.json")
+        requested = record["run_id"] == os.environ.get("GITHUB_RUN_ID")
+        generation = ota_build.generation_metadata(record, requested)
+    else:
+        lock, source, foundation, version, generation = known_source(name)
+        requested = False
     inputs = {"LightboardOTA.ino", "partitions.csv", "BuildIdentity.h", *ota_build.RUNTIME_FILES}
     binaries = {APP, "LightboardOTA.ino.bootloader.bin", "LightboardOTA.ino.partitions.bin"}
     expected = inputs | binaries | {"manifest.json", "build-report.json", "SHA256SUMS"}
+    if name == "generated":
+        expected.add("generation.json")
     require(not folder.is_symlink() and {p.name for p in folder.iterdir()} == expected,
             "Incomplete or unexpected OTA bundle inventory")
     sums = {}
@@ -75,7 +88,7 @@ def checked_bundle(folder, name):
         require(path.is_file() and not path.is_symlink(), "Non-file or symlink in OTA bundle")
         if filename != "SHA256SUMS":
             require(sha(path.read_bytes()) == sums[filename], "OTA bundle checksum mismatch")
-    require((folder / "LightboardOTA.ino").read_bytes() == source.encode(), "Known OTA scene source mismatch")
+    require((folder / "LightboardOTA.ino").read_bytes() == source.encode(), "Validated OTA scene source mismatch")
     for filename in ota_build.RUNTIME_FILES:
         require((folder / filename).read_bytes() == (ota_build.DEVICE / "runtime" / filename).read_bytes(),
                 "OTA runtime source mismatch")
@@ -92,14 +105,17 @@ def checked_bundle(folder, name):
             report["baseline_source_sha256"] == lock["baseline"]["source_sha256"] and
             report["fqbn"] == lock["fqbn"] and report["arduino_cli"] == lock["arduino_cli_version"] and
             report["core"] == f"{lock['core']}@{lock['core_version']}" and
-            type(report["model_requests"]) is int and report["model_requests"] == 0 and
+            type(report["model_requests"]) is int and report["model_requests"] == int(requested) and
             report["uploaded_to_board"] is False and report["automatic_updates"] is False and
             report["application_slot_bytes"] == lock["application_slot_bytes"], "Unsupported OTA build report")
+    if name == "generated":
+        require(report.get("generation") == generation, "Generated OTA provenance mismatch")
     for filename in binaries:
         data = (folder / filename).read_bytes()
         require(report["binaries"][filename] == {"bytes": len(data), "sha256": sha(data)},
                 "OTA binary/report mismatch")
     data = (folder / APP).read_bytes()
+    validate_image_identity(data, foundation, version)
     require(data[:1] == b"\xe9" and 288 <= len(data) <= lock["application_slot_bytes"] and
             report["application_headroom_bytes"] == lock["application_slot_bytes"] - len(data),
             "Invalid OTA application size/image")
@@ -137,7 +153,23 @@ def validate_entry(value, filename="firmware.bin"):
 
 
 def validate_manifest(m, published):
-    lock, source, foundation, version, generation = known_source(m.get("scene"))
+    if m.get("scene") == "generated":
+        # Historical records have no public prompt/source. Exact composition is checked
+        # against generation.json at prepare time; history retains immutable asset hashes.
+        lock, _, foundation, _, _ = known_source("baseline")
+        generation = m.get("generation")
+        require(isinstance(generation, dict) and
+                set(generation) == {"run_id", "response_sha256", "model_request_in_this_run"} and
+                isinstance(generation["run_id"], str) and re.fullmatch(r"[1-9][0-9]*", generation["run_id"]) and
+                isinstance(generation["response_sha256"], str) and re.fullmatch(r"[a-f0-9]{64}", generation["response_sha256"]) and
+                type(generation["model_request_in_this_run"]) is bool,
+                "Unsupported generated OTA provenance")
+        require(generation["model_request_in_this_run"] is (generation["run_id"] == m["build"]["run_id"]),
+                "Generation/build run mismatch")
+    else:
+        lock, source, foundation, version, generation = known_source(m.get("scene"))
+        require(m["current"]["version"] == version and
+                m["current"]["source_sha256"] == sha(source.encode()), "Known OTA source identity mismatch")
     require(set(m) == {"schema_version", "repository", "channel", "device", "foundation_id", "fqbn",
                        "ota_enabled", "published", "automatic_updates", "scene", "generation", "build",
                        "current", "usb_recovery", "usb_recovery_scope", "previous", "legacy_delivery_test",
@@ -146,7 +178,6 @@ def validate_manifest(m, published):
             m["channel"] == "ota-pilot" and m["device"] == "esp32-32x32" and
             m["foundation_id"] == foundation and m["fqbn"] == lock["fqbn"] and
             m["published"] is published and m["ota_enabled"] is True and m["automatic_updates"] is False and
-            m["current"]["version"] == version and m["current"]["source_sha256"] == sha(source.encode()) and
             m["usb_recovery_scope"] == RECOVERY_SCOPE and
             m["generation"] == generation and set(m["build"]) == {"run_id", "attempt", "commit_sha"} and
             ((m["build"]["commit_sha"] is None and published is False) or
@@ -154,6 +185,9 @@ def validate_manifest(m, published):
             "Unsupported OTA publication manifest")
     validate_entry(m["current"])
     validate_entry(m["usb_recovery"], "recovery.bin")
+    tag = tag_name(m["build"]["run_id"], m["build"]["attempt"])
+    require(m["current"]["release_tag"] == tag and m["usb_recovery"]["release_tag"] == tag,
+            "Manifest build/tag mismatch")
     _, baseline, _, baseline_version, _ = known_source("baseline")
     require(m["usb_recovery"]["version"] == baseline_version and
             m["usb_recovery"]["source_sha256"] == sha(baseline.encode()), "Recovery must retain the sealed baseline pilot")
@@ -230,6 +264,7 @@ def publish(folder, api, download=delivery.public_bytes):
         data = (folder / filename).read_bytes()
         require(data[:1] == b"\xe9" and len(data) == m[key]["bytes"] and sha(data) == m[key]["sha256"],
                 "Prepared OTA binary changed")
+        validate_image_identity(data, m["foundation_id"], m[key]["version"])
     sums = "".join(f"{sha((folder / n).read_bytes())}  {n}\n" for n in ASSETS[:-1])
     require((folder / "SHA256SUMS").read_text() == sums, "Prepared OTA checksums changed")
     require(os.environ.get("GITHUB_REPOSITORY") == delivery.REPOSITORY and
@@ -271,7 +306,7 @@ def publish(folder, api, download=delivery.public_bytes):
     write_manifest(folder, m)
     release = api.request("POST", "/releases", {"tag_name": tag, "target_commitish": os.environ["GITHUB_SHA"],
         "name": f"Lightboard OTA pilot {m['build']['run_id']}: {m['scene']}",
-        "body": "Controlled known-scene OTA pilot. No automatic install or model request. "
+        "body": "Validated Lightboard OTA package. No automatic install or device command. "
                 "Retains sealed Wi-Fi/update foundation. Recovery asset is an application only. "
                 "Physical installation and rollback checks are separate; preserve USB recovery source.",
         "draft": True, "prerelease": True, "make_latest": "false"})
@@ -293,7 +328,7 @@ def publish(folder, api, download=delivery.public_bytes):
     for url in (f"https://raw.githubusercontent.com/{delivery.REPOSITORY}/{commit}/manifest.json", delivery.FEED_URL):
         require(download(url, 8192) == encoded(m), "OTA feed committed but readback failed; inspect before retrying")
     print(f"OTA_PUBLICATION_PASSED: https://github.com/{delivery.REPOSITORY}/releases/tag/{tag}")
-    print("No model request or device command; physical install and recovery still require verification.")
+    print("Publication sends no model request or device command; installation requires device confirmation.")
     return m
 
 
@@ -301,7 +336,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--candidate", type=Path)
     parser.add_argument("--baseline", type=Path)
-    parser.add_argument("--scene", choices=("saved-heart", "baseline"), default="saved-heart")
+    parser.add_argument("--scene", choices=("saved-heart", "baseline", "generated"), default="saved-heart")
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--run-id", default=os.environ.get("GITHUB_RUN_ID"))
     parser.add_argument("--attempt", default=os.environ.get("GITHUB_RUN_ATTEMPT", "1"))

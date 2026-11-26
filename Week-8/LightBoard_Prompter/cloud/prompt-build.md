@@ -1,61 +1,43 @@
-# Manual prompt-to-firmware pipeline
+# Manual prompt-to-OTA pipeline
 
-**Scope updated November 9, 2026:** The user deferred animation appearance and creative tuning. No preview or aesthetic approval is required. Technical validation, compilation, pinned inputs, and accurate device status remain required.
+**Updated November 26, 2026.** Routine prompt build and the saved-response publication test now use the physically proven sealed OTA foundation. Local integration passed; the revised workflows have not yet run on GitHub. New Wi-Fi setup is pending and does not block compilation or public package verification.
 
 ## Behavior
 
-The manual **Lightboard prompt build** workflow accepts a creative prompt of 1–2,000 characters. It loads `generationBrief.md`, sends one request to the existing free-project Gemini 3.5 Flash-Lite API, validates the returned function, and compiles it against the preserved ESP32 foundation. It does not publish or install a device update.
+**Lightboard prompt build** accepts a 1–2,000-character creative prompt. **Reuse saved generation** defaults on: leave the default heart prompt to reuse the exact response from run `42735010470`, with no API request. A different prompt or brief stops reuse. A new generation requires explicitly disabling reuse; it is outside the current zero-model-call integration test.
 
-For infrastructure diagnosis, **Reuse saved generation** can explicitly select the exact heart response from run `42735010470`. That mode skips the API step, checks that the prompt and brief match the saved response, and uses the same validation/compilation path. It is not an automatic fallback. The default remains a new request for the entered prompt.
+The workflow uses `cloud/prompt_build.py` to compile both the recovery baseline and the recorded function against foundation `f1244292bbdf180ad5ea8b4ffbf46c72b9772ef8ad2407276ae26e3786132522`. It prepares schema-2 OTA metadata through the same publisher as the controlled known-scene tests. **Publish** defaults off. There are no Actions artifacts, caches, schedules, serial commands or automatic device updates.
 
-Prompt text passes through an environment variable and is written as data; it is never interpolated into shell code. The private API secret is available only to the generation step. Generated C++ is never executed on the runner; Arduino CLI compiles it for the ESP32.
+The saved-response **Lightboard publication test** workflow calls the same builder/publisher. The original non-OTA `cloud/build.py` and `cloud/publish.py` remain for historical baseline tests and legacy metadata checks. They are no longer the routine prompt/publication entry points. The Desktop USB helper still uses the old foundation: do not deploy it onto the OTA board; migrating that helper remains separate work.
 
-Generation uses minimal thinking, an 8,192-token output cap, and a 120-second timeout. There are no retries, correction calls, model switches, paid fallbacks, grounding tools, schedules, or Actions caches. Quota/capacity failure stops the run. Durable queuing is a later stage; GitHub workflow concurrency alone does not provide it.
+## Validation and publication
 
-## Technical gates
+- Exact prompt/brief, complete response SHA-256, supported `restState` function and generation origin are checked before compilation. Saved reuse and a request in the current Actions run have distinct provenance.
+- All 84 preserved source/library files, pinned CLI 1.5.1/core 2.0.17, full board profile, and sealed runtime/partitions/protected sketch remain checked before and after builds. Generated scenes replace only `restState`.
+- The builder writes a new isolated work directory and preserves existing work. Failed compilation, oversize images, or changed staged inputs cannot create an eligible package. Source/identity/checksums are revalidated before package preparation; expected foundation/version strings must also exist in the actual application bytes.
+- Only `firmware.bin`, `recovery.bin`, `manifest.json` and `SHA256SUMS` enter the publication package. The exact generation record stays in the internal build evidence, outside the release assets. It is never added to the feed.
+- Optional publication requires the matching main-branch Actions commit/run/attempt, server asset digests, anonymous exact-byte readbacks and a feed update guarded by the previous blob SHA. Compatible previous images and immutable recovery/history are retained; unknown foundation transitions stop. Existing releases/assets are never overwritten or deleted.
+- Historical generated manifests retain compact provenance and immutable image/source hashes; their prompts/source need not remain in the checkout. Exact source composition is validated when preparing their bundle, rather than inferred from a historical manifest.
 
-- All 84 preserved source/library files must match `build-lock.json` before and after compilation. CLI 1.5.1, ESP32 core 2.0.17, full board options, and drawing libraries stay pinned.
-- A complete model response must match its saved SHA-256. One conventional code fence can be removed; the function is not repaired or rewritten.
-- Exactly one `void restState(unsigned long now)` is allowed. Checks reject known hardware/global-state access, unsupported calls, directives, dynamic allocation, and unconditional loops. Display access is limited to supported drawing methods. Per-pixel brightness remains in RGB drawing values.
-- Composition changes only that function in an isolated sketch. Protected bytes must match the pinned foundation, including wiring, hardware brightness, buffers, frame interval, and timer setup.
-- Compilation must pass and the application must fit the 1,310,720-byte configured slot. A failed check removes this candidate's old bundle and cannot produce a successful download. Baseline artifacts remain separate.
+Publication is separate from installation. The board still requires manual `check`, `arm-update`, and `install`; only fresh running-version/boot-health evidence establishes installation. Credentials stay in board NVS, outside the firmware package. Changing Wi-Fi requires private provisioning through native Arduino IDE, not a new firmware build.
 
-The parser derives from the existing local helper. These checks do not formally prove arbitrary C++ behavior, runtime timing, or heap use. Actual flash capacity, networked runtime, installation, and recovery remain hardware checks before OTA is enabled.
+## Local saved-response check
 
-## Run after publication
-
-1. Recheck that the repository is public, the Google project remains Free tier with billing disabled, and the model allowance is available.
-2. Open **Actions → Lightboard prompt build → Run workflow** and enter a non-sensitive creative prompt. This explicit build form needs no `%%%` suffix; that convention still applies to the planned email intake and existing chat deployment workflow.
-3. **Save firmware** defaults off. Enable it only after checking free Actions storage and the existing $0 spending stop. The job uses standard Ubuntu 24.04, skips private repositories, and creates no cache.
-   For the next compiler verification, enable **Reuse saved generation** and keep the default heart prompt; this makes no new model request. The report preserves the original generation run/commit and distinguishes reuse from a request in the current run.
-4. Wait for **Compile against the pinned foundation** to pass. No preview or creative-approval step is present.
-5. If enabled, download `lightboard-candidate-<run>-<attempt>` and verify `SHA256SUMS`. Retention is one day.
-
-The repository/workflow is public. The exact generation record is retained as base64 JSON in job logs, including when validation later fails; downloads also include it as `generation.json`. The encoded format prevents generated text from becoming workflow commands. The client checks for the actual key before any output. Keep credentials out of prompts and firmware. [GitHub's input-handling guidance](https://docs.github.com/en/actions/concepts/security/script-injections) and [Actions billing documentation](https://docs.github.com/en/billing/concepts/product-billing/github-actions) explain safe prompt handling and the distinction between free public runners and storage billing.
-
-## Bundle
-
-Output is `.build/candidate-artifact/`, separate from the baseline's `.build/artifact/`. It contains three firmware binaries, the composed `.ino`, `restState.cpp`, actual compile log, build report, manifest, and checksums. API-generated builds also retain the exact submitted brief, prompt, response, usage metadata, and provenance in `generation.json`.
-
-The manifest gives a source-derived version and application filename, size, and SHA-256. It records `published: false` and `ota_enabled: false`; no device URL is configured yet. Board-accessible publication is Step 6. Compilation or download does not establish installation.
-
-## Local check without a model request
+Use a new work directory each time. Prepare `PROMPT_FILE` containing the exact saved prompt, `An overflowing heart that keeps giving`, then run from this project:
 
 ```bash
-python3 cloud/build.py \
-  --cli '/Applications/Arduino IDE.app/Contents/Resources/app/lib/backend/resources/arduino-cli' \
-  --data-dir /Users/pmartin5/Library/Arduino15 \
-  --candidate experiments/model-verification/2026-11-06/overflowing-heart/candidate.cpp
+python3 cloud/prompt_build.py \
+  --work .build/NEW-PROMPT-CHECK \
+  --generation-record experiments/flash-lite/2026-11-09/cloud-run-42735010470/generation.json \
+  --prompt-file PROMPT_FILE --run-id 123 --attempt 1
 ```
 
-This reads the installed toolchain and preserved libraries and writes isolated outputs. Its report records no new model API call. API-generated builds also pass `--generation-record` to bind the function to the response.
+This uses the installed pinned toolchain and never calls the model, publishes, opens serial or uploads. Its hypothetical run-123 URLs are not live releases. Evidence is under the new work directory: `baseline/artifact/`, `candidate/artifact/`, and the four-file `package/`. The recovery binary is an application only; preserve the existing IDE recovery source, bootloader and partitions.
 
-## Current checkpoint
+## Current verification and next cloud check
 
-The first integrated cloud run, [42733551597](https://github.com/pmartin5-gif/HelloWorld/actions/runs/42733551597), generated a response in 5.018 seconds but rejected an unsupported call without preserving source. Its exact call remains unknown. The diagnostic revision was published and [run 42735010470](https://github.com/pmartin5-gif/HelloWorld/actions/runs/42735010470) returned a response in 4.479 seconds, retained it, and identified `rand()` as the rejected call. Compile/download were skipped; no further request was made afterward.
+November 26 local routine-path build: heart **1,012,080 bytes**, headroom **298,640 bytes**, SHA `2dec6e1a896f2a1bd6cd4cab5cb46397c74cde90942cfdb7561fbd49369bd3d1`; baseline **1,011,872 bytes**. Source/foundation/version match the tested scenes; binary hashes can vary with build path. All **88 offline tests** pass and both workflow YAML files parse. See `prompt-ota-verification.json` and `.build/prompt-ota-integration-2026-11-26/`. No publication, device operation or new model call occurred. The saved heart's existing growth clipping remains unchanged.
 
-The installed ESP32 2.0.17 `Arduino.h` includes `stdlib.h`, which provides `rand()`. Added only this numeric PRNG to the allowed calls, retained the exact response as a regression fixture, and compiled that unchanged function locally: 291,216-byte application, protected foundation intact. All 32 offline tests pass, including response reuse and mismatched prompt/brief rejection. No preview or aesthetic review was performed. The published saved-response cloud check described below passed without another API call. The GitHub connection rejected Git-tree writes with HTTP 403; the assistant shell cannot reach GitHub.
+After reviewing/pushing the scoped changes, verify the public standard runner/free-use settings and existing $0 spending stop. Run **Lightboard prompt build** on **main**, with the default prompt, **Reuse saved generation on**, **Publish off**. Inspect the exact commit, foundation, version, size/hash and `model_request_in_this_run: false`. A local compile is not a cloud-run result. Keep publication and installation separate until that check passes. The new network can be configured later; actual association and physical checks remain pending.
 
-The user published `1cd37ca` and manually dispatched [saved-response run 42742746935](https://github.com/pmartin5-gif/HelloWorld/actions/runs/42742746935). Saved-response reuse, validation, and pinned Ubuntu compilation passed; the model-generation step was skipped. Application: **291,200 bytes**, leaving **1,019,520 bytes** in the configured slot. All 84 pinned inputs verified before and after compilation. No artifact was uploaded, so report provenance fields, binary checksums, and cloud static DRAM were not inspected. No new model request or device operation occurred. Logs are retained locally; see `prompt-build-reuse-verification.json`.
-
-Next come board-accessible publication, separately provisioned Wi-Fi/OTA support, and email intake with a durable queue. Creative tuning can happen later.
+Earlier non-OTA runs and their evidence remain in `prompt-build-reuse-verification.json`, `publication-verification.json` and `documentation.md`; they do not verify the revised workflow.

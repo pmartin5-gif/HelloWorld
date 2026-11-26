@@ -1,14 +1,14 @@
 # Lightboard remote prompting step by step
 
-**Updated:** November 23,2026
+**Updated:** November 26, 2026
 
-**Status:** Controlled Step 7 hardware tests passed: heart and baseline installed over Wi-Fi, deferred validity/health, SDK manual rollback, baseline reinstallation and final normal stones confirmed. Source051a334 is remote. All 79 offline tests and both 29-test corrected cloud runs passed. Automatic updates remain off. Heart clipping is a saved-scene geometry issue; creative refinement remains deferred. Next bridge the normal prompt pipeline to the proven foundation before email intake.
+**Status:** Controlled Step 7 hardware tests passed: heart and baseline installed over Wi-Fi, deferred validity/health, SDK manual rollback, baseline reinstallation and final normal stones confirmed. Source051a334 is remote. All 79 offline tests and both 29-test corrected cloud runs passed. Automatic updates remain off. Heart clipping is a saved-scene geometry issue; creative refinement remains deferred. Routine prompt/publication integration now passes locally with 88 offline tests and a real sealed build; revised cloud verification is next. A different Wi-Fi network is planned but not configured.
 
 **Goal:** Email a prompt, generate and compile an animation in the cloud, and have the ESP32 install it over Wi-Fi while your computer is off.
 
 **Budget:** Zero additional spending. Stay on verified free allowances. When a limit is reached, pause or queue requests. Do not enable paid fallback or use a time-limited paid trial as the long-term solution.
 
-**Starting point:** Cloud saved-response generation/compilation, public delivery and the separate sealed known-scene OTA workflow are verified. Current board is baseline f2e92e43…/foundation f124…/app0/VALID with saved credentials. The older routine prompt builder/publisher and Desktop helper still use non-OTA source; integrate them before automatic prompt/email delivery. Read RESUME.md for exact evidence and current next action.
+**Starting point:** Cloud saved-response generation/compilation, public delivery and the separate sealed known-scene OTA workflow are verified. Current board is baseline f2e92e43…/foundation f124…/app0/VALID with saved credentials. The revised routine builder/publisher uses the sealed foundation locally; its cloud run/publication is pending. The Desktop helper still uses non-OTA source and must not overwrite the OTA board. New Wi-Fi setup is pending. Read RESUME.md for exact evidence and current next action.
 
 ## How to use this plan
 
@@ -202,13 +202,15 @@ Actual evidence and limitations: device/verification.json, cloud/ota-publication
 
 ## Step 7A — Carry the proven OTA foundation into routine prompt delivery
 
-This bridge is required before Steps 8–10 can deploy new prompts. The known-scene workflow is separate; older routine builds and Desktop helper still overwrite networking support.
+This bridge is required before Steps 8–10 can deploy new prompts. November 26: the regular prompt and saved-response publication-test workflows now call the sealed builder/publisher. Local baseline/heart builds and package checks pass; 88 offline tests pass. Revised cloud execution/publication and physical routine-path confirmation are pending. The Desktop helper remains on the old foundation; do not deploy it. New Wi-Fi is not configured yet; compilation/cloud readbacks do not require that network.
 
-- [ ] Adapt regular prompt build/publication to sealed runtime/protected-source/identity checks and schema2 compatible current/previous/recovery metadata.
-- [ ] Use an existing saved response first; no new model API call or spending. Validate exact generation-record/function bindings and compile against pinned inputs.
-- [ ] Preserve immutable history/recovery, previous compatible image, exact source-commit/size/hash checks and failed-build/publication behavior.
+- [x] Adapt regular prompt build/publication to sealed runtime/protected-source/identity checks and schema2 compatible current/previous/recovery metadata (local implementation; cloud execution pending).
+- [x] Use an existing saved response first; zero new model API calls/spending. Exact generation-record/function binding and pinned local compile passed: heart 1,012,080 bytes, headroom 298,640.
+- [x] Preserve immutable history/recovery, compatible previous, exact source-commit/size/hash checks and failure behavior in the shared publisher; offline tests pass. No new live publication is claimed.
 - [ ] Verify a real routine-path package retains the foundation, then one controlled install/health without enabling automatic delivery. Reuse completed tests where code is unchanged.
 - [ ] Keep manual update behavior until an explicit tested automation/acknowledgment design exists. Never report published as installed.
+
+**Network change, November 26:** User will use a different Wi-Fi network, not configured yet. Keep existing credentials/recovery. When ready, privately provision via native Arduino IDE, then read fresh association/health. No rebuild/upload is required merely to change Wi-Fi. No new credentials have been requested or entered.
 
 ## Step 8 — Prepare the email input
 

@@ -88,7 +88,9 @@ class OtaFoundationTests(unittest.TestCase):
             self.assertEqual(len(foundation), 64)
 
     def test_network_calls_remain_forbidden_in_generated_function(self):
-        for code in ('WiFi.disconnect();', 'lightboard::begin();', 'esp_ota_set_boot_partition(0);'):
+        for code in ('WiFi.disconnect();', 'lightboard::begin();', 'esp_ota_set_boot_partition(0);',
+                     'lightboardFlashPaused = true;', 'displayRefreshCount = 0;',
+                     'displayAccess = 0;', 'displayRefreshTask = 0;'):
             with self.subTest(code=code), self.assertRaises(ValueError):
                 scene.validate_function('void restState(unsigned long now) { ' + code + ' }')
 

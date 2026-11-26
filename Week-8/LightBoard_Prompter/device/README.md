@@ -1,6 +1,6 @@
 # Wi-Fi/OTA pilot foundation
 
-**Verified November 23,2026:** Two known scenes installed over Wi-Fi, deferred boot validation passed for each, SDK manual rollback returned the prior image, and baseline reinstallation restored normal stones. Automatic checking/installing remains disabled. Regular prompt/email delivery still needs this foundation integrated into its older build/publish path. Current handoff: [RESUME.md](../RESUME.md).
+**Verified November 23,2026:** Two known scenes installed over Wi-Fi, deferred boot validation passed for each, SDK manual rollback returned the prior image, and baseline reinstallation restored normal stones. Automatic checking/installing remains disabled. Regular prompt/publication integration passed locally November 26; revised cloud execution remains pending. Email delivery is later work. Current handoff: [RESUME.md](../RESUME.md).
 
 ## Running firmware and evidence
 
@@ -22,9 +22,11 @@ Preserved visible recovery sketch: `/Users/pmartin5/Documents/Arduino/Lightboard
 
 Use native Arduino IDE Upload only when recovery is needed. Rediscover USB (last `/dev/cu.usbserial-0001`), verify source/ESP32 Dev Module, pinned2.0.17 and original full profile: Upload921600, CPU240MHz, flash80MHz/QIO/4MB, default partitions, debugNone, PSRAMoff, loop/events core1, eraseAlloff, JTAGoff. No package upgrades or CLI serial/Terminal UI workaround. If stale ZigbeeMode is actually observed, reload board data, wait and reselect board; inspect actual compiled options. Record flash byte count/hash/reset and fresh boot health. IDE editor scene can differ from installed OTA scene; do not click Upload merely to resume.
 
-The Desktop helper and older routine cloud prompt builder still use non-OTA source. Do not deploy them over this firmware. Next integrate the sealed foundation with saved-response reuse before routine/email delivery. USB recovery evidence and actual manual OTA rollback are preserved; arbitrary fault/power-cut recovery is not inferred.
+The revised routine prompt/publication workflows now use the sealed foundation and pass locally with saved-response reuse; cloud verification is pending. The Desktop helper and historical cloud builder still use non-OTA source. Do not deploy them over this firmware. USB recovery evidence and actual manual OTA rollback are preserved; arbitrary fault/power-cut recovery is not inferred.
 
 ## Credentials and connection controls
+
+**November 26 network change:** The user plans to use a different Wi-Fi network, which is not configured yet. New network name, band/security and credentials are unknown. No provisioning/forget/reconnect command has been sent. Keep the existing credentials until the replacement is ready; use the private native IDE provisioning procedure below then verify fresh association/health. The software build and public feed checks can proceed independently. Historical Hello World results below remain the last observed state.
 
 Saved Hello World2.4GHz credentials already exist in board NVS and survived installs/rollback. Hello World5GHz is separate. No repeated provisioning is needed; Mac may use another network. Credentials are never compiled/published/echoed, but NVS is unencrypted and accessible to physical flash reads. No eFuse/flash-encryption policy changed.
 
