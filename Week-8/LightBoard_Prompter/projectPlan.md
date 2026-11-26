@@ -245,10 +245,10 @@ Bring back this request:
 
 **Complete the automation.**
 
-**November26 checkpoint:** Queue.gs now implements durable per-job storage, checksum-bound immutable receipt references, FIFO, shared-lock/capacity controls and one-in-flight/revisioned transitions.15 focused local checks pass; actual Google installation/persistence is next (see email/queue.md). No dispatch/trigger/model/publication/device operation has been enabled. Workflow job-result binding and real adapter are not implemented yet.
+**November26 checkpoint:** Queue.gs now implements durable per-job storage, checksum-bound immutable receipt references, FIFO, shared-lock/capacity controls and one-in-flight/revisioned transitions.15 focused local checks pass; actual Google installation/persistence also passed from supplied second-run log at1:25:37PM (see email/queue.md). No dispatch/trigger/model/publication/device operation has been enabled. Workflow job-result binding and real adapter are not implemented yet.
 
 - [x] Implement/test durable queue storage and internal transition rules locally, separately from the older offline simulation.
-- [ ] Install separate Queue file, run setupQueue once and syncQueue twice; verify two existing jobs survive as the same entries without another import or dispatch.
+- [x] Installed separate Queue file; user ran setupQueue and syncQueue twice. Supplied second execution1:25:37 shows imported0/jobs2, same IDs/hashes/order, revision1/attempt0, null in-flight and dispatch disabled. First-run log not captured; no repeat needed.
 - [ ] Bind workflow inputs/results to queue job ID, attempt, exact prompt hash, run and source commit before enabling dispatch.
 
 

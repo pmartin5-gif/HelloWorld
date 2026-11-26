@@ -2469,6 +2469,20 @@ Ran only node --test tests/test_persistent_queue.cjs:15 pass,0 fail,109.35ms. Ac
 
 Local implementation complete; Google installation and live persistence are still pending. Next add separate Script Queue from exact local Queue.gs, Save, run setupQueue once and syncQueue twice. Expect two imports then zero, same two existing received job IDs/hashes/head, no in-flight job and dispatchEnabledfalse. No new test email, manifest edit or reset of setup/history. After persistence check, implement the actual job-bound GitHub adapter separately. No automatic delivery enabled.
 
+## 109. Live queue persistence confirmed from second execution
+
+**Date:** November 26, 2026
+
+### Your prompt
+
+> I did everything but ran syncQueue once without saving output. Second run1:25:36–1:25:37: synced/imported0/record_only/dispatchEnabledfalse/jobs2, correct heart head, null in-flight, original heart/vessel IDs and hashes, both received/revision1/attempt0/publishedfalse/deviceConfirmedfalse.
+
+### Intent, result and next checkpoint
+
+User reports installing Queue and completing setup/two separate sync runs. Second log is sufficient evidence: both records survived from an earlier execution, hashes/order match known accepted receipts, and no duplicate import/progress occurred. First sync output/import count not captured or assumed; no rerun/reset required. Reassured user and saved full supplied log privately, comparison metadata in verification and current checkpoint/guide/plan.
+
+No queue/intake source change, repeated test suite, firmware build, cloud/model request, email, trigger, publication or device command. Live queue persistence checkpoint complete. Next prepare actual GitHub adapter and workflow job/attempt/prompt/run/commit/result binding locally before credential handoff. All dispatch/new model/publication/reply/trigger/device actions remain disabled; no credential needs to be shared in chat.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.

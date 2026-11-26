@@ -1,6 +1,6 @@
 {
   "date": "2026-11-26",
-  "status": "Planned live intake checks passed; persistent queue implemented locally and 15 focused checks pass; live queue installation/persistence pending",
+  "status": "Planned live intake checks and live queue persistence passed; GitHub adapter/workflow binding next",
   "focused_tests_passed": 15,
   "test_command": "node --test tests/test_email_intake.cjs tests/test_queue_simulation.cjs",
   "full_firmware_regression_suite_run": false,
@@ -25,7 +25,7 @@
     "Conservative plain-text boundaries require simple test messages; no universal email/signature parser is claimed.",
     "Standalone marker requires direct In-Reply-To to one eligible earlier design from the same sender/thread.",
     "Script Properties capacity is finite; processing pauses rather than deleting receipts or buying storage.",
-    "Queue.gs implements durable storage/transitions locally; Google installation/persistence is pending. queue-simulation.cjs stays an older simulation-only contract. Actual GitHub dispatch/output reconciliation and authenticated device-report channel are not implemented."
+    "Queue.gs is installed and live persistence validated from supplied second-execution log. First import output was not captured and is not required again. Actual GitHub dispatch/output reconciliation and authenticated device-report channel are not implemented; old queue-simulation.cjs remains a separate offline contract."
   ],
   "files_sha256": {
     "email/Inbox.gs": "41fce61d7dc91116f3c46564d5209cb420416c041f7fb43e20af8a3074399e28",
@@ -38,7 +38,7 @@
     "email/Queue.gs": "cd2c9840709fba6de99b52861611588d0953e41f866fb2790a038c5ae51cb6e4",
     "tests/test_persistent_queue.cjs": "f94f02759d45badc7f7b088e3a9d00cfa4d13c6cbb02756bd65d54674a968373"
   },
-  "next_action": "In the existing private Apps Script project add separate Queue.gs from email/Queue.gs, save, run setupQueue once and syncQueue twice in separate executions. Expect first import2/jobs2 and then import0/jobs2 with same IDs/hashes/head and no in-flight job; dispatchEnabledfalse. Do not change Code.gs, manifest, properties, receipts or triggers. Then implement job-bound GitHub adapter separately.",
+  "next_action": "Prepare the GitHub adapter and workflow job/attempt/prompt-hash/result binding locally. Keep live dispatch/model calls/publication/replies/triggers/device delivery off. Queue persistence has passed; no repeat or reset needed. Prepare concrete adapter before asking user to create/store a private repository-scoped credential.",
   "mailbox_choice": "Separate Gmail inbox configured and authorized; first fixed-reader acceptance reported",
   "network_connection_verified": "martin apple, wifi_status3, configured_matches_expectedtrue, healthtrue; November26",
   "script_project_created": true,
@@ -209,12 +209,26 @@
     "interpretation": "One new rejection and zero new jobs, as expected for standalone marker without direct-reply context. Aggregate log does not expose the durable reason."
   },
   "persistent_queue_implemented_locally": true,
-  "persistent_queue_installed_live": false,
-  "persistent_queue_live_persistence_verified": false,
+  "persistent_queue_installed_live": true,
+  "persistent_queue_live_persistence_verified": true,
   "persistent_queue_mode": "record_only; dispatch disabled",
   "persistent_queue_focused_tests_passed": 15,
   "persistent_queue_test_command": "node --test tests/test_persistent_queue.cjs",
   "persistent_queue_test_duration_ms": 109.354959,
   "github_dispatch_adapter_implemented": false,
-  "github_workflow_changed_for_queue": false
+  "github_workflow_changed_for_queue": false,
+  "live_queue_persistence": {
+    "evidence_source": "User-pasted second-run log after reported setup and two sync executions",
+    "evidence_path": ".build/email-intake-2026-11-26/live-queue-persistence.json",
+    "completed_local": "1:25:37 PM America/New_York",
+    "first_sync_output_captured": false,
+    "imported": 0,
+    "jobs": 2,
+    "original_ids_and_hashes_match": true,
+    "fifo_order_correct": true,
+    "all_revisions": 1,
+    "all_attempts": 0,
+    "in_flight_job": null,
+    "dispatch_enabled": false
+  }
 }

@@ -1,8 +1,8 @@
 # Persistent queue checkpoint
 
-November 26, 2026: `Queue.gs` implements durable queue storage and transitions. Fifteen focused checks of the actual Apps Script source pass locally. Installation and persistence in the private Google project are the next live check. This is separate from the older offline `queue-simulation.cjs` contract.
+November 26, 2026: `Queue.gs` implements durable queue storage and transitions. Fifteen focused checks of the actual Apps Script source pass locally. Installation and live persistence in the private Google project passed at1:25:37PM: second sync imported0 with two correct received jobs, original hashes/order, revision1/attempt0 and dispatch disabled. First sync output was not captured; it does not need repeating. This is separate from the older offline `queue-simulation.cjs` contract.
 
-## Install and check persistence
+## Completed installation and persistence check
 
 In the existing **Lightboard Inbox** Apps Script project:
 
@@ -12,7 +12,7 @@ In the existing **Lightboard Inbox** Apps Script project:
 4. Run **syncQueue**. With the two existing accepted test jobs, expect `imported:2`, `jobs:2`, both `received`, original prompt hashes, the heart as `headJobId`, and `inFlightJobId:null`.
 5. Run **syncQueue** again as a separate execution. Expect `imported:0`, the same two jobs/hashes/head, and no in-flight job. Send no new email for this test.
 
-`inspectQueue` reads the same safe summary without importing anything. Once this checkpoint passes, future manual intake runs can be followed by syncQueue to import new accepted jobs. No queued job starts merely because it was imported. The current two examples are queued test data, not authorization to dispatch them later.
+`inspectQueue` reads the same safe summary without importing anything. This checkpoint has passed; do not reset/repeat it for a missing first-run log. Future manual intake runs can be followed by syncQueue to import new accepted jobs. No queued job starts merely because it was imported. The current two examples are queued test data, not authorization to dispatch them later.
 
 ## Storage and ordering
 
