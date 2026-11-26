@@ -116,15 +116,18 @@
   "desktop_helper_migrated": false,
   "network_change": {
     "requested_by_user": "2026-11-26",
-    "status": "Different network planned; not configured yet",
-    "network_name": null,
+    "status": "User privately provisioned martin apple; actual connection/intended-name/healthy firmware verified",
+    "network_name": "martin apple",
     "band_and_security_verified": false,
-    "provisioned": false,
+    "provisioned": true,
     "credential_or_network_command_sent": false,
     "last_observed_network": "Hello World (2.4 GHz), November 23",
-    "current_association_freshly_observed": false
+    "current_association_freshly_observed": true,
+    "wifi_status": 3,
+    "rssi_dbm": -59,
+    "configured_matches_expected": true
   },
-  "next_action": "Configure a private Gmail label/inbox and install the record-only email prototype for a manual live intake test. New Wi-Fi, routine publication/install and production dispatch/acknowledgments remain pending.",
+  "next_action": "Configure selected separate Gmail inbox and manually test record-only intake. Routine publication/install and production dispatch/acknowledgments remain pending.",
   "routine_check_policy": {
     "date": "2026-11-26",
     "regression_tests_per_scene": false,

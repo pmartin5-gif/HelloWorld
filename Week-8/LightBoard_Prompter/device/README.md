@@ -26,7 +26,7 @@ The revised routine prompt/publication workflows use the sealed foundation and p
 
 ## Credentials and connection controls
 
-**November 26 network change:** The user plans to use a different Wi-Fi network, which is not configured yet. New network name, band/security and credentials are unknown. No provisioning/forget/reconnect command has been sent. Keep the existing credentials until the replacement is ready; use the private native IDE provisioning procedure below then verify fresh association/health. The software build and public feed checks can proceed independently. Historical Hello World results below remain the last observed state.
+**November26 network verified:** User privately provisioned `martin apple` in native IDE. Observed credentials-stored/connected events; fresh status wifi_status3/RSSI-59, same stones/app0/SDK VALID/healthtrue, minheap214,184/maxgap49ms. Expected-name diagnostic returned configured_matches_expectedtrue and alreadyconnected/no scan. WPA2/2.4GHz availability was user-reported; no security/channel scan was performed. No password was received/observed by the assistant; no firmware build/upload was needed. Historical Hello World results below describe the earlier network. Continue separate Gmail inbox setup; no repeated provisioning is required.
 
 Saved Hello World2.4GHz credentials already exist in board NVS and survived installs/rollback. Hello World5GHz is separate. No repeated provisioning is needed; Mac may use another network. Credentials are never compiled/published/echoed, but NVS is unencrypted and accessible to physical flash reads. No eFuse/flash-encryption policy changed.
 

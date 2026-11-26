@@ -2228,6 +2228,34 @@ All**15 focused new inbox/queue checks passed** in114ms reported by Node, using 
 
 Routine saved-response cloud compilation/package is verified; new routine publication/install remain separate pending steps. Record-only email intake and offline queue prototype are locally ready. Asked whether to use a dedicated label in existing Gmail or a separate inbox; no choice has arrived yet. No Google account was inspected/configured, no Apps Script installed/OAuth authorized, and no live email processed/replied to. Next choose the account/label, privately configure test senders and manually run setup/acceptance checks. Do not add triggers, dispatch credentials, model calls or installed-success acknowledgments yet. New Wi-Fi remains not configured; board and stored credentials are untouched. The only new cloud run was manually dispatched by the user; no release/publication/device command/new model call/additional spending occurred. Preserve unrelated repository files.
 
+## 94. Separate inbox selected; Wi-Fi provisioning prepared in native IDE
+
+**Date:** November 26, 2026
+
+### Your prompt
+
+> We're going to use a separate gmail inbox. but first i want to get the esp32 connected to a wifi network. I have instructions here [private native-IDE provisioning instructions for martin apple, WPA2 and2.4GHz].
+
+### Intent and observed result
+
+Prioritize network setup and retain separate Gmail as the later account choice. Inspected native Arduino IDE only; freshly observed ESP32 Dev Module at `/dev/cu.usbserial-0001`, Serial Monitor115200/New Line. Cleared old output and sent only `status`. Actual running stones f2e92e43…/f124/app0/SDK state2 VALID, layouttrue and healthtrue; wifi_status1/RSSI0, so not connected. Seen heap free/min220,532/218,140, worker/refresh stack22,848/3,436, frames61,385/maxgap37ms. AX line truncates after health_ok; no unseen trailing fields claimed. Open IDE editor points to older pilot_v5 source; no upload/verify/package upgrade occurred.
+
+Left the monitor ready for user-operated timed private provisioning: provision, exact network name, password at its prompt, clear credential input/history, then report done. No provision/network credential command has been sent by the assistant, no password requested/received, no new network connection claimed. Await user completion before any further UI read. Updated checkpoint/network evidence and separate-inbox choice. No tests, model call, cloud run, publication or firmware build was required.
+
+## 95. New Wi-Fi association verified
+
+**Date:** November 26, 2026
+
+### Your prompt
+
+> done
+
+### Intent and result
+
+After user completed private provisioning and cleared credential input/history, inspected native Serial Monitor. Observed `LB_CREDENTIALS_STORED_PRIVATELY` and `LB_WIFI_CONNECTED`. Sent fresh `status`: actual wifi_status3/RSSI-59dBm, credentials_settrue, unchanged stones f2e92e43…/f124/app0/SDK2 VALID/layouttrue/healthtrue. Free/min/largest heap219,244/214,184/110,580; worker/refresh stack22,240/3,436; frames63,711/maxgap49ms. Status truncates after health_ok in AX; no trailing fields inferred. Sent read-only `wifi-diagnose` plus literal TAB and `martin apple` through native paste; configured_matches_expectedtrue, alreadyconnected/no scan. This verifies the intended configured network and actual association; WPA2/2.4GHz availability is user-reported, no independent security/channel scan. USB/baud/New Line unchanged.
+
+Updated checkpoint/network evidence and plans. No password read/received, firmware upload/build, regression tests, model request, cloud dispatch, publication or device install. Network step is complete; separate Gmail inbox setup and record-only live intake are next. Routine publication/install and real authenticated acknowledgments remain later work. No repeat provisioning/network check is a resume prerequisite.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.

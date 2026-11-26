@@ -19,7 +19,7 @@
   ],
   "queue_is_simulation_only": true,
   "live_installed_acknowledgments_implemented": false,
-  "network_change_pending": true,
+  "network_change_pending": false,
   "limitations": [
     "Gmail API, Script Properties and locks were mocked locally; no live Gmail acceptance yet.",
     "Conservative plain-text boundaries require simple test messages; no universal email/signature parser is claimed.",
@@ -34,5 +34,7 @@
     "tests/test_email_intake.cjs": "a9227699ca8ee45c5d542b1c31e0091dda25c1a15a7dbf6bc544d7b49a201130",
     "tests/test_queue_simulation.cjs": "49404451ab0eca3f15d43f606cb82bd2063aacf448f4f7cefaef690f25100a7c"
   },
-  "next_action": "Choose Gmail account/label, privately configure approved senders, install script/manifest, authorize read-only access and run the manual intake acceptance steps in email/README.md."
+  "next_action": "Choose Gmail account/label, privately configure approved senders, install script/manifest, authorize read-only access and run the manual intake acceptance steps in email/README.md.",
+  "mailbox_choice": "Separate Gmail inbox, selected by user; account/setup still pending",
+  "network_connection_verified": "martin apple, wifi_status3, configured_matches_expectedtrue, healthtrue; November26"
 }
