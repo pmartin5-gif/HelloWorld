@@ -2833,6 +2833,16 @@ Saved full publication marker and manual hardware evidence under ignored email-i
 
 **Result:** Handoff notes saved locally. No runtime/code/config changes, tests, model request, workflow dispatch, device operation or remote push. Latest confirmed email repair and automatic installation remain the completed baseline. Stop work until user resumes.
 
+## 135. Explain a later green build's delay and observe its automatic installation
+
+> “i just receiveda new email and all the checks in github seemed to get resolved, but i am not seeing a new image on the lightboard. do you know what's going on?”
+
+**Intent:** Diagnose existing email delivery while preserving the saved next-session agenda. No new generation or creative review requested.
+
+**Evidence:** Run45910268762/job140216682803/source262c61e succeeded; one normal-use response3.952s, published23:21:15.940Z. Feed/result agree on85a093c4aa648ef301d2b626/1,013,680bytes/SHA883d810c81559d893691994813ec3e79383d66b86b4737ac2d921e92795434fe/a529/automatictrue. Initial native read-only status still e7ece/app0/SDK2VALID/healthtrue/Wi-Fi3/RSSI-67; diagnostic check returned prior e7ece/95500SHA while connector already saw newfeed. Later natural poll emitted exactnew LB_AUTO_INSTALL, followed by exact85a093 boot/automatic_updatestrue/Wi-Fi connected/LB_BOOT_HEALTH_PASSED by23:26Z. Thus publication succeeded and device delivery lagged, consistent with earlier feed propagation/cache behavior. Exact headers/TTL not captured; no stronger caching claim.
+
+**Result:** New firmware automatically installed and healthy; informed user. No resend/rebuild/model request/manual install/Upload/source change or tests. Only native status/check diagnostics. No independent physical appearance confirmation requested; device boot is direct installation evidence. Saved current result/feed/full generated record/delivery metadata in ignored evidence and updated RESUME while retaining the prompt deep dive/checks audit as next-session priorities. Notes remain local to preserve live source pin.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.
