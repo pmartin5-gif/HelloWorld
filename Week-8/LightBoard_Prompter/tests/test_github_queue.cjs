@@ -70,12 +70,12 @@ function runtime(data = initial(), state = {}, options = {}) {
       return response(state.postCode || 200,state.postBody || {workflow_run_id:1234});
     }
     if (url.endsWith('/commits/main')) {
-      assert.equal(opts.headers.Authorization,undefined);
+      assert.equal(opts.headers.Authorization,'Bearer '+token);
       return state.quota ? response(403,'private body',{ 'X-RateLimit-Remaining':'0' }) :
         response(200,{sha:state.head || commit});
     }
     if (url.includes('/contents/')) {
-      assert.equal(opts.headers.Authorization,undefined);
+      assert.equal(opts.headers.Authorization,'Bearer '+token);
       const file = url.includes('/contents/.github/') ? join(root,'../../.github/workflows/lightboard-prompt-build.yml') :
         join(root,'cloud/queue_binding.py');
       const content=state.badSource ? 'edited' : readFileSync(file,'utf8');
@@ -153,6 +153,22 @@ test('changed main or edited workflow source stops before reserving or posting',
   const bad=runtime(initial(),{badSource:true});bad.context.setupQueue();bad.context.syncQueue();
   assert.equal(bad.context.setupGitHubConnection().reason,'LB_GH_SOURCE');
   assert.equal(bad.data.LB_GITHUB_ACTIVE,undefined);
+});
+
+test('setup quota reports only safe authenticated request/reset metadata and retains unstarted jobs',()=>{
+  const e=runtime(initial(),{quota:true});e.context.setupQueue();e.context.syncQueue();
+  const result=e.context.setupGitHubConnection();
+  assert.equal(result.reason,'LB_GH_QUOTA');assert.equal(result.rateLimit.authenticated,true);
+  assert.equal(result.rateLimit.requestType,'source_head');assert.equal(result.rateLimit.remaining,0);
+  assert.equal(e.q().attempt,0);assert.equal(e.data.LB_GITHUB_ACTIVE,undefined);
+  assert.equal(e.state.postCount,undefined);assert.equal(e.logs.join('').includes(token),false);
+  const headers={'X-RateLimit-Reset':'1795716000','X-RateLimit-Limit':'5000',
+    'X-RateLimit-Remaining':'0','Retry-After':'120'};
+  e.context.UrlFetchApp.fetch=()=>response(429,'private provider body '+token,headers);
+  const retry=e.context.setupGitHubConnection();
+  assert.equal(retry.rateLimit.resetAt,new Date(1795716000*1000).toISOString());
+  assert.equal(retry.rateLimit.retryAfterSeconds,120);assert.equal(retry.rateLimit.limit,5000);
+  assert.equal(e.logs.join('').includes('private provider'),false);
 });
 
 test('lost POST response is reconciled by exact attempt title after restart without another dispatch',()=>{

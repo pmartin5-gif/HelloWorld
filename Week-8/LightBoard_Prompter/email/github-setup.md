@@ -1,6 +1,6 @@
 # Manual queue-to-GitHub saved-build connection
 
-November 26, 2026. The adapter/workflow are prepared locally. They have not been pushed, installed or run against GitHub yet. The two existing live queue entries and earlier successful cloud/hardware checks remain preserved. This stage tests the saved heart build only: no new model request, publication, acknowledgment email, trigger or board update.
+November 26, 2026. The adapter/workflow push is verified on GitHub main at88eac47d92632ffe7a6f14dd2008a17569cb91ca. Private Apps Script installation/setup and first saved-heart dispatch/result now passed live: run45886859649, poll returns built with exact bound prompt/result checksum, modelRequests0 and publication/device confirmation false. Do not repeat the completed example. The two existing live queue entries and earlier successful cloud/hardware checks remain preserved. This stage tests the saved heart build only: no new model request, publication, acknowledgment email, trigger or board update.
 
 ## 1. Push the prepared source
 
@@ -11,7 +11,7 @@ git push origin main
 git rev-parse HEAD
 ```
 
-Keep the full 40-character commit ID for the private setup property below. Do not manually start the workflow in Actions: the Apps Script request must supply the queue binding. Setup requires GitHub main to equal that exact commit and checks the exact workflow/helper file hashes. Future main changes stop new dispatch until deliberately reviewed; they do not prevent polling the pinned original run.
+Push verified: use `88eac47d92632ffe7a6f14dd2008a17569cb91ca` for the private setup property below. Keep main/HEAD pinned until this setup and first bound build finish. Do not manually start the workflow in Actions: the Apps Script request must supply the queue binding. Setup requires GitHub main to equal that exact commit and checks the exact workflow/helper file hashes. Future main changes stop new dispatch until deliberately reviewed; they do not prevent polling the pinned original run.
 
 ## 2. Install the prepared Apps Script files
 
@@ -34,7 +34,7 @@ In Apps Script **Project Settings → Script Properties**, add:
 | `LB_GITHUB_TOKEN` | The generated fine-grained token. Paste it only here, never chat/source/terminal/logs. |
 | `LB_GITHUB_SETUP` | `{"sourceCommit":"YOUR_FULL_PUSHED_COMMIT_ID"}` |
 
-Save the properties. Keep existing properties unchanged. The source contains no credential. Source-file checks use public unauthenticated reads; Actions requests use the token only at api.github.com. Log-storage redirects never receive that bearer token. Setup verifies source/read access, not write permission; the subsequent manual dispatch tests write access.
+Save the properties. Keep existing properties unchanged. The source contains no credential. Source-file checks and Actions requests now use the existing token only at api.github.com, avoiding the lower anonymous IP-based limit. The first live setup hit LB_GH_QUOTA; which request hit it was not recorded by that older adapter. Updated adapter reports safe reset/retry metadata on setup quota. No token permission expansion is requested. Log-storage redirects never receive that bearer token. Setup verifies source/read access, not write permission; the subsequent manual dispatch tests write access.
 
 GitHub's [token setup guide](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) describes the repository and permission selection; [workflow dispatch](https://docs.github.com/en/rest/actions/workflows#create-a-workflow-dispatch-event) requires Actions write. No billing or subscription change is needed by this implementation.
 
@@ -71,4 +71,4 @@ python3 -m unittest discover -s tests -p test_queue_binding.py -v
 
 These exercise actual adapter/queue/binding source with mocked HTTP/storage and synthetic manifests. They cover exact source/input/result bindings, one POST, crash/restart and lost-response recovery, rate limits, wrong/duplicate/oversized results, redirect credential isolation, no model/publication authorization, FIFO and unchanged receipts. One test uses the real existing manifest validator; no compiler or firmware suite runs. Remote response fixtures do not establish live GitHub success.
 
-Live source push, private installation/credential/OAuth, manual dispatch/result verification are pending. Arbitrary-prompt generation, publication/feed/device delivery, authenticated device confirmation, durable truthful email replies and scheduling are subsequent work. Do not describe this build-only connection as the complete email-to-board system.
+Source push, private setup and first manual dispatch/result verification are complete. The earlier dispatch_unknown was reconciled by pollSavedBuild without another POST. Remote result marker independently matches the stored result checksum. Source drift, rate-limit and first-setup instructions above remain recovery guidance; do not repeat passed stages. Arbitrary-prompt generation, publication/feed/device delivery, authenticated device confirmation, durable truthful email replies and scheduling are subsequent work. Do not describe this build-only connection as the complete email-to-board system.

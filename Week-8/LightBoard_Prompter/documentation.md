@@ -2505,6 +2505,115 @@ Updated Queue.gs for adapter compatibility check, truthful manual-versus-automat
 
 Primary GitHub workflow dispatch/job-step logs/fine-grained token docs and Google UrlFetch docs checked. New response shapes remain unverified live. Source changes are local only; connector write403/shell network limitations were already established, so no ineffective retry. Next user pushes main, then privately installs updated Queue/new GitHub/manifest, stores HelloWorld-only Actions write token and exact pushed commit, runs GET-only setup. Manual dispatch/poll is concretely prepared for subsequent live verification. No token should be shared in chat and no prior passing intake/queue test needs repetition.
 
+## 111. Prepared GitHub source push verified
+
+**Date:** November 26, 2026
+
+### Your prompt
+
+> push complete
+
+### Intent and result
+
+GitHub connector fetch_commit(main) confirms remote88eac47d92632ffe7a6f14dd2008a17569cb91ca, the exact prepared adapter/workflow source. Saved compact verification privately; no full diff needed for next work. Next handoff installs updated Queue/new GitHub/manifest, creates privately stored HelloWorld-only fine-grained Actions write token and setup sourceCommit property, then runs GET-only setupGitHubConnection. No token received or requested in chat, no account security action performed by agent, and private installation/OAuth/setup/dispatch/result remain pending.
+
+No code/tests/compiler/model/email/trigger/device operation. Evidence-only checkpoint/docs remain uncommitted deliberately to preserve pushed HEAD/main as the setup source pin; do not commit/push notes until the first bound build is complete or pin changes are deliberately handled. Existing two live jobs and all receipts remain preserved.
+
+## 112. Live GitHub setup stopped by duplicate global declaration
+
+**Date:** November 26, 2026
+
+### Your prompts
+
+> What should the token name and description be?
+> where do i select setupGitHubConnection?
+> SyntaxError: Identifier LBGH has already been declared at Github.gs:1,1:57:47.
+
+### Diagnosis and next action
+
+Supplied token name/description and editor/function-dropdown guidance. New error occurs at project parsing before setup can run. Local rg finds one const LBGH in GitHub.gs; syntax compilation of all four canonical .gs files together passes without executing them. Native editor lists one Github.gs plus Code/Diagnose/Queue/manifest; an extra differently named Github file is not observed. Exact duplicate inside/between live files remains unidentified. Editor text searches showed no const LBGH in Code/Queue, but native editor/history views became conflicting/stale, so do not overstate full source inspection or continue ineffective UI loops. No editor source write/delete or properties/credentials inspected/changed.
+
+A navigation shortcut unintentionally retried selected setupQueue at2:01:05; same duplicate-declaration error occurred before function execution. Informed user; no state mutation/build/device action. Next manual source check locates exact const LBGH declaration in each .gs: one belongs in Github only. Replace duplicated or misplaced source with the matching canonical full file, preserve all private properties/receipts/queue and source pin, then save/run setupGitHubConnection. No new test suite/build/model/email/trigger/publication. Checkpoint updates stay uncommitted during pinned first-build setup.
+
+## 113. Authorized live-source replacement blocked by unreliable native copy
+
+**Date:** November 26, 2026
+
+### Your prompt
+
+> Implement the plan.
+
+### Work and actual outcome
+
+Attempted to preserve selected live Github.gs via native Chrome copy into a separate VSCode document before any overwrite. Native source selection appeared in AX but clipboard/save yielded the336byte manifest instead; locally verified capture type and renamed it accordingly in ignored evidence. Used only documented CUA controls; no shell clipboard/browser workaround. Repeated selection/native menu copy did not yield a verifiable live source backup. Therefore did not overwrite live source or run setup without the required preservation step. No token/properties/queue/source-pin changes, new tests/build/model/email/trigger/device operations. Explicitly informed user of concrete tool blocker and need for manual preservation/replacement/save/browser reload/one setup run. Exact duplicate cause not confirmed. Notes left uncommitted during pinned source setup.
+
+## 114. Misplaced live Queue/Diagnose source explains duplicate declarations
+
+**Date:** November 26, 2026
+
+### Your prompts
+
+> Accidentally replaced Code.gs with the GitHub script; please provide Code.gs again.
+> Restored Code.gs and Github.gs;2:31:15 still reports duplicate LBGH.
+
+### Evidence and required repair
+
+Created clearly named ignored restore/Code.gs from canonical Inbox.gs; user reports restoring it. Live read-only Code header now matches intake. Verified local user-created GitHub.backUp.js is byte-identical to canonical GitHub.gs and absent from live file list; not the cause. After refresh, live file selection worked: Queue.gs is selected while GitHub adapter/const LBGH is visibly displayed (screenshot); Diagnose.gs selected while durable queue/const LBQ/setupQueue is shown (AX). This identifies the actual source-placement error, rather than an unproven runtime cache issue.
+
+Prepared correctly named restore/Queue.gs and restore/Diagnose.gs from exact canonical bytes. Both must be replaced before running: fixing Queue alone leaves duplicate LBQ in misplaced Diagnose. Keep correct Code/Github and manifest/properties/token/receipts/queue. After saving both, Chrome Reload button and one setupGitHubConnection run verifies parsing/configuration. No live code mutation, setup run, full suite, build/model/email/trigger/device operation by assistant this turn. Source pin preserved; notes remain uncommitted.
+
+## 115. Syntax repaired; setup rate limit handled without retry loop
+
+**Date:** November 26, 2026
+
+### Your prompt
+
+> setupGitHubConnection2:35:40–2:35:42: stopped/LB_GH_QUOTA, automaticDispatchEnabledfalse/publishedfalse/deviceConfirmedfalse.
+
+### Findings and changes
+
+Live placement repair now parses and reaches GitHub. Setup/configuration success is not claimed and no dispatch occurred. Older adapter returned no endpoint/reset context; cannot prove which call hit quota. Found anonymous commits/main and contents requests, a plausible IP-limit cause. Primary GitHub rate-limit and token docs confirm lower unauthenticated IP limits and public read access. Changed source reads to use existing token, without adding permissions or touching source/workflow pin. Added sanitized request type/authentication/HTTP/limit/remaining/reset/retry metadata for setup quotas; no raw body, URLs, token or email content logged. Quota after POST remains uncertain and cannot cause blind resend.
+
+16 focused adapter checks pass including safe quota metadata/no setup/no attempts, source auth, redirect token isolation and prior run/receipt bindings. No other suite/compiler/cloud/model/email/trigger/device operation. Prepared clearly named restore/Github.gs; user should replace only live Github.gs, Save and run setupGitHubConnection once. No push, token recreation, manifest/property/queue reset or resume function. Local patch/notes remain uncommitted to preserve88eac47 until first bound build. If still quota, use precise returned reset/retry metadata before another call.
+
+## 116. Live GitHub connection configured for pinned saved-heart job
+
+**Date:** November 26, 2026
+
+### Your prompt
+
+> setup2:51:10–2:51:14: configured/saved_build_only, approved original heart job, sourceCommit88eac47d92632ffe7a6f14dd2008a17569cb91ca, automaticDispatchEnabledfalse/dispatchSentfalse.
+
+### Result and next checkpoint
+
+Supplied live output verifies authenticated source fix and private GitHub setup succeeded with expected job/source, no dispatch. Stored full result privately and public comparisons/checkpoint. No token accessed/logged, source mutation, test repetition, compiler/model/email/trigger/device operation. Next user manually runs dispatchNextSavedBuild once and shares output/run URL; subsequent pollSavedBuild verifies or reconciles exact run. Saved heart/reuse only, publication false; no independent Actions run, setup reset or duplicate reservation. Keep pinned source unchanged and local fix/notes uncommitted during first bound build. Actual dispatch/result still pending.
+
+## 117. First bound queue dispatch reached GitHub; run URL found
+
+**Date:** November 26, 2026
+
+### Your prompt
+
+> dispatch2:52:23–2:52:26 returned dispatch_unknown for heart job, nextActionpollSavedBuild. I don't know where to find a run URL.
+
+### Observed result and next checkpoint
+
+Used read-only GitHub connector repository actions/runs endpoint after the workflow-scoped route was rejected by its URL allowlist. Found run45886859649 created19:52:25Z, same job ID/unique reservation title, exact main88eac47/source/workflow_dispatch/attempt1, in_progress. Shared canonical run URL. Saved full evidence privately. No additional POST/run/retry triggered. Actual dispatch response shape remains unknown; do not claim error or second attempt. Script queue still needs pollSavedBuild to reconcile saved nonce/store run binding, then verify structured result after completion. No new local tests/build/model/email/trigger/device operation by assistant. Keep pinned source and uncommitted notes/fix intact during this run.
+
+## 118. Email/queue/cloud bound-result milestone passed
+
+**Date:** November 26, 2026
+
+### Your prompt
+
+> pollSavedBuild2:54:36–2:54:39: built, original heart job/run45886859649, exact prompt SHA738a280…8da63, result SHA6e4a19850f9c474c56ef799106ee18292d8efc0a7f4e6e4aa9298a39dcf68fe7, modelRequests0/publishedfalse/deviceConfirmedfalse/automaticDispatchEnabledfalse.
+
+### Verification and result
+
+Independently read GitHub run/job140139603365: completed success/source88eac47/attempt1, request binding/reuse/compile/result succeeded, new generation and publication skipped. Read decoded remote result marker; its canonical compact JSON checksum exactly matches user-persisted checksum. Marker retains same dispatch nonce/job/run/commit, exact prompt and saved427 generation provenance. App1,012,016bytes/SHA524ca739f55cffb3063d7a408dc4ccfc98181ee79fc75780e8b4ec701f183cb0, known709f heart version/f124foundation. Compiler/marker metadata, not independent binary download or physical installation proof. Full evidence saved privately.
+
+This completes manual email→immutable receipt→durable queue→one saved-response cloud build→verified bound result. No repeat tests/run, second POST, new model request, publication, email/trigger/device command. Next publication/board confirmation remains separate and off. Completed bound build releases source-pinning reason for holding local commits: commit the tested quota fix and notes locally, do not automatically push/change live source pin. Future source update requires deliberate configuration; one approved job is complete and vessel still cannot silently reuse heart/generate. No credentials accessed.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.

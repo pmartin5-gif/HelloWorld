@@ -34,7 +34,20 @@ function lbghApi_(snapshot, method, path, body, authenticated = true) {
   const response = lbghFetch_('https://api.github.com' + path, options);
   const code = response.getResponseCode();
   if (code === 429 || (code === 403 && (lbghHeader_(response, 'x-ratelimit-remaining') === '0' ||
-    lbghHeader_(response, 'retry-after')))) throw new Error('LB_GH_QUOTA');
+    lbghHeader_(response, 'retry-after')))) {
+    const error = new Error('LB_GH_QUOTA');
+    const integer = name => {
+      const raw = lbghHeader_(response, name);
+      return /^\d{1,10}$/.test(raw) ? Number(raw) : null;
+    };
+    const reset = integer('x-ratelimit-reset');
+    error.rateLimit = {httpStatus: code, authenticated,
+      requestType: path.includes('/commits/') ? 'source_head' : path.includes('/contents/') ? 'source_file' : 'actions',
+      limit: integer('x-ratelimit-limit'), remaining: integer('x-ratelimit-remaining'),
+      resetAt: reset !== null && reset <= 4102444800 ? new Date(reset * 1000).toISOString() : null,
+      retryAfterSeconds: integer('retry-after')};
+    throw error;
+  }
   return response;
 }
 function lbghJson_(response) {
@@ -53,6 +66,7 @@ function lbghLocked_(work) {
       if (error.message === 'LB_STORAGE_PAUSED') throw error;
       const known = /^LB_GH_(TOKEN|TARGET|NETWORK|QUOTA|HTTP|RESPONSE_SIZE|JSON|CONFIG|SOURCE|WORKFLOW|JOB|RUN|LOGS|RESULT)$/;
       return lbReport({status: 'stopped', reason: known.test(error.message) ? error.message : 'LB_GH_CONFIG',
+        ...(error.message === 'LB_GH_QUOTA' && error.rateLimit ? {rateLimit: error.rateLimit} : {}),
         automaticDispatchEnabled: false, published: false, deviceConfirmed: false});
     }
   });
@@ -69,7 +83,7 @@ function lbghConfig_(snapshot) {
   return {queue, config};
 }
 function lbghCheckSource_(snapshot, commit, workflowId) {
-  const head = lbghGet_(snapshot, '/commits/main', false);
+  const head = lbghGet_(snapshot, '/commits/main');
   lbghRequire_(head.sha === commit, 'SOURCE');
   const workflow = lbghGet_(snapshot, '/actions/workflows/' + LBGH.workflow);
   lbghRequire_(Number.isSafeInteger(workflow.id) && workflow.id > 0 && workflow.path === LBGH.workflowPath &&
@@ -77,7 +91,7 @@ function lbghCheckSource_(snapshot, commit, workflowId) {
   return String(workflow.id);
 }
 function lbghCheckFile_(snapshot, path, commit, expected) {
-  const file = lbghGet_(snapshot, '/contents/' + path + '?ref=' + commit, false);
+  const file = lbghGet_(snapshot, '/contents/' + path + '?ref=' + commit);
   lbghRequire_(file.encoding === 'base64' && typeof file.content === 'string', 'SOURCE');
   const source = Utilities.newBlob(Utilities.base64Decode(file.content.replace(/\s/g, ''))).getDataAsString('UTF-8');
   lbghRequire_(lbHash(source) === expected, 'SOURCE');
@@ -153,7 +167,8 @@ function dispatchNextSavedBuild() {
     catch (error) {
       if (error.message !== 'LB_GH_QUOTA') throw error;
       lbghSaveEvent_(store, snapshot, queue, q.jobId, 'quota_pause', {}, now);
-      return lbReport({status: 'quota_paused', jobId: q.jobId, dispatchSent: false});
+      return lbReport({status: 'quota_paused', jobId: q.jobId, dispatchSent: false,
+        ...(error.rateLimit ? {rateLimit: error.rateLimit} : {})});
     }
     if (queue.mode !== 'manual_saved_build') {
       queue.mode = 'manual_saved_build'; lbSet(store, snapshot, LBQ.configKey, queue);

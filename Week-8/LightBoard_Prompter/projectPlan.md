@@ -258,7 +258,7 @@ Bring back this request:
 > Connect the tested Apps Script email jobs to the manual Lightboard workflow. Use a narrowly scoped credential to dispatch only the intended repository workflow, store it in Script Properties, and implement a persistent queue with at most one in-flight update for the board. Add received, building, published, device-confirmed, failed, and quota-paused statuses. Keep email replies accurate and prevent duplicate or overlapping delivery.
 
 - [ ] Create the required repository credential with only the permissions the dispatcher needs. GitHub fine-grained Actions:write is repository-scoped, not single-workflow-scoped; enforce the workflow allowlist in the adapter. Store the credential privately; keep it out of `.gs`, repository, logs and chat.
-- [ ] Test dispatch manually from Apps Script with one known prompt.
+- [x] Test dispatch manually from Apps Script with one known saved prompt; run45886859649/source88eac47 passed and poll bound exact job/prompt/result2:54:39 November26, modelRequests0/publishedfalse/deviceConfirmedfalse. Publication/device/acknowledgment remain pending.
 - [ ] Confirm the build uses that exact prompt, publishes only a successful candidate, and keeps the one-board queue until device confirmation or a defined failure/timeout.
 - [ ] Add a time-driven trigger for the processor in Apps Script. Start with a five-minute polling interval and verify its runtime fits the account's quotas; it is not an instant-arrival email trigger.
 - [ ] Send a new test email. Confirm a received acknowledgment, cloud job, publication, and eventual device confirmation.

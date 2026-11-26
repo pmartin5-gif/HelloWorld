@@ -1,6 +1,6 @@
 {
   "date": "2026-11-26",
-  "status": "Live intake and queue persistence passed; manual saved-build GitHub adapter and job-bound workflow implemented/tested locally; source push/private setup/live dispatch pending",
+  "status": "Live email-to-queue-to-saved-build-to-bound-result checkpoint passed; no model calls or publication/installation",
   "focused_tests_passed": 39,
   "full_firmware_regression_suite_run": false,
   "firmware_rebuild_for_email_change": false,
@@ -9,7 +9,7 @@
   "oauth_authorized": true,
   "live_email_processed": true,
   "emails_sent": 0,
-  "builds_dispatched": 0,
+  "builds_dispatched": 1,
   "model_requests": 0,
   "triggers_created": 0,
   "device_commands": 0,
@@ -36,13 +36,13 @@
     "tests/test_email_diagnostics.cjs": "4077b99f6584286f618a94f202c8a46a817761892ede3d12b9746de5640aba5f",
     "email/Queue.gs": "b0d423934b972d2a10b3f49acf51f9a3be768761f892617b0b67e567711711c8",
     "tests/test_persistent_queue.cjs": "f94f02759d45badc7f7b088e3a9d00cfa4d13c6cbb02756bd65d54674a968373",
-    "email/GitHub.gs": "f79020c4abc2afd830e50d97427993b2ba933619d65b8eca8d13497369e952bd",
+    "email/GitHub.gs": "933883ceb1618b850d773f502449ea2ceffee28970759afd09880d7e7e879810",
     "cloud/queue_binding.py": "f28b745d8f48f3c5d28b45743015334c57a61825426d40a73dea6eb3364ad884",
-    "tests/test_github_queue.cjs": "8f56cc8aee6c725d6761d676afaffe9a4e886202dadcfd94475ec9f3a2d84bd6",
+    "tests/test_github_queue.cjs": "b88bdb19b326c0af9ccfd45692eedf38e4117a6ee633f99106eeb36c1554918c",
     "tests/test_queue_binding.py": "a83f8bbdea51e6f34a385173821ed64c5b3065657246879441b92b8e57469fb6",
     "../../.github/workflows/lightboard-prompt-build.yml": "fa60df4dca19d6a4b53de0457351c7f35d984719f8bc3263bd99beaf0a7d2436"
   },
-  "next_action": "User Terminal: git push origin main (prepared changes will be committed locally). Then install updated Queue.gs, new GitHub.gs and updated appsscript.json in existing project, create/store fine-grained HelloWorld-only Actions:write token privately, add LB_GITHUB_SETUP with exact pushed HEAD, run setupGitHubConnection. Full concrete handoff email/github-setup.md. Actual dispatch only via manual dispatchNextSavedBuild after setup, then pollSavedBuild; saved heart/reuse only, publication/new model requests/device delivery off.",
+  "next_action": "Manual email\u2192receipt\u2192durable queue\u2192saved-response GitHub build\u2192verified bound result checkpoint complete. Do not repeat. Next stage is publication and board confirmation design/implementation, preserving zero new model calls and delivery off until concretely configured. Queue job approved once only; vessel requires separate generation authorization and cannot reuse heart. Local quota fix/progress can now be committed; remote/setup source stays88eac47 until a deliberate source-pin update. No automatic push.",
   "mailbox_choice": "Separate Gmail inbox configured and authorized; first fixed-reader acceptance reported",
   "network_connection_verified": "martin apple, wifi_status3, configured_matches_expectedtrue, healthtrue; November26",
   "script_project_created": true,
@@ -235,12 +235,12 @@
     "in_flight_job": null,
     "dispatch_enabled": false
   },
-  "github_connection_installed_live": false,
-  "github_live_setup_verified": false,
-  "github_live_dispatch_verified": false,
-  "github_live_result_verified": false,
+  "github_connection_installed_live": true,
+  "github_live_setup_verified": true,
+  "github_live_dispatch_verified": true,
+  "github_live_result_verified": true,
   "live_queue_source_update_pending": true,
-  "manifest_update_for_github_live_verified": false,
+  "manifest_update_for_github_live_verified": true,
   "local_oauth_scopes": [
     "https://www.googleapis.com/auth/gmail.readonly",
     "https://www.googleapis.com/auth/script.external_request"
@@ -255,5 +255,111 @@
   "queue_binding_python_tests": 9,
   "queue_binding_python_duration_seconds": 0.067,
   "workflow_yaml_parsed": true,
-  "github_adapter_scope": "Manual one approved saved-heart job, reuse=true/publish=false; no arbitrary generation, automatic dispatch, publication or installation"
+  "github_adapter_scope": "Manual one approved saved-heart job, reuse=true/publish=false; no arbitrary generation, automatic dispatch, publication or installation",
+  "github_source_push_verified": true,
+  "github_expected_source_commit": "88eac47d92632ffe7a6f14dd2008a17569cb91ca",
+  "github_live_setup_error": {
+    "source": "User log and native editor observation",
+    "user_error_time_local": "1:57:47 PM America/New_York",
+    "error": "SyntaxError: Identifier 'LBGH' has already been declared",
+    "reported_file": "Github.gs:1",
+    "observed_files": [
+      "appsscript.json",
+      "Code.gs",
+      "Diagnose.gs",
+      "Queue.gs",
+      "Github.gs"
+    ],
+    "extra_github_filename_seen": false,
+    "canonical_declaration_count": 1,
+    "canonical_four_file_parse_check_passed": true,
+    "exact_live_duplicate_location_identified": false,
+    "ui_limitation": "Native editor/history views and selections return stale/conflicting contents; no code mutation performed.",
+    "unintended_retry": {
+      "time_local": "2:01:05 PM America/New_York",
+      "action": "Editor navigation shortcut retried selected setupQueue function",
+      "result": "Same project parse error before function execution; no build/queue setup mutation"
+    },
+    "next_action": "User search each .gs for const LBGH. Exactly one declaration belongs in Github.gs; replace duplicated/misplaced source with matching canonical file, preserve properties and source pin, then run setupGitHubConnection."
+  },
+  "github_replacement_attempt": {
+    "result": "blocked_by_native_copy_controls",
+    "live_source_replaced": false,
+    "live_source_backup_verified": false,
+    "captured_copy_type": "manifest JSON, not Github.gs; renamed accordingly",
+    "setup_run_attempted_this_turn": false,
+    "script_properties_accessed": false,
+    "queue_modified": false,
+    "source_commit_preserved": "88eac47d92632ffe7a6f14dd2008a17569cb91ca",
+    "next_action": "User manually preserves current live Github.gs, replaces entire live file with canonical email/GitHub.gs, saves, uses Chrome Reload button, runs setupGitHubConnection once and shares new log."
+  },
+  "github_live_source_mismatch": {
+    "source": "Live Apps Script AX and screenshot",
+    "error_time_local": "2:31:15 PM",
+    "confirmed_live_mismatches": {
+      "Queue.gs": "GitHub adapter, const LBGH; visually confirmed selected Queue.gs with GitHub code",
+      "Diagnose.gs": "Durable queue, const LBQ; selected Diagnose.gs AX shows queue source/setupQueue"
+    },
+    "Code.gs": "Restored intake header observed",
+    "Github.gs": "GitHub adapter header observed",
+    "backup": "Local email/GitHub.backUp.js matches canonical GitHub.gs byte-for-byte and is not in live Apps Script file list",
+    "cause": "Misplaced source duplicates LBGH in live Queue.gs and Github.gs. Restoring Queue alone would then duplicate LBQ with misplaced queue in Diagnose, so restore both before next run.",
+    "agent_live_edits": false,
+    "next_action": "Replace live Diagnose.gs with restore/Diagnose.gs and Queue.gs with restore/Queue.gs, Save both, Chrome Reload button, select Github.gs/setupGitHubConnection and Run once. Preserve private properties/receipts/source pin."
+  },
+  "github_setup_quota": {
+    "source": "User execution log",
+    "time_local": "2:35:40\u20132:35:42 PM America/New_York",
+    "result": {
+      "status": "stopped",
+      "reason": "LB_GH_QUOTA",
+      "automaticDispatchEnabled": false,
+      "published": false,
+      "deviceConfirmed": false
+    },
+    "syntax_resolved": true,
+    "setup_completed": false,
+    "request_that_hit_limit": "Not exposed by original log; could be anonymous source or authenticated Actions request",
+    "local_fix": "Authenticate source checks with existing token; add sanitized HTTP/request type/limit/remaining/resetAt/retryAfter metadata",
+    "local_focused_adapter_tests_passed": 16,
+    "live_fix_saved": false,
+    "next_action": "Replace only live Github.gs with updated restore/Github.gs, Save and run setupGitHubConnection once; share output. No push/credential/property/manifest/queue reset."
+  },
+  "latest_adapter_checks_passed": 16,
+  "latest_adapter_check_command": "node --test tests/test_github_queue.cjs",
+  "github_authenticated_source_fix_live_verified": true,
+  "github_live_setup_result": {
+    "evidence_source": "User-pasted log",
+    "mode": "saved_build_only",
+    "approved_job_matches_expected": true,
+    "source_commit": "88eac47d92632ffe7a6f14dd2008a17569cb91ca",
+    "automatic_dispatch_enabled": false,
+    "dispatch_sent": false,
+    "completed_local": "2:51:14 PM America/New_York"
+  },
+  "github_live_dispatch_response": "dispatch_unknown",
+  "github_observed_run_id": "45886859649",
+  "github_observed_run_url": "https://github.com/pmartin5-gif/HelloWorld/actions/runs/45886859649",
+  "github_queue_run_binding_verified": true,
+  "github_first_bound_build_complete": true,
+  "github_live_verified_result": {
+    "run_id": "45886859649",
+    "workflow_job_id": "140139603365",
+    "source_commit": "88eac47d92632ffe7a6f14dd2008a17569cb91ca",
+    "status": "built",
+    "result_sha256": "6e4a19850f9c474c56ef799106ee18292d8efc0a7f4e6e4aa9298a39dcf68fe7",
+    "independently_matches_remote_result_marker": true,
+    "exact_prompt_hash_matches": true,
+    "model_requests": 0,
+    "published": false,
+    "device_confirmed": false,
+    "automatic_dispatch": false,
+    "application_bytes": 1012016,
+    "application_sha256": "524ca739f55cffb3063d7a408dc4ccfc98181ee79fc75780e8b4ec701f183cb0",
+    "version": "ota-pilot-709f1f9cc6fe30951ccdd977",
+    "foundation": "f1244292bbdf180ad5ea8b4ffbf46c72b9772ef8ad2407276ae26e3786132522",
+    "generation_step": "skipped",
+    "publication_step": "skipped",
+    "evidence_path": ".build/email-intake-2026-11-26/github-first-bound-build-verified.json"
+  }
 }
