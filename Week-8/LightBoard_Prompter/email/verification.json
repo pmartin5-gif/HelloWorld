@@ -1,6 +1,6 @@
 {
   "date": "2026-11-26",
-  "status": "Live inline prompt/hash/replay, unmarked nonacceptance and direct-reply marker exact prior-prompt hash verified",
+  "status": "Planned live manual intake checks passed: inline exact prompt, replay deduplication, unmarked ignore, direct-reply exact prior prompt and no-context rejection",
   "focused_tests_passed": 15,
   "test_command": "node --test tests/test_email_intake.cjs tests/test_queue_simulation.cjs",
   "full_firmware_regression_suite_run": false,
@@ -21,7 +21,7 @@
   "live_installed_acknowledgments_implemented": false,
   "network_change_pending": false,
   "limitations": [
-    "Inline prompt exact hash, replay deduplication, unmarked nonacceptance and direct-reply marker exact prior-prompt hash verified from supplied live logs. Standalone marker without reply context and disallowed-envelope live cases remain pending; broad coverage is mocked locally.",
+    "Planned manual intake cases passed from supplied live logs. No-context rejection reason not inspected separately; aggregate result is rejected1/received0. Disallowed-envelope and broader edge cases are covered locally with mocks, not all exercised live.",
     "Conservative plain-text boundaries require simple test messages; no universal email/signature parser is claimed.",
     "Standalone marker requires direct In-Reply-To to one eligible earlier design from the same sender/thread.",
     "Script Properties capacity is finite; processing pauses rather than deleting receipts or buying storage.",
@@ -36,7 +36,7 @@
     "email/Diagnose.gs": "85140a496d25b22dab5d3b1a10a3f57d045e2958959f152b7656ba6b7a1adb05",
     "tests/test_email_diagnostics.cjs": "4077b99f6584286f618a94f202c8a46a817761892ede3d12b9746de5640aba5f"
   },
-  "next_action": "Final context guard check: send a new composed Lightboard email from the approved sender to the bot containing only %%%, not a reply. Confirm outside Spam/Lightboard label, then run processInbox. Expect received0/rejected1 and no new accepted job. Preserve existing receipts/setup. Then continue durable queue/workflow integration with delivery disabled.",
+  "next_action": "Step9: prepare durable one-in-flight queue and scoped GitHub workflow integration locally, keeping live dispatch, model calls, publication, replies, triggers and device delivery disabled until concretely configured. Do not repeat passing intake cases or full firmware suite.",
   "mailbox_choice": "Separate Gmail inbox configured and authorized; first fixed-reader acceptance reported",
   "network_connection_verified": "martin apple, wifi_status3, configured_matches_expectedtrue, healthtrue; November26",
   "script_project_created": true,
@@ -186,5 +186,24 @@
     "published": false,
     "deviceConfirmed": false,
     "private_evidence": ".build/email-intake-2026-11-26/direct-reply-marker-accepted.json"
+  },
+  "live_no_context_marker_check_verified": true,
+  "planned_live_intake_checks_complete": true,
+  "no_context_marker_result": {
+    "date": "2026-11-26",
+    "evidence_source": "User-pasted execution log after requested newly composed marker-only email",
+    "started_local": "1:13:39 PM America/New_York",
+    "completed_local": "1:13:40 PM America/New_York",
+    "result": {
+      "status": "record_only",
+      "received": 0,
+      "ignored": 0,
+      "rejected": 1,
+      "duplicates": 6
+    },
+    "expected_no_job_result_verified": true,
+    "rejection_reason_inspected": false,
+    "expected_reason_from_source": "design_missing",
+    "interpretation": "One new rejection and zero new jobs, as expected for standalone marker without direct-reply context. Aggregate log does not expose the durable reason."
   }
 }

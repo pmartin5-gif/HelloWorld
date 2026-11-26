@@ -2432,6 +2432,20 @@ Compared new hash with SHA256 of exact expected prior design A warm light in a b
 
 No source edit, regression tests, cloud run, model request, email sent by assistant, trigger, publication or device operation. Next final live context guard: freshly compose subject Lightboard/body only %%%, not a reply, ensure outside Spam/labelled and process; expect zero new jobs and one rejection. Passing positive prompt/hash/replay cases need no repetition. Durable queue/workflow integration remains future work with delivery disabled.
 
+## 107. Standalone marker without reply context rejected; planned live intake checks complete
+
+**Date:** November 26, 2026
+
+### Your prompt
+
+> Done. processInbox1:13:39–1:13:40: record_only/received0/ignored0/rejected1/duplicates6, completed.
+
+### Intent, changes and result
+
+User completed requested newly composed marker-only email case. Supplied counters match expected nonacceptance: one new rejection, zero new jobs. Exact durable reason not exposed/inspected; source expects design_missing, which is not claimed as independently observed. This completes planned live manual cases alongside inline exact prompt/hash, replay deduplication, unmarked ignore and direct-reply prior-prompt hash. Broader/disallowed-envelope edge cases remain locally mocked, not all exercised live.
+
+Saved private log and updated checkpoint/verification/guide/Step8 completion. No source change, tests/full suite, cloud build, model call, email sent by assistant, trigger, publication or device command. No further repeats of successful intake cases needed. Next Step9 is local durable one-in-flight queue and scoped workflow integration preparation, with dispatch/new model calls/publication/replies/triggers/device delivery disabled until concretely configured.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.
