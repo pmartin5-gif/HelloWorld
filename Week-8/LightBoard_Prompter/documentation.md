@@ -2275,6 +2275,20 @@ Enabled manifest visibility. Native editor observations became stale; several ma
 
 Label/project/source saved; complete manifest configuration, private allowed-sender properties, Gmail read-only authorization and live receipt/deduplication tests remain pending. No script execution, live intake, sent email, trigger, model call, workflow, release, board command, firmware build or full test suite. Existing source is unchanged; no redundant offline checks were needed for UI setup. Preserve the verified Wi-Fi state and prior cloud result. Continue from email/verification.json and ignored private-project evidence; do not create a second project or assume the inbox is active.
 
+## 97. Manifest verified and private test-sender configuration saved
+
+**Date:** November 26, 2026
+
+### Your prompt
+
+> I have copied that code into the app script and clicked save. i haven't run it yet. [approved sender] will send the initial test prompts.
+
+### Changes made and observed result
+
+Visually verified the user-saved exact manifest: only Gmail read-only OAuth scope, Gmail v1 Advanced Service and V8, saved cloud icon. Confirmed dedicated account. Added private LB_CONFIG for the existing Lightboard label and sole user-approved test sender. Native field input was delayed; corrected a duplicated intermediate value, verified exact single JSON, saved and observed disabled fields/Edit Script Properties state. Actual addresses/config remain only in Script Properties and ignored private-project evidence.
+
+Returned to saved Code.gs, with correct source beginning and parsed functions. Native function-selector actions failed to select setupInbox consistently and raised ScreenCaptureKit invalid-parameter errors. No Run action or authorization grant was verified. Handed off choosing setupInbox/Run and reviewing first Google read-only Gmail authorization. Setup logs and live intake still need observation. No tests/build/model call/email/trigger/device action. Existing firmware/Wi-Fi/cloud evidence unaffected.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.

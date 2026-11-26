@@ -1,6 +1,6 @@
 {
   "date": "2026-11-26",
-  "status": "Dedicated Gmail label/project created and prepared intake source saved; manifest/properties/OAuth/live acceptance pending",
+  "status": "Dedicated inbox manifest and private configuration saved/verified; first setup execution and Gmail authorization pending",
   "focused_tests_passed": 15,
   "test_command": "node --test tests/test_email_intake.cjs tests/test_queue_simulation.cjs",
   "full_firmware_regression_suite_run": false,
@@ -34,14 +34,17 @@
     "tests/test_email_intake.cjs": "a9227699ca8ee45c5d542b1c31e0091dda25c1a15a7dbf6bc544d7b49a201130",
     "tests/test_queue_simulation.cjs": "49404451ab0eca3f15d43f606cb82bd2063aacf448f4f7cefaef690f25100a7c"
   },
-  "next_action": "Reopen project if needed; user replaces appsscript.json with exact local manifest and saves, then supplies approved test sender addresses. Verify manifest before configuring properties or authorizing Gmail.",
+  "next_action": "User manually selects setupInbox, clicks Run and reviews first read-only Gmail authorization; inspect result before any intake test. Private configuration remains in Script Properties and ignored project evidence.",
   "mailbox_choice": "Separate Gmail inbox, selected by user; account/setup still pending",
   "network_connection_verified": "martin apple, wifi_status3, configured_matches_expectedtrue, healthtrue; November26",
   "script_project_created": true,
   "source_saved_as": "Code.gs",
   "label_created": true,
-  "manifest_configuration_verified": false,
-  "approved_test_senders_pending": true,
+  "manifest_configuration_verified": true,
+  "approved_test_senders_pending": false,
   "private_project_evidence": ".build/email-intake-2026-11-26/private-project.json",
-  "browser_setup_limitation": "Browser attachment unavailable; native controls returned stale editor state. Repeated manifest input was inconsistent, so unsaved attempt was discarded through Reload. Post-reload page is blank/loading; saved manifest not verified. User-assisted manifest replacement is required."
+  "browser_setup_limitation": "User manually repaired/saved manifest; screenshot and Gmail v1 dependency verify correct scope. Private properties saved and observed. Native function selector/keyboard produced ScreenCaptureKit errors; setup is not verified run. User handoff for selection/Run/authorization.",
+  "script_properties_configured": true,
+  "approved_test_sender_count": 1,
+  "setup_function_run_verified": false
 }
