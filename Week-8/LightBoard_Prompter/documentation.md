@@ -2321,6 +2321,22 @@ Verify one live prompt receipt and duplicate prevention. Actual dedicated inbox 
 
 Attempted to read durable rejection reason through Project Settings; native route/AX content became stale, then direct navigation yielded blank/loading page. Asked user for only the reason field of the existing LB_MSG_ property, without edits/deletion. No parser change or speculative cause accepted. Private expected prompt hash/arrival/run result and public verification/checkpoint updated. Preserve original record, diagnose exact reason first. No second processing run, email sent by assistant, build, model request, trigger, publication, device command, firmware compile or full suite. Delivery/filter stages work; validation diagnosis and live accepted receipt/deduplication remain pending.
 
+## 100. Rejection gate identified; metadata-only MIME diagnostic prepared
+
+**Date:** November 26, 2026
+
+### Your prompt
+
+> here is the value for LB_MSG_etc [schema1 rejected record, reason missing_inline_text, recorded2026-11-26T17:07:30.639Z]
+
+### Findings and work
+
+Preserved exact original record in ignored private evidence. The failure is the body-reader guard after sender/subject/envelope checks: it requires a body, no external content reference, and string inline data. This reason alone does not identify which branch failed. Checked primary Gmail MessagePartBody/attachments.get documentation: separately retrieved content is supported by the API, but not by the current parser. Did not claim an external body is the actual live cause or loosen checks speculatively.
+
+Prepared separate `email/Diagnose.gs` for one bounded, read-only diagnostic of the sole existing matching rejection. It verifies account/envelope, fetches only that message, and reports MIME structure/body/data type/size/reference presence without body text, raw/base64 data, addresses, filenames or reference values. No property/mail writes or new scope. Added3 focused Node checks of actual helper privacy/unchanged records, target/account refusal and sanitized failures; all pass in82ms reported by Node. No full suite or firmware work. Original Inbox.gs reader remains unchanged.
+
+Next user-assisted step: add the exact local helper as separate Apps Script file Diagnose, Save, run diagnoseIntake once, share its JSON. The prior browser editor/selector/capture failures justify this small manual handoff; no additional UI retry loop. Live MIME shape, targeted reader fix and accepted receipt/deduplication remain pending. Preserve original rejected receipt; no rerun/delete or new model/build/reply/trigger/device operation.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.

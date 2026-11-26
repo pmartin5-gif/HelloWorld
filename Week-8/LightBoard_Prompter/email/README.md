@@ -66,3 +66,11 @@ The separate queue simulation verifies FIFO, one in-flight job, duplicate event 
 ## API references used
 
 Implementation uses Google's [Advanced Gmail service](https://developers.google.com/apps-script/advanced/gmail), [message listing and label filtering](https://developers.google.com/workspace/gmail/api/reference/rest/v1/users.messages/list), [message/MIME representation](https://developers.google.com/workspace/gmail/api/reference/rest/v1/users.messages), [Properties service](https://developers.google.com/apps-script/guides/properties) and [script locks](https://developers.google.com/apps-script/reference/lock/lock-service). These APIs were checked November 26; account access and live behavior remain separate checks.
+
+## Current MIME diagnostic
+
+The first live message arrived/was labelled, but intake rejected it with `missing_inline_text`. This identifies the body-reader gate; it does not yet distinguish a missing body/data field, an external content reference or another live representation. [Google's body schema](https://developers.google.com/workspace/gmail/api/reference/rest/v1/users.messages.attachments#MessagePartBody) permits separately retrieved content; the current reader only accepts inline strings. Preserve the original durable rejection.
+
+Add a separate Apps Script file named **Diagnose**, copy the exact `email/Diagnose.gs`, Save and run **diagnoseIntake** once. This requires exactly one matching rejection, verifies the account/envelope, retrieves only that message and logs MIME types/depth, body/data presence/type/length, declared byte sizes, external-reference booleans and child counts. It logs no prompt, raw/base64 data, sender, filename or external-reference value; writes no properties or emails. Share only the diagnostic JSON. This uses the existing read-only scope. No actual reader repair is claimed until the live shape is known.
+
+Three focused checks of this helper pass: metadata/privacy/unchanged receipts, wrong-account or ambiguous-target refusal, and sanitized provider/depth failures. Run `node --test tests/test_email_diagnostics.cjs` only when changing the helper; no firmware build/full suite is involved.
