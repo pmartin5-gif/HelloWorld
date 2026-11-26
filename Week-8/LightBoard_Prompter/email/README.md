@@ -1,6 +1,6 @@
 # Lightboard inbox prototype
 
-**November 26, 2026:** Local record-only implementation and 15 focused inbox/queue checks pass. No Gmail account has been configured or inspected, no script installed/authorized, and no live email received. Cloud prompt build 45858227133 passed independently; this inbox does not dispatch it.
+**November 26, 2026:** Local record-only implementation and 15 focused inbox/queue checks pass. Dedicated Gmail setup is now configured/authorized; setupInbox completed at17:01:06Z with record_only and zero triggers. A filter applies only the Lightboard label to the approved sender/subject search. First live prompt receipt/deduplication remains pending. Private mailbox/sender/project details stay in ignored .build evidence and Script Properties. Cloud prompt build 45858227133 passed independently; this inbox does not dispatch it.
 
 `Inbox.gs` reads selected Gmail messages and saves private durable receipts in Script Properties. It never sends email, marks messages read, changes labels, calls a model, starts GitHub Actions or commands the board. There is no trigger or background processing. `queue-simulation.cjs` is a separate offline status contract, not an Apps Script dispatcher.
 

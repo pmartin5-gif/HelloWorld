@@ -1,13 +1,13 @@
 {
   "date": "2026-11-26",
-  "status": "Dedicated inbox manifest and private configuration saved/verified; first setup execution and Gmail authorization pending",
+  "status": "Live setup configured successfully in dedicated Gmail; label-only filter created; first live prompt receipt/deduplication pending",
   "focused_tests_passed": 15,
   "test_command": "node --test tests/test_email_intake.cjs tests/test_queue_simulation.cjs",
   "full_firmware_regression_suite_run": false,
   "firmware_rebuild_for_email_change": false,
   "gmail_account_accessed": true,
-  "script_installed": false,
-  "oauth_authorized": false,
+  "script_installed": true,
+  "oauth_authorized": true,
   "live_email_processed": false,
   "emails_sent": 0,
   "builds_dispatched": 0,
@@ -34,7 +34,7 @@
     "tests/test_email_intake.cjs": "a9227699ca8ee45c5d542b1c31e0091dda25c1a15a7dbf6bc544d7b49a201130",
     "tests/test_queue_simulation.cjs": "49404451ab0eca3f15d43f606cb82bd2063aacf448f4f7cefaef690f25100a7c"
   },
-  "next_action": "User manually selects setupInbox, clicks Run and reviews first read-only Gmail authorization; inspect result before any intake test. Private configuration remains in Script Properties and ignored project evidence.",
+  "next_action": "User sends fresh simple test email from approved sender. Run processInbox, inspect exact receipt/hash/status, then rerun to verify no duplicate. Do not dispatch builds or send acknowledgments.",
   "mailbox_choice": "Separate Gmail inbox, selected by user; account/setup still pending",
   "network_connection_verified": "martin apple, wifi_status3, configured_matches_expectedtrue, healthtrue; November26",
   "script_project_created": true,
@@ -43,8 +43,16 @@
   "manifest_configuration_verified": true,
   "approved_test_senders_pending": false,
   "private_project_evidence": ".build/email-intake-2026-11-26/private-project.json",
-  "browser_setup_limitation": "User manually repaired/saved manifest; screenshot and Gmail v1 dependency verify correct scope. Private properties saved and observed. Native function selector/keyboard produced ScreenCaptureKit errors; setup is not verified run. User handoff for selection/Run/authorization.",
+  "browser_setup_limitation": "User selected setupInbox and completed first authorization; live execution log shows configured/record_only/zero triggers and completed. Native selector remains unreliable; use user handoff only when necessary.",
   "script_properties_configured": true,
   "approved_test_sender_count": 1,
-  "setup_function_run_verified": false
+  "setup_function_run_verified": true,
+  "setup_result": {
+    "status": "configured",
+    "startAt": "2026-11-26T17:01:06.171Z",
+    "mode": "record_only",
+    "triggersCreated": 0
+  },
+  "label_only_filter_created": true,
+  "filter_other_actions_selected": false
 }

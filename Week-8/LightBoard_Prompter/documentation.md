@@ -2289,6 +2289,23 @@ Visually verified the user-saved exact manifest: only Gmail read-only OAuth scop
 
 Returned to saved Code.gs, with correct source beginning and parsed functions. Native function-selector actions failed to select setupInbox consistently and raised ScreenCaptureKit invalid-parameter errors. No Run action or authorization grant was verified. Handed off choosing setupInbox/Run and reviewing first Google read-only Gmail authorization. Setup logs and live intake still need observation. No tests/build/model call/email/trigger/device action. Existing firmware/Wi-Fi/cloud evidence unaffected.
 
+## 98. Live inbox setup completed and label-only filter created
+
+**Date:** November 26, 2026
+
+### Your prompts
+
+> where do i find the option to run setupInbox?
+> got it. done.
+
+### Intent and result
+
+Explained Code.gs/function dropdown/setupInbox/Run. After user's manual action, native Apps Script execution log shows started12:01:05, configured at2026-11-26T17:01:06.171Z, mode record_only, triggersCreated0, execution completed12:01:06. This is live setup success, not a live prompt receipt. Read-only Gmail API-backed setup and a matching Google access notice confirm authorization; the detailed consent screen was user-operated, not independently inspected.
+
+Created a Gmail filter in the dedicated account: approved sender plus subject search Lightboard, only Apply label Lightboard. No read/archive/star/forward/delete/spam/importance/category action, no apply-to-existing. Observed Your filter was created. Exact account/filter/sender details remain only in ignored private-project evidence and private settings. Source parser still enforces exact subject and sender independently of Gmail's broader subject search.
+
+Next request is one fresh plain-text email from the approved sender to the dedicated inbox, subject Lightboard, body An overflowing heart that keeps giving%%%. Saved expected prompt/hash privately for comparison. Need processInbox receipt/exact prompt hash, rerun deduplication, then unmarked/context checks. No test email sent by assistant, no processInbox run yet, no acknowledgment/build/model call/trigger/device action or firmware tests. Saved setup/filter checkpoint; do not recreate these on resume.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.

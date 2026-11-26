@@ -219,20 +219,20 @@ This bridge is required before Steps 8–10 can deploy new prompts. November 26:
 
 **Start with your own test messages.**
 
-November26: `email/Inbox.gs` and read-only manifest are ready;15 focused inbox/queue tests pass locally. The processor records jobs only and sends no email/build/device command. Gmail setup/authorization/live tests are pending. `email/queue-simulation.cjs` verifies queue/status rules offline; it is not a live dispatcher. See `email/README.md`.
+November26: `email/Inbox.gs` and read-only manifest are ready;15 focused inbox/queue tests pass locally. The processor records jobs only and sends no email/build/device command. Live setup/authorization passed with record_only/zero triggers and a label-only approved-sender filter; first prompt receipt/deduplication tests remain pending. `email/queue-simulation.cjs` verifies queue/status rules offline; it is not a live dispatcher. See `email/README.md`.
 
 - [x] Implement local record-only intake, prompt/hash preservation, sender/thread binding, stable IDs, deduplication, capacity stops and manual setup guide.
 - [x] Run focused offline inbox/queue-contract checks; no animation assessment or full firmware suite.
 
-- [ ] Choose a dedicated Gmail inbox or a dedicated `Lightboard` label in an account you control.
+- [x] Dedicated Gmail inbox chosen; Lightboard label and label-only sender/subject filter created.
 - [ ] For this prototype, use subject `Lightboard` and put only the creative prompt followed by `%%%` in the message body. Disable automatic signatures in test messages.
-- [ ] Open [Google Apps Script](https://script.google.com/) and create a project named `Lightboard Inbox`. Local code/manifest and setup guide are ready in `email/`; account setup is pending.
+- [x] Created Lightboard Inbox Apps Script project, loaded code/manifest and configured private approved sender.
 
 Bring back this request:
 
 > Create the Lightboard Apps Script inbox processor. Initially only validate and record matching emails; do not trigger builds. Extract the new body without quoted history or signatures, recognize a trailing %%%, assign a job ID, prevent duplicates, and accept only our initial test senders. Keep the exact prompt. A standalone marker needs a clear prior design in the same sender's conversation; otherwise report that the design is missing.
 
-- [ ] Add the reviewed script, run its initial setup function, and review Google's requested account permissions.
+- [x] User ran setupInbox and authorized; actual configured/record_only/zero-triggers/completed observed at17:01:06Z November26.
 - [ ] Email one test prompt and confirm exactly one job is recorded.
 - [ ] Run it again and confirm the same email is not processed twice.
 - [ ] Send a message without the marker and confirm it does not become a deployment job.
