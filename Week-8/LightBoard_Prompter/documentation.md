@@ -2403,6 +2403,20 @@ Updated verification, resume, guide and Step8 completion checks. No intake sourc
 
 Expected one ignored unmarked message. Supplied counters instead show only two prior durable outcomes skipped and no new outcome; accepted job is unchanged. This is not a passing missing-marker check and does not establish whether the proposed email was sent, delivered or labelled. Retained the check as pending rather than changing the parser or setup. Next confirm sending and actual arrival/subject/Lightboard label in the dedicated inbox, manually apply label if absent, then process and inspect. No source change, tests, build, model call, email, trigger or device action.
 
+## 105. Spam explained missed mail; unmarked messages ignored after recovery
+
+**Date:** November 26, 2026
+
+### Your prompt
+
+> These emails ended up in the spam folder of the bot inbox. I've marked them not spam. I've run processInbox:1:04:27–1:04:28, record_only/received0/ignored3/rejected0/duplicates2, completed.
+
+### Intent, changes and result
+
+User supplied the delivery explanation and manually recovered the messages. Script intentionally lists messages with includeSpamTrashfalse, so no parser or setup change is needed. The new run consumed three messages as ignored outcomes with zero jobs accepted, passing nonacceptance for the intended unmarked test. Exact identities/reasons for all three were not supplied; no new post-run inspection yet. Prior accepted prompt/hash/replay remains verified.
+
+Saved private evidence and expected direct-reply vessel hash; updated current checkpoint/guide/verification/plan. Next from approved sender directly reply to one original unmarked vessel-design email, addressed to bot, with only %%% as new text; verify reply outside Spam/with Lightboard label, process and inspect for one additional job matching the prior prompt. No repeat successful tests, source change, test run, build, model call, email sent by assistant, trigger or device action. No Spam-filter exception configured or verified.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.

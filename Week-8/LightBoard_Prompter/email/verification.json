@@ -1,6 +1,6 @@
 {
   "date": "2026-11-26",
-  "status": "Live accepted prompt hash and replay deduplication verified from supplied execution logs; unmarked/context tests next",
+  "status": "Live inline prompt/hash/replay and unmarked-message nonacceptance verified; direct-reply marker context next",
   "focused_tests_passed": 15,
   "test_command": "node --test tests/test_email_intake.cjs tests/test_queue_simulation.cjs",
   "full_firmware_regression_suite_run": false,
@@ -21,7 +21,7 @@
   "live_installed_acknowledgments_implemented": false,
   "network_change_pending": false,
   "limitations": [
-    "Inline-marker acceptance, exact expected prompt hash and replay deduplication verified from user-supplied live logs. Live unmarked-message, disallowed-envelope and standalone-marker context cases remain pending; broad coverage remains mocked locally.",
+    "Inline-marker acceptance, exact expected prompt hash, replay deduplication and unmarked-message nonacceptance verified from supplied live logs. Standalone-marker context and disallowed-envelope live cases remain pending; broad coverage is mocked locally.",
     "Conservative plain-text boundaries require simple test messages; no universal email/signature parser is claimed.",
     "Standalone marker requires direct In-Reply-To to one eligible earlier design from the same sender/thread.",
     "Script Properties capacity is finite; processing pauses rather than deleting receipts or buying storage.",
@@ -36,7 +36,7 @@
     "email/Diagnose.gs": "85140a496d25b22dab5d3b1a10a3f57d045e2958959f152b7656ba6b7a1adb05",
     "tests/test_email_diagnostics.cjs": "4077b99f6584286f618a94f202c8a46a817761892ede3d12b9746de5640aba5f"
   },
-  "next_action": "Confirm the new approved-sender email was sent and has arrived in the dedicated inbox with subject Lightboard and label Lightboard. Body A warm light in a blue vessel, no marker. Apply the label manually if missing, then run processInbox and inspectIntake. Preserve existing history and setup.",
+  "next_action": "From the approved sender, reply directly to one original unmarked A warm light in a blue vessel message, addressed to the bot, with only %%% as new text. Confirm reply is outside Spam and labelled Lightboard, then run processInbox and inspectIntake. Expect received1 and a second job whose hash matches the vessel prompt. Keep delivery off.",
   "mailbox_choice": "Separate Gmail inbox configured and authorized; first fixed-reader acceptance reported",
   "network_connection_verified": "martin apple, wifi_status3, configured_matches_expectedtrue, healthtrue; November26",
   "script_project_created": true,
@@ -148,5 +148,24 @@
     "unmarked_message_seen": false,
     "test_passed": false,
     "interpretation": "No new receipt/outcome in this run. Sending, arrival and matching label for the proposed unmarked message have not been confirmed; do not infer parser ignore behavior."
+  },
+  "live_unmarked_message_check_verified": true,
+  "unmarked_after_spam_recovery": {
+    "date": "2026-11-26",
+    "evidence_source": "User report and pasted execution log",
+    "delivery_finding": "User found test emails in Spam and marked them Not spam",
+    "process_started_local": "1:04:27 PM America/New_York",
+    "process_completed_local": "1:04:28 PM America/New_York",
+    "result": {
+      "status": "record_only",
+      "received": 0,
+      "ignored": 3,
+      "rejected": 0,
+      "duplicates": 2
+    },
+    "interpretation": "Three newly consumed messages produced ignored outcomes and zero accepted jobs. Missing-marker check passes for the intended unmarked test; exact identities/reasons for all three were not supplied.",
+    "live_unmarked_check_passed": true,
+    "spam_filter_exception_configured": false,
+    "after_run_inspection_supplied": false
   }
 }
