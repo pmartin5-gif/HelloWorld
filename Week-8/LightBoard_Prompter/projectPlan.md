@@ -1,5 +1,9 @@
 # Lightboard remote prompting step by step
 
+## First unattended email milestone achieved; continuous intake next
+
+Run45895333330/sourceb941500 generated one new Gemini scene and published it successfully. ESP32 automatically installed `ota-pilot-f502bdd7ce31e531e7b2a28f`, app1/SDK2VALID/healthy/Wi-Fi connected, and user confirmed “it changed”. No per-email install/upload/build intervention. Arduino IDE/Mac are not required for normal operation; ESP32 needs power and Wi-Fi. First-email handler stops after one result, so **sending further emails whenever desired is not yet enabled**. Next is persistent one-at-a-time intake; reporting, fuller queues and creative/broad tests remain backlog. See [automatic email guide](email/automatic-pilot.md). Older bootstrap/manual statuses below are historical.
+
 ## Immediate milestone — one new email to automatic panel installation
 
 User prioritizes one unattended email → Gemini → compile → publish → ESP32 install. The new opt-in automatic runtime is already compiled/USB-installed and healthy with retained Wi-Fi; auto-on was enabled. Current heart bootstrap version `ota-pilot-10044853bfa1d68ef156ecf2`, foundation `a529d5f9a72ca4858e0ab09ae66ec5eaecff656fdeb6d6a4f040e40633959ec1`, app0. The first new emailed image is **not yet verified**. Next push the implementation, add Automatic.gs and the updated manifest to Apps Script, run startEmailPilot once, then send one fresh prompt. Device reporting, continuous queues, replies and broad/creative tests are backlog. See [automatic email guide](email/automatic-pilot.md) and [resume](RESUME.md). Historical results below remain historical.

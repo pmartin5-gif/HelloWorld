@@ -2,7 +2,7 @@
 
 The immediate milestone is one **new email → Gemini → compile → publish → automatic ESP32 installation**, without per-email commands. Device reporting, queue release, replies, general recovery and creative review are backlog items. The existing saved-heart queue and all its historical receipts remain unchanged.
 
-**Current handoff, November 26:** Board bootstrap and `auto-on` are already complete; do not repeat step 2. Wi-Fi and healthy boot were observed. GitHub push, Apps Script installation/authorization and the first fresh email remain pending. No new generation request has been sent yet.
+**Current result, November 26:** First new email completed the full automatic path in [run45895333330](https://github.com/pmartin5-gif/HelloWorld/actions/runs/45895333330). Generation/build/publication succeeded; the ESP32 automatically installed version `ota-pilot-f502bdd7ce31e531e7b2a28f`, passed boot health/SDK VALID, retained Wi-Fi, and the user confirmed “it changed”. Do not repeat setup or resend that prompt. This mode stops after one email; continuous intake is the next requested capability and is not yet enabled. The board remains on auto-on. A stale older feed was initially observed before a later poll got the new feed; several minutes of publication-to-board delay occurred. The Node20 action annotation was nonfatal.
 
 ## One-time setup
 
