@@ -1,0 +1,99 @@
+name: Lightboard queued publication
+run-name: Lightboard queue ${{ inputs.queue_job_id }} ${{ inputs.queue_dispatch_id }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      queue_job_id:
+        type: string
+        required: true
+      queue_dispatch_id:
+        type: string
+        required: true
+      prior_build_run_id:
+        type: string
+        required: true
+      prior_result_sha256:
+        type: string
+        required: true
+      prompt_sha256:
+        type: string
+        required: true
+      publish:
+        description: 'Publish exact verified saved-heart rebuild; no model request or board command'
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+concurrency:
+  group: lightboard-api-test
+  cancel-in-progress: false
+jobs:
+  compile-and-publish:
+    if: ${{ github.repository == 'pmartin5-gif/HelloWorld' && github.event.repository.private == false && github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      actions: read
+    defaults:
+      run:
+        working-directory: Week-8/LightBoard_Prompter
+    env:
+      QUEUE_JOB_ID: ${{ inputs.queue_job_id }}
+      QUEUE_DISPATCH_ID: ${{ inputs.queue_dispatch_id }}
+      PRIOR_BUILD_RUN_ID: ${{ inputs.prior_build_run_id }}
+      PRIOR_RESULT_SHA256: ${{ inputs.prior_result_sha256 }}
+      PROMPT_SHA256: ${{ inputs.prompt_sha256 }}
+      PUBLICATION_APPROVED: ${{ inputs.publish }}
+    steps:
+      - name: Check out sealed build and saved response
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /Week-8/LightBoard_Prompter/cloud/
+            /Week-8/LightBoard_Prompter/device/
+            /Week-8/LightBoard_Prompter/generationBrief.md
+            /Week-8/LightBoard_Prompter/experiments/flash-lite/2026-11-09/cloud-run-42735010470/generation.json
+      - name: Bind publication to prior verified queue result
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 cloud/queue_publication.py prepare
+      - name: Verify pinned foundation
+        run: python3 cloud/build.py --verify-only
+      - name: Install pinned Arduino CLI
+        uses: arduino/setup-arduino-cli@81d310742121c928ea9c8bbd407b4217b432ae02 # v2
+        with:
+          version: '1.5.1'
+      - name: Reuse exact saved response without a model call
+        run: >-
+          python3 cloud/scene.py --reuse-record
+          --record experiments/flash-lite/2026-11-09/cloud-run-42735010470/generation.json
+          --output .build/queue-publication/generation.json
+          --prompt-file .build/queue-publication/creative-prompt.txt --brief generationBrief.md
+      - name: Validate saved function
+        run: >-
+          python3 cloud/scene.py --record .build/queue-publication/generation.json
+          --output .build/queue-publication/restState.cpp
+      - name: Set up pinned ESP32 toolchain
+        run: python3 cloud/build.py --install-core --install-only
+      - name: Rebuild sealed candidate and recovery
+        run: |
+          python3 cloud/prompt_build.py --cli arduino-cli --data-dir .build/arduino-data \
+            --work .build/prompt-ota --generation-record .build/queue-publication/generation.json \
+            --prompt-file .build/queue-publication/creative-prompt.txt
+          mv .build/prompt-ota .build/queue-publication/build
+      - name: Publish only if rebuilt image matches prior verified build
+        if: ${{ success() && inputs.publish }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 cloud/queue_publication.py publish
+      - name: Record queue result
+        if: ${{ always() }}
+        env:
+          PUBLICATION_OUTCOME: ${{ job.status }}
+        run: python3 cloud/queue_publication.py result

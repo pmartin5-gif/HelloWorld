@@ -243,6 +243,9 @@ Bring back this request:
 
 ## Step 9 — Connect email to the tested cloud workflow
 
+**Latest publication phase:** Separate queue publication implemented/tested locally (45 focused checks) but not pushed/installed/run. It rebuilds saved heart, refuses any image mismatch with prior verified build, preserves original build/config/receipt, reserves one publication and verifies feed plus four release digests. Holds queue published/unconfirmed; no new generation, automatic device reporting or installation. Next email/queued-publication.md handoff; manual native-IDE OTA/status after publication passes.
+
+
 **Complete the automation.**
 
 **November26 checkpoint:** Queue.gs now implements durable per-job storage, checksum-bound immutable receipt references, FIFO, shared-lock/capacity controls and one-in-flight/revisioned transitions.15 focused local checks pass; actual Google installation/persistence also passed from supplied second-run log at1:25:37PM (see email/queue.md). No dispatch/trigger/model/publication/device operation has been enabled. Manual saved-heart GitHub adapter and workflow job/attempt/prompt/run/commit/result binding are now implemented/tested locally; source push/private setup/live dispatch remain pending. See email/github-setup.md.

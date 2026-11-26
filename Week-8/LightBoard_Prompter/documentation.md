@@ -2614,6 +2614,26 @@ Independently read GitHub run/job140139603365: completed success/source88eac47/a
 
 This completes manual email→immutable receipt→durable queue→one saved-response cloud build→verified bound result. No repeat tests/run, second POST, new model request, publication, email/trigger/device command. Next publication/board confirmation remains separate and off. Completed bound build releases source-pinning reason for holding local commits: commit the tested quota fix and notes locally, do not automatically push/change live source pin. Future source update requires deliberate configuration; one approved job is complete and vessel still cannot silently reuse heart/generate. No credentials accessed.
 
+## 119. Controlled queue publication prepared; physical confirmation remains next
+
+**Date:** November 26, 2026
+
+### Your prompt
+
+> Great. Let's move forward.
+
+### Implementation
+
+Prepared a dedicated queued-publication workflow and cloud/queue_publication.py instead of weakening the completed build-only workflow. It reads the actual prior successful run/result step, verifies its exact stored digest/job/prompt/source/saved-response provenance, rebuilds the saved heart with existing sealed compilation/recovery gates, and refuses publication unless version/foundation/bytes/SHA exactly equal the verified first build. Recompile is necessary because no binaries/artifacts were retained. No new generation/artifact/cache/routine test/device command. Uses unchanged immutable publisher with prior/legacy/recovery/asset/feed guards; result includes all four asset digests/sizes and distinguishes unconfirmed partial failure from known nonpublication. Same local publication intent cannot be retried.
+
+Extended Queue/GitHub with a separate publication reservation/run/source/result on the original job, leaving old build receipt/dispatch/result/pin intact. New setupPublication verifies new source and old proof read-only and saves separate configuration. Explicit publishApprovedBuild posts once; unknown responses reconcile by nonce. pollPublication validates exact old/new provenance/image, current feed hash/content and four server asset digests/URLs/sizes. Published and uncertain states retain one in-flight hold; no installed claim or automatic queue advance. No credential/scope/manifest change. Updated matching restore copies and concrete handoff guide. Consolidated RESUME current section to remove stale NEXT instructions, retaining chronological documentation and completed hardware evidence.
+
+### Validation and next action
+
+37 Node queue/adapter checks and8 Python publication checks pass;45 focused checks total. Covered saved-proof mismatch, no approval/rerun/branch/source drift, exact rebuilt image gate, repeat intent refusal, preserved build/config/receipts, FIFO/one active, lost response/restart, feed/release tamper, unconfirmed failures and late reconciliation, no forwarded storage token/model/install claim. Synthetic fixtures and mocked publisher/network; no real compilation/publication/device operation. YAML parses and diff checks pass. No full suite or artwork checks.
+
+Local work complete; next user pushes prepared main, updates ONLY live Queue/Github, adds LB_PUBLICATION_SETUP with exact new pushed commit, runs GET-only setupPublication, then manual publishApprovedBuild once/pollPublication. Keep old LB_GITHUB_ACTIVE and all history. After publication is independently verified, use existing native Arduino Serial status/check/arm-update/install/health-status procedure; older opened sketch must not be uploaded. Manual physical evidence stays separate from future authenticated device reporting, so queue does not automatically declare installation. All new API generation/automatic delivery/scheduling/replies remain off.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.

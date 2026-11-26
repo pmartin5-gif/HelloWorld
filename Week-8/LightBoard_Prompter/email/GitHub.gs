@@ -67,7 +67,7 @@ function lbghLocked_(work) {
       const known = /^LB_GH_(TOKEN|TARGET|NETWORK|QUOTA|HTTP|RESPONSE_SIZE|JSON|CONFIG|SOURCE|WORKFLOW|JOB|RUN|LOGS|RESULT)$/;
       return lbReport({status: 'stopped', reason: known.test(error.message) ? error.message : 'LB_GH_CONFIG',
         ...(error.message === 'LB_GH_QUOTA' && error.rateLimit ? {rateLimit: error.rateLimit} : {}),
-        automaticDispatchEnabled: false, published: false, deviceConfirmed: false});
+        automaticDispatchEnabled: false, publicationConfirmed: false, deviceConfirmed: false});
     }
   });
 }
@@ -82,11 +82,11 @@ function lbghConfig_(snapshot) {
   lbghToken_(snapshot);
   return {queue, config};
 }
-function lbghCheckSource_(snapshot, commit, workflowId) {
+function lbghCheckSource_(snapshot, commit, workflowId, target = LBGH) {
   const head = lbghGet_(snapshot, '/commits/main');
   lbghRequire_(head.sha === commit, 'SOURCE');
-  const workflow = lbghGet_(snapshot, '/actions/workflows/' + LBGH.workflow);
-  lbghRequire_(Number.isSafeInteger(workflow.id) && workflow.id > 0 && workflow.path === LBGH.workflowPath &&
+  const workflow = lbghGet_(snapshot, '/actions/workflows/' + target.workflow);
+  lbghRequire_(Number.isSafeInteger(workflow.id) && workflow.id > 0 && workflow.path === target.workflowPath &&
     workflow.state === 'active' && (!workflowId || String(workflow.id) === workflowId), 'WORKFLOW');
   return String(workflow.id);
 }
@@ -112,11 +112,11 @@ function lbghJob_(snapshot, queue, config) {
   return {rows, q};
 }
 function lbghTitle_(q) { return 'Lightboard queue ' + q.jobId + ' ' + q.dispatch.id; }
-function lbghRun_(run, q, config) {
+function lbghRun_(run, q, config, target = LBGH) {
   lbghRequire_(run && Number.isSafeInteger(run.id) && run.id > 0 &&
     String(run.workflow_id) === config.workflowId && run.head_sha === config.sourceCommit &&
     run.head_branch === LBGH.ref && run.event === 'workflow_dispatch' && run.run_attempt === 1 &&
-    [LBGH.workflowPath, LBGH.workflowPath + '@main', LBGH.workflowPath + '@refs/heads/main'].includes(run.path) &&
+    [target.workflowPath, target.workflowPath + '@main', target.workflowPath + '@refs/heads/main'].includes(run.path) &&
     run.repository && run.repository.full_name === LBGH.repository &&
     run.repository.private === false && run.display_title === lbghTitle_(q) &&
     run.html_url === 'https://github.com/' + LBGH.repository + '/actions/runs/' + run.id &&
@@ -199,11 +199,11 @@ function dispatchNextSavedBuild() {
   });
 }
 
-function lbghFindRun_(snapshot, q, config) {
-  if (q.dispatch.runId) return lbghRun_(lbghGet_(snapshot, '/actions/runs/' + q.dispatch.runId), q, config);
+function lbghFindRun_(snapshot, q, config, target = LBGH) {
+  if (q.dispatch.runId) return lbghRun_(lbghGet_(snapshot, '/actions/runs/' + q.dispatch.runId), q, config, target);
   const matches = [];
   for (let page = 1; page <= 3; page++) {
-    const data = lbghGet_(snapshot, '/actions/workflows/' + LBGH.workflow +
+    const data = lbghGet_(snapshot, '/actions/workflows/' + target.workflow +
       '/runs?event=workflow_dispatch&branch=main&per_page=100&page=' + page +
       '&created=' + encodeURIComponent('>=' + new Date(Date.parse(q.dispatch.reservedAt) - 300000)
         .toISOString().replace(/\.\d{3}Z$/, 'Z')));
@@ -212,7 +212,7 @@ function lbghFindRun_(snapshot, q, config) {
     if (data.workflow_runs.length < 100) break;
   }
   lbghRequire_(matches.length <= 1, 'RUN');
-  return matches.length ? lbghRun_(matches[0], q, config) : null;
+  return matches.length ? lbghRun_(matches[0], q, config, target) : null;
 }
 function lbghStepLog_(snapshot, jobId, stepNumber) {
   const path = '/repos/' + LBGH.repository + '/actions/jobs/' + jobId + '/steps/' + stepNumber + '/logs';
@@ -251,6 +251,8 @@ function pollSavedBuild() {
   return lbghLocked_((store, snapshot, now) => {
     const {queue, config} = lbghConfig_(snapshot);
     let {q} = lbghJob_(snapshot, queue, config);
+    if (q.publicationDispatch) return lbReport({status: q.status, jobId: q.jobId,
+      nextAction: 'pollPublication', published: q.publication !== null, deviceConfirmed: false});
     if (!LBQ.active.includes(q.status)) return lbReport({status: q.status, jobId: q.jobId,
       runId: q.dispatch ? q.dispatch.runId : null, published: false, deviceConfirmed: false});
     const run = lbghFindRun_(snapshot, q, config);
@@ -288,5 +290,184 @@ function resumeSavedBuildQueue() {
     lbghCheckSource_(snapshot, config.sourceCommit, config.workflowId);
     lbghSaveEvent_(store, snapshot, queue, q.jobId, 'resume', {}, now);
     return lbReport({status: 'received', jobId: q.jobId, dispatchSent: false});
+  });
+}
+
+/** Separate explicit publication phase. Original build/config/receipt are never overwritten. */
+const LBPUB = Object.freeze({workflow: 'lightboard-queue-publish.yml',
+  workflowPath: '.github/workflows/lightboard-queue-publish.yml',
+  workflowSha256: 'fb029ca7d8cdf8aaa0708c24f61a4fe0f7021cc0282f7c80fc377c89d25b7ede', helperSha256: '6878f022db82fb1962bbda68e5eb35cc1a1989a8f0f05506e266d354e5cd8035',
+  configKey: 'LB_PUBLICATION_ACTIVE'});
+
+function lbpubContext_(snapshot) {
+  lbghRequire_(LBQ.publicationAdapterVersion === 1, 'CONFIG');
+  const {queue, config: buildConfig} = lbghConfig_(snapshot);
+  const config = JSON.parse(snapshot[LBPUB.configKey] || 'null');
+  lbghRequire_(config && config.schemaVersion === 1 && config.mode === 'manual_saved_publication' &&
+    config.accountSha256 === queue.accountSha256 && config.approvedJobId === buildConfig.approvedJobId &&
+    /^[a-f0-9]{40}$/.test(config.sourceCommit || '') && /^[1-9][0-9]{0,19}$/.test(config.workflowId || ''), 'CONFIG');
+  const {rows, q} = lbghJob_(snapshot, queue, buildConfig);
+  const p = config.priorResult;
+  lbghRequire_(p && p.result === 'built' && p.jobId === q.jobId && p.runId === q.dispatch.runId &&
+    p.commitSha === q.dispatch.commitSha && lbHash(JSON.stringify(p)) === q.dispatch.resultSha256 &&
+    p.promptSha256 === q.promptSha256 && p.modelRequests === 0 && p.published === false, 'RESULT');
+  return {queue, buildConfig, config, rows, q};
+}
+function lbpubReport_(snapshot, run, expectedJobName) {
+  const data = lbghGet_(snapshot, '/actions/runs/' + run.id + '/attempts/1/jobs?per_page=100');
+  lbghRequire_(data.total_count === 1 && Array.isArray(data.jobs) && data.jobs.length === 1, 'RESULT');
+  const job = data.jobs[0];
+  lbghRequire_(job.name === expectedJobName && job.run_id === run.id && job.status === 'completed' &&
+    job.conclusion === run.conclusion && Number.isSafeInteger(job.id) && Array.isArray(job.steps), 'RESULT');
+  const steps = job.steps.filter(s => s.name === LBGH.resultStep);
+  lbghRequire_(steps.length === 1 && steps[0].status === 'completed' && steps[0].conclusion === 'success' &&
+    Number.isSafeInteger(steps[0].number) && steps[0].number > 0, 'RESULT');
+  return {report: lbghStepLog_(snapshot, job.id, steps[0].number), workflowJobId: String(job.id)};
+}
+function setupPublication() {
+  return lbghLocked_((store, snapshot, now) => {
+    lbghRequire_(LBQ.publicationAdapterVersion === 1, 'CONFIG');
+    if (snapshot[LBPUB.configKey]) {
+      const {config, q} = lbpubContext_(snapshot);
+      return lbReport({status: 'already_configured', mode: config.mode, jobId: q.jobId,
+        sourceCommit: config.sourceCommit, dispatchSent: false, automaticDispatchEnabled: false});
+    }
+    const {queue, config: buildConfig} = lbghConfig_(snapshot);
+    const {rows, q} = lbghJob_(snapshot, queue, buildConfig);
+    lbghRequire_(q.status === 'built' && !q.publicationDispatch && !rows.some(x => LBQ.active.includes(x.status)), 'JOB');
+    const requested = JSON.parse(snapshot.LB_PUBLICATION_SETUP || 'null');
+    lbghRequire_(requested && /^[a-f0-9]{40}$/.test(requested.sourceCommit || ''), 'CONFIG');
+    const workflowId = lbghCheckSource_(snapshot, requested.sourceCommit, null, LBPUB);
+    lbghCheckFile_(snapshot, LBPUB.workflowPath, requested.sourceCommit, LBPUB.workflowSha256);
+    lbghCheckFile_(snapshot, 'Week-8/LightBoard_Prompter/cloud/queue_publication.py',
+      requested.sourceCommit, LBPUB.helperSha256);
+    const run = lbghRun_(lbghGet_(snapshot, '/actions/runs/' + q.dispatch.runId), q, buildConfig);
+    lbghRequire_(run.status === 'completed' && run.conclusion === 'success', 'RUN');
+    const {report} = lbpubReport_(snapshot, run, 'generate-and-compile');
+    lbghResult_(report, q, buildConfig, run);
+    lbghRequire_(lbHash(JSON.stringify(report)) === q.dispatch.resultSha256, 'RESULT');
+    const config = {schemaVersion: 1, mode: 'manual_saved_publication', accountSha256: queue.accountSha256,
+      approvedJobId: q.jobId, sourceCommit: requested.sourceCommit, workflowId, priorResult: report, createdAt: now};
+    lbSet(store, snapshot, LBPUB.configKey, config);
+    return lbReport({status: 'configured', mode: config.mode, jobId: q.jobId, sourceCommit: config.sourceCommit,
+      priorBuildRunId: q.dispatch.runId, priorResultSha256: q.dispatch.resultSha256,
+      dispatchSent: false, automaticDispatchEnabled: false, deviceConfirmed: false});
+  });
+}
+function lbpubProjection_(q) {
+  const p = q.publicationDispatch;
+  return {jobId: q.jobId, promptSha256: q.promptSha256,
+    dispatch: {id: p.id, reservedAt: p.reservedAt, runId: p.runId, commitSha: p.sourceCommit}};
+}
+function publishApprovedBuild() {
+  return lbghLocked_((store, snapshot, now) => {
+    const {queue, config, q} = lbpubContext_(snapshot);
+    if (q.publicationDispatch) return lbReport({status: q.status, jobId: q.jobId,
+      nextAction: 'pollPublication', dispatchRepeated: false});
+    lbghRequire_(q.status === 'built', 'JOB');
+    lbghCheckSource_(snapshot, config.sourceCommit, config.workflowId, LBPUB);
+    queue.mode = 'manual_saved_publication'; lbSet(store, snapshot, LBQ.configKey, queue);
+    let current = lbghSaveEvent_(store, snapshot, queue, q.jobId, 'reserve_publication', {
+      id: 'gh_' + Utilities.getUuid().replace(/-/g, ''), sourceCommit: config.sourceCommit,
+      priorResultSha256: q.dispatch.resultSha256}, now);
+    let run;
+    try {
+      const response = lbghApi_(snapshot, 'post', '/repos/' + LBGH.repository + '/actions/workflows/' +
+        LBPUB.workflow + '/dispatches', {ref: 'main', inputs: {queue_job_id: q.jobId,
+          queue_dispatch_id: current.publicationDispatch.id, prior_build_run_id: q.dispatch.runId,
+          prior_result_sha256: q.dispatch.resultSha256, prompt_sha256: q.promptSha256, publish: 'true'}});
+      if (response.getResponseCode() === 200) {
+        const accepted = lbghJson_(response);
+        lbghRequire_(Number.isSafeInteger(accepted.workflow_run_id) && accepted.workflow_run_id > 0, 'RUN');
+        run = lbghRun_(lbghGet_(snapshot, '/actions/runs/' + accepted.workflow_run_id),
+          lbpubProjection_(current), config, LBPUB);
+      }
+    } catch (_) { /* Preserve reservation after every uncertain POST response. */ }
+    if (run) {
+      current = lbghSaveEvent_(store, snapshot, queue, q.jobId, 'bind_publication', {
+        dispatchId: current.publicationDispatch.id, sourceCommit: config.sourceCommit,
+        promptSha256: q.promptSha256, runId: String(run.id)}, now);
+      return lbReport({status: 'publishing', jobId: q.jobId, runId: String(run.id), runUrl: run.html_url,
+        automaticDispatchEnabled: false, deviceConfirmed: false});
+    }
+    lbghSaveEvent_(store, snapshot, queue, q.jobId, 'publication_unknown', {}, now);
+    return lbReport({status: 'publication_unknown', jobId: q.jobId, nextAction: 'pollPublication',
+      automaticDispatchEnabled: false, deviceConfirmed: false});
+  });
+}
+function lbpubVerify_(snapshot, report, q, config, run) {
+  const old = config.priorResult, p = q.publicationDispatch;
+  lbghRequire_(run.conclusion === 'success' && report && report.schemaVersion === 1 &&
+    report.operation === 'publication' && report.jobId === q.jobId && report.dispatchId === p.id &&
+    report.priorBuildRunId === q.dispatch.runId && report.priorResultSha256 === q.dispatch.resultSha256 &&
+    report.promptSha256 === q.promptSha256 && report.runId === String(run.id) && report.runAttempt === 1 &&
+    report.commitSha === config.sourceCommit && report.repository === LBGH.repository &&
+    report.workflowPath === LBPUB.workflowPath && report.result === 'published' && report.published === true &&
+    report.modelRequests === 0 && report.automaticUpdates === false && report.deviceConfirmed === false &&
+    ['foundation', 'version', 'bytes', 'sha256'].every(k => report[k] === old[k]), 'RESULT');
+  const tag = 'lightboard-ota-' + run.id + '-1';
+  const baseUrl = 'https://github.com/' + LBGH.repository + '/releases/download/' + tag + '/';
+  lbghRequire_(report.releaseTag === tag && report.firmwareUrl === baseUrl + 'firmware.bin' &&
+    report.feedUrl === 'https://raw.githubusercontent.com/' + LBGH.repository + '/lightboard-feed/manifest.json' &&
+    /^[a-f0-9]{64}$/.test(report.manifestSha256 || ''), 'RESULT');
+  const file = lbghGet_(snapshot, '/contents/manifest.json?ref=lightboard-feed');
+  lbghRequire_(file.encoding === 'base64' && typeof file.content === 'string' && file.size <= 8192, 'RESULT');
+  const raw = Utilities.newBlob(Utilities.base64Decode(file.content.replace(/\s/g, ''))).getDataAsString('UTF-8');
+  lbghRequire_(lbBytes(raw) === file.size && lbHash(raw) === report.manifestSha256, 'RESULT');
+  const m = JSON.parse(raw);
+  lbghRequire_(m.schema_version === 2 && m.repository === LBGH.repository && m.device === 'esp32-32x32' &&
+    m.channel === 'ota-pilot' && m.foundation_id === old.foundation && m.published === true &&
+    m.ota_enabled === true && m.automatic_updates === false && m.scene === 'generated' &&
+    m.build.run_id === String(run.id) && m.build.attempt === '1' && m.build.commit_sha === config.sourceCommit &&
+    m.generation.run_id === '42735010470' && m.generation.response_sha256 === LBGH.responseSha256 &&
+    m.generation.model_request_in_this_run === false && m.current.url === report.firmwareUrl &&
+    m.current.release_tag === tag && ['version', 'bytes', 'sha256'].every(k => m.current[k] === old[k]), 'RESULT');
+  const release = lbghGet_(snapshot, '/releases/tags/' + tag);
+  const names = ['firmware.bin', 'recovery.bin', 'manifest.json', 'SHA256SUMS'];
+  lbghRequire_(release.draft === false && release.prerelease === true && Array.isArray(release.assets) &&
+    release.assets.length === 4 && report.assetSha256 && report.assetBytes, 'RESULT');
+  for (const name of names) {
+    const assets = release.assets.filter(a => a.name === name);
+    lbghRequire_(assets.length === 1 && /^[a-f0-9]{64}$/.test(report.assetSha256[name] || '') &&
+      assets[0].state === 'uploaded' && assets[0].size === report.assetBytes[name] &&
+      assets[0].digest === 'sha256:' + report.assetSha256[name] &&
+      assets[0].browser_download_url === baseUrl + name, 'RESULT');
+  }
+  lbghRequire_(report.assetSha256['manifest.json'] === report.manifestSha256 &&
+    report.assetSha256['firmware.bin'] === old.sha256 && report.assetBytes['firmware.bin'] === old.bytes &&
+    report.assetSha256['recovery.bin'] === m.usb_recovery.sha256 &&
+    report.assetBytes['recovery.bin'] === m.usb_recovery.bytes, 'RESULT');
+  return {version: old.version, foundation: old.foundation, sha256: old.sha256, bytes: old.bytes,
+    releaseTag: tag, firmwareUrl: report.firmwareUrl, manifestSha256: report.manifestSha256,
+    runId: String(run.id), sourceCommit: config.sourceCommit};
+}
+function pollPublication() {
+  return lbghLocked_((store, snapshot, now) => {
+    const {queue, config, q} = lbpubContext_(snapshot);
+    if (!q.publicationDispatch) return lbReport({status: 'not_dispatched', jobId: q.jobId});
+    if (q.status === 'published') return lbReport({status: 'published', jobId: q.jobId,
+      runId: q.publicationDispatch.runId, publication: q.publication,
+      automaticDispatchEnabled: false, deviceConfirmed: false});
+    let current = q;
+    const run = lbghFindRun_(snapshot, lbpubProjection_(q), config, LBPUB);
+    if (!run) return lbReport({status: 'awaiting_publication_run', jobId: q.jobId, dispatchRepeated: false});
+    if (!q.publicationDispatch.runId) current = lbghSaveEvent_(store, snapshot, queue, q.jobId,
+      'bind_publication', {dispatchId: q.publicationDispatch.id, sourceCommit: config.sourceCommit,
+        promptSha256: q.promptSha256, runId: String(run.id)}, now);
+    if (run.status !== 'completed') return lbReport({status: 'publishing', jobId: q.jobId,
+      runId: String(run.id), runUrl: run.html_url, deviceConfirmed: false});
+    const {report, workflowJobId} = lbpubReport_(snapshot, run, 'compile-and-publish');
+    if (run.conclusion !== 'success' || report.result !== 'published') {
+      if (current.status !== 'review_required') lbghSaveEvent_(store, snapshot, queue, q.jobId, 'timeout', {}, now);
+      return lbReport({status: 'review_required', jobId: q.jobId, runId: String(run.id),
+        publicationConfirmed: false, deviceConfirmed: false, automaticDispatchEnabled: false});
+    }
+    const publication = lbpubVerify_(snapshot, report, current, config, run);
+    current = lbghSaveEvent_(store, snapshot, queue, q.jobId, 'publication_result', {
+      runId: String(run.id), sourceCommit: config.sourceCommit, promptSha256: q.promptSha256,
+      publication, resultSha256: lbHash(JSON.stringify(report)), workflowJobId}, now);
+    return lbReport({status: 'published', jobId: q.jobId, runId: String(run.id), runUrl: run.html_url,
+      publication: current.publication, resultSha256: current.publicationDispatch.resultSha256,
+      modelRequests: 0, automaticDispatchEnabled: false, deviceConfirmed: false});
   });
 }

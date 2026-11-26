@@ -1,9 +1,10 @@
 /** Durable queue, installed alongside Code.gs. No network, dispatch, triggers or mail writes. */
-const LBQ = Object.freeze({schemaVersion: 1, githubAdapterVersion: 1,
+const LBQ = Object.freeze({schemaVersion: 1, githubAdapterVersion: 1, publicationAdapterVersion: 1,
   prefix: 'LB_QUEUE_JOB_', configKey: 'LB_QUEUE_CONFIG',
-  active: ['dispatch_pending', 'dispatch_unknown', 'building', 'published', 'review_required'],
+  active: ['dispatch_pending', 'dispatch_unknown', 'building', 'published', 'review_required',
+    'publication_pending', 'publication_unknown', 'publishing'],
   statuses: ['received', 'quota_paused', 'dispatch_pending', 'dispatch_unknown', 'building',
-    'built', 'published', 'review_required', 'failed']});
+    'built', 'published', 'review_required', 'failed', 'publication_pending', 'publication_unknown', 'publishing']});
 
 function lbqRequire_(ok) { lbRequire(ok, 'LB_QUEUE_INVALID'); }
 function lbqCopy_(value) { return JSON.parse(JSON.stringify(value)); }
@@ -17,7 +18,8 @@ function lbqConfig_(snapshot) {
   const inbox = JSON.parse(snapshot.LB_ACTIVE_CONFIG || 'null');
   lbqRequire_(inbox && lbAddress(inbox.account) === inbox.account);
   const config = JSON.parse(snapshot[LBQ.configKey] || 'null');
-  lbqRequire_(config && config.schemaVersion === 1 && ['record_only', 'manual_saved_build'].includes(config.mode) &&
+  lbqRequire_(config && config.schemaVersion === 1 &&
+    ['record_only', 'manual_saved_build', 'manual_saved_publication'].includes(config.mode) &&
     config.accountSha256 === lbHash(inbox.account) && config.board === 'esp32-32x32');
   lbqTime_(config.createdAt);
   return config;
@@ -66,6 +68,16 @@ function lbqRead_(snapshot, config) {
           /^[1-9][0-9]{0,19}$/.test(q.dispatch.workflowJobId || ''));
       }
     }
+    if (q.publicationDispatch) {
+      const p = q.publicationDispatch;
+      lbqRequire_(['publication_pending', 'publication_unknown', 'publishing', 'published', 'review_required'].includes(q.status) &&
+        /^gh_[a-f0-9]{32}$/.test(p.id || '') && /^[a-f0-9]{40}$/.test(p.sourceCommit || '') &&
+        p.priorResultSha256 === q.dispatch.resultSha256 && /^[a-f0-9]{64}$/.test(p.priorResultSha256 || '') &&
+        /^[1-9][0-9]{0,19}$/.test(q.dispatch.runId || '') &&
+        (p.runId === null || /^[1-9][0-9]{0,19}$/.test(p.runId)));
+      lbqTime_(p.reservedAt);
+      if (['publishing', 'published'].includes(q.status)) lbqRequire_(p.runId !== null);
+    } else lbqRequire_(!['publication_pending', 'publication_unknown', 'publishing'].includes(q.status));
     if (q.publication !== null) {
       lbqRequire_(q.status === 'published' || q.status === 'review_required');
       lbqPublication_(q.publication);
@@ -102,13 +114,14 @@ function lbqSummary_(rows, config) {
   const active = rows.find(q => LBQ.active.includes(q.status));
   const head = active || rows.find(q => ['received', 'quota_paused'].includes(q.status));
   const mode = config ? config.mode : 'record_only';
-  return {mode, dispatchEnabled: mode === 'manual_saved_build', automaticDispatchEnabled: false, jobs: rows.length,
+  return {mode, dispatchEnabled: mode !== 'record_only', automaticDispatchEnabled: false, jobs: rows.length,
     headJobId: head ? head.jobId : null, inFlightJobId: active ? active.jobId : null,
     items: rows.map((q, index) => ({jobId: q.jobId, position: index + 1, status: q.status,
       promptSha256: q.promptSha256, revision: q.revision, attempt: q.attempt,
       runId: q.dispatch ? q.dispatch.runId : null,
       commitSha: q.dispatch ? q.dispatch.commitSha : null,
       resultSha256: q.dispatch ? (q.dispatch.resultSha256 || null) : null,
+      publicationRunId: q.publicationDispatch ? q.publicationDispatch.runId : null,
       published: q.publication !== null, deviceConfirmed: false}))};
 }
 
@@ -132,7 +145,7 @@ function setupQueue() {
     if (snapshot[LBQ.configKey]) {
       const config = lbqConfig_(snapshot);
       return lbReport({status: 'already_configured', mode: config.mode,
-        dispatchEnabled: config.mode === 'manual_saved_build', automaticDispatchEnabled: false});
+        dispatchEnabled: config.mode !== 'record_only', automaticDispatchEnabled: false});
     }
     const config = lbConfig(store);
     lbqRequire_(config && lbAddress(config.account) === config.account);
@@ -179,7 +192,32 @@ function lbqTransition_(rows, jobId, event, now) {
   const q = lbqCopy_(current);
   const active = rows.find(x => LBQ.active.includes(x.status));
   const head = rows.find(x => ['received', 'quota_paused'].includes(x.status));
-  if (event.type === 'reserve_dispatch') {
+  if (event.type === 'reserve_publication') {
+    lbqRequire_(!active && q.status === 'built' && !q.publicationDispatch &&
+      !rows.slice(0, rows.indexOf(current)).some(x => ['received', 'quota_paused'].includes(x.status)) &&
+      /^gh_[a-f0-9]{32}$/.test(event.id) && /^[a-f0-9]{40}$/.test(event.sourceCommit || '') &&
+      event.priorResultSha256 === q.dispatch.resultSha256 && /^[a-f0-9]{64}$/.test(event.priorResultSha256 || ''));
+    q.publicationDispatch = {id: event.id, reservedAt: now, sourceCommit: event.sourceCommit,
+      priorResultSha256: event.priorResultSha256, runId: null};
+    q.status = 'publication_pending';
+  } else if (event.type === 'publication_unknown') {
+    lbqRequire_(q.status === 'publication_pending' && q.publicationDispatch); q.status = 'publication_unknown';
+  } else if (event.type === 'bind_publication') {
+    const p = q.publicationDispatch;
+    lbqRequire_(p && ['publication_pending', 'publication_unknown', 'review_required'].includes(q.status) &&
+      p.runId === null && event.dispatchId === p.id && event.sourceCommit === p.sourceCommit &&
+      event.promptSha256 === q.promptSha256 && /^[1-9][0-9]{0,19}$/.test(event.runId || ''));
+    p.runId = event.runId; q.status = 'publishing';
+  } else if (event.type === 'publication_result') {
+    const p = q.publicationDispatch;
+    lbqRequire_(p && ['publishing', 'review_required'].includes(q.status) && p.runId !== null &&
+      event.runId === p.runId && event.sourceCommit === p.sourceCommit &&
+      event.promptSha256 === q.promptSha256 && /^[a-f0-9]{64}$/.test(event.resultSha256 || '') &&
+      /^[1-9][0-9]{0,19}$/.test(event.workflowJobId || ''));
+    lbqPublication_(event.publication);
+    q.publication = lbqCopy_(event.publication); q.status = 'published';
+    p.resultSha256 = event.resultSha256; p.workflowJobId = event.workflowJobId;
+  } else if (event.type === 'reserve_dispatch') {
     lbqRequire_(!active && head === current && q.status === 'received');
     q.status = 'dispatch_pending'; q.attempt = 1;
     q.dispatch = {id: event.id, reservedAt: now, runId: null, commitSha: null};

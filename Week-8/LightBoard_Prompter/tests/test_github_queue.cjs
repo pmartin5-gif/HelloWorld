@@ -46,6 +46,34 @@ function runtime(data = initial(), state = {}, options = {}) {
     published:false, publicationAbsenceVerified:true, modelRequests:0, automaticUpdates:false, deviceConfirmed:false,
     foundation:'f1244292bbdf180ad5ea8b4ffbf46c72b9772ef8ad2407276ae26e3786132522',
     version:'ota-pilot-'+'b'.repeat(24), sha256:'c'.repeat(64),bytes:1012016,...state.reportOverride});
+  const pubCommit='b'.repeat(40);
+  const pubRun=()=>({id:5678,workflow_id:8,head_sha:pubCommit,head_branch:'main',event:'workflow_dispatch',
+    run_attempt:1,path:'.github/workflows/lightboard-queue-publish.yml',repository:{full_name:repository,private:false},
+    display_title:'Lightboard queue '+jobId+' '+q().publicationDispatch.id,
+    html_url:'https://github.com/'+repository+'/actions/runs/5678',status:state.pubCompleted?'completed':'in_progress',
+    conclusion:state.pubCompleted?(state.pubConclusion||'success'):null,...state.pubRunOverride});
+  const pubData=()=>{
+    const old=makeReport(),tag='lightboard-ota-5678-1',baseUrl='https://github.com/'+repository+'/releases/download/'+tag+'/';
+    const m={schema_version:2,repository,device:'esp32-32x32',channel:'ota-pilot',foundation_id:old.foundation,
+      published:true,ota_enabled:true,automatic_updates:false,scene:'generated',
+      build:{run_id:'5678',attempt:'1',commit_sha:pubCommit},
+      generation:{run_id:'42735010470',response_sha256:old.responseSha256,model_request_in_this_run:false},
+      current:{version:old.version,bytes:old.bytes,sha256:old.sha256,url:baseUrl+'firmware.bin',release_tag:tag},
+      usb_recovery:{sha256:'d'.repeat(64),bytes:1011840}};
+    const raw=JSON.stringify(m,null,2)+'\n';
+    const hashes={'firmware.bin':old.sha256,'recovery.bin':'d'.repeat(64),'manifest.json':hash(raw),'SHA256SUMS':'e'.repeat(64)};
+    const sizes={'firmware.bin':old.bytes,'recovery.bin':1011840,'manifest.json':Buffer.byteLength(raw),'SHA256SUMS':320};
+    const report={schemaVersion:1,operation:'publication',jobId,dispatchId:q().publicationDispatch.id,
+      priorBuildRunId:'1234',priorResultSha256:q().dispatch.resultSha256,promptSha256:old.promptSha256,
+      runId:'5678',runAttempt:1,commitSha:pubCommit,repository,
+      workflowPath:'.github/workflows/lightboard-queue-publish.yml',result:'published',published:true,modelRequests:0,
+      automaticUpdates:false,deviceConfirmed:false,foundation:old.foundation,version:old.version,bytes:old.bytes,
+      sha256:old.sha256,releaseTag:tag,manifestSha256:hash(raw),firmwareUrl:baseUrl+'firmware.bin',
+      feedUrl:'https://raw.githubusercontent.com/'+repository+'/lightboard-feed/manifest.json',
+      assetSha256:hashes,assetBytes:sizes,...state.pubReportOverride};
+    return {m,raw,report,release:{draft:false,prerelease:true,assets:Object.keys(hashes).map(name=>({name,state:'uploaded',
+      size:sizes[name],digest:'sha256:'+hashes[name],browser_download_url:baseUrl+name}))}};
+  };
   const store = {getProperty:k => data[k] || null,getProperties:() => ({...data}),
     setProperty(k,v) {
       data[k]=v;
@@ -59,11 +87,17 @@ function runtime(data = initial(), state = {}, options = {}) {
     assert.equal(opts.muteHttpExceptions,true);
     if (url.startsWith('https://logs.blob.core.windows.net/')) {
       assert.equal(opts.headers.Authorization,undefined);
-      const line='2026-11-26T18:00:00.0000000Z LB_QUEUE_RESULT: ' + JSON.stringify(makeReport());
+      const line='2026-11-26T18:00:00.0000000Z LB_QUEUE_RESULT: ' + JSON.stringify(
+        url.includes('publication')?pubData().report:makeReport());
       return response(200,state.logText===undefined ? line : state.logText);
     }
     assert.ok(url.startsWith('https://api.github.com/repos/'+repository+'/'));
     if (opts.method==='post') {
+      if(url.includes('lightboard-queue-publish')){
+        assert.equal(q().status,'publication_pending');state.pubPostCount=(state.pubPostCount||0)+1;state.hasPubRun=true;
+        if(state.pubPostThrows)throw new Error('lost publication response');
+        return response(state.pubPostCode||200,{workflow_run_id:5678});
+      }
       assert.equal(q().status,'dispatch_pending'); assert.equal(q().attempt,1);
       state.postCount=(state.postCount || 0)+1; state.hasRun=state.accepted!==false;
       if (state.postThrows) throw new Error('provider might echo '+token);
@@ -76,12 +110,30 @@ function runtime(data = initial(), state = {}, options = {}) {
     }
     if (url.includes('/contents/')) {
       assert.equal(opts.headers.Authorization,'Bearer '+token);
-      const file = url.includes('/contents/.github/') ? join(root,'../../.github/workflows/lightboard-prompt-build.yml') :
-        join(root,'cloud/queue_binding.py');
+      if(url.includes('/contents/manifest.json?ref=lightboard-feed')){
+        const raw=state.changedFeed?'{}':pubData().raw;
+        return response(200,{encoding:'base64',content:Buffer.from(raw).toString('base64'),size:Buffer.byteLength(raw)});
+      }
+      const file = url.includes('/contents/.github/') ? join(root,'../../.github/workflows/',
+        url.includes('lightboard-queue-publish')?'lightboard-queue-publish.yml':'lightboard-prompt-build.yml') :
+        join(root,url.includes('queue_publication.py')?'cloud/queue_publication.py':'cloud/queue_binding.py');
       const content=state.badSource ? 'edited' : readFileSync(file,'utf8');
       return response(200,{encoding:'base64',content:Buffer.from(content).toString('base64')});
     }
     assert.equal(opts.headers.Authorization,'Bearer '+token);
+    if(url.endsWith('/actions/workflows/lightboard-queue-publish.yml')) return response(200,
+      {id:8,path:'.github/workflows/lightboard-queue-publish.yml',state:'active'});
+    if(url.endsWith('/actions/runs/5678')) return response(200,pubRun());
+    if(url.includes('lightboard-queue-publish.yml/runs?'))return response(200,{workflow_runs:state.hasPubRun?[pubRun()]:[]});
+    if(url.includes('/actions/jobs/66/steps/'))return response(302,'',
+      {Location:'https://logs.blob.core.windows.net/step?kind=publication'});
+    if(url.includes('/actions/runs/5678/attempts/1/jobs'))return response(200,{total_count:1,jobs:[{id:66,run_id:5678,
+      name:'compile-and-publish',status:'completed',conclusion:state.pubConclusion||'success',
+      steps:[{name:'Record queue result',status:'completed',conclusion:'success',number:11}]}]});
+    if(url.includes('/releases/tags/')){
+      const release=pubData().release;if(state.badAsset)release.assets[0].digest='sha256:'+'0'.repeat(64);
+      return response(200,release);
+    }
     if (url.endsWith('/actions/workflows/lightboard-prompt-build.yml')) {
       return response(200,{id:7,path:'.github/workflows/lightboard-prompt-build.yml',state:'active'});
     }
@@ -107,7 +159,7 @@ function runtime(data = initial(), state = {}, options = {}) {
     ScriptApp:{newTrigger:()=>{throw new Error('No trigger');}},MailApp:{sendEmail:()=>{throw new Error('No mail');}}});
   scripts.forEach((s,index)=>vm.runInContext(options.legacyQueue && index===1 ?
     s.replace('githubAdapterVersion: 1,','') : s,context));
-  return {context,data,state,calls,logs,q,makeRun,makeReport};
+  return {context,data,state,calls,logs,q,makeRun,makeReport,pubData};
 }
 function prepared(state={},options={}) {
   const e=runtime(initial(),state,options); e.context.setupQueue(); e.context.syncQueue();
@@ -274,4 +326,60 @@ test('only approved FIFO saved-heart job is eligible; queued vessel never causes
   receipt.job.receivedAt='2026-11-26T16:00:00.000Z';e.data.LB_MSG_b2=JSON.stringify(receipt);
   delete e.data['LB_QUEUE_JOB_'+receipt.job.id];
   assert.equal(dispatch(e).reason,'LB_GH_JOB');assert.equal(e.state.postCount,undefined);
+});
+
+function publicationReady(state={}){
+  const e=prepared(state);dispatch(e);e.state.completed=true;
+  assert.equal(e.context.pollSavedBuild().status,'built');
+  e.state.head='b'.repeat(40);e.data.LB_PUBLICATION_SETUP=JSON.stringify({sourceCommit:e.state.head});
+  assert.equal(e.context.setupPublication().status,'configured');return e;
+}
+test('publication setup preserves build evidence, old connection pin and receipts without POST',()=>{
+  const e=publicationReady();const oldConfig=e.data.LB_GITHUB_ACTIVE,oldBuild=JSON.stringify(e.q().dispatch);
+  assert.equal(e.context.setupPublication().status,'already_configured');
+  assert.equal(e.state.pubPostCount,undefined);assert.equal(e.data.LB_GITHUB_ACTIVE,oldConfig);
+  assert.equal(JSON.stringify(e.q().dispatch),oldBuild);assert.equal(e.q().status,'built');
+});
+test('publication reserves once before POST, survives lost response and binds only publication run',()=>{
+  const e=publicationReady({pubPostThrows:true});const oldBuild=JSON.stringify(e.q().dispatch);
+  assert.equal(e.context.publishApprovedBuild().status,'publication_unknown');
+  const restarted=runtime(e.data,e.state);
+  assert.equal(restarted.context.publishApprovedBuild().dispatchRepeated,false);
+  assert.equal(restarted.context.pollPublication().status,'publishing');
+  assert.equal(e.state.pubPostCount,1);assert.equal(e.q().publicationDispatch.runId,'5678');
+  assert.equal(JSON.stringify(e.q().dispatch),oldBuild);
+  assert.equal(restarted.context.pollSavedBuild().nextAction,'pollPublication');
+});
+test('published result requires exact prior image plus feed/release digests; holds later board work',()=>{
+  const e=publicationReady();e.context.publishApprovedBuild();e.state.pubCompleted=true;
+  const result=runtime(e.data,e.state).context.pollPublication();
+  assert.equal(result.status,'published');assert.equal(result.deviceConfirmed,false);assert.equal(result.modelRequests,0);
+  const view=e.context.inspectQueue();assert.equal(view.inFlightJobId,jobId);assert.equal(view.items[1].attempt,0);
+  assert.equal(view.items[0].published,true);assert.equal(e.state.pubPostCount,1);
+  assert.equal(e.context.pollPublication().status,'published');
+  assert.throws(()=>e.context.lbqApplyEvent_('lb-'+hash(account).slice(0,12)+'-b2',
+    {id:'later',type:'reserve_dispatch',expectedRevision:1}),/Queue stopped/);
+});
+test('wrong publication provenance, image, current feed or server digest never completes queue',()=>{
+  for(const bad of [{pubReportOverride:{priorResultSha256:'0'.repeat(64)}},
+    {pubReportOverride:{sha256:'0'.repeat(64)}},{pubReportOverride:{modelRequests:1}},
+    {pubReportOverride:{deviceConfirmed:true}},{changedFeed:true},{badAsset:true},
+    {pubRunOverride:{head_sha:'c'.repeat(40)}}]){
+    const e=publicationReady();e.context.publishApprovedBuild();Object.assign(e.state,bad,{pubCompleted:true});
+    assert.equal(e.context.pollPublication().status,'stopped');assert.equal(e.q().status,'publishing');
+    assert.equal(e.q().publication,null);
+  }
+});
+test('failed or uncertain publication retains a durable review hold without claiming unpublished',()=>{
+  const e=publicationReady();e.context.publishApprovedBuild();e.state.pubCompleted=true;e.state.pubConclusion='failure';
+  const result=e.context.pollPublication();assert.equal(result.status,'review_required');
+  assert.equal(result.publicationConfirmed,false);assert.equal(result.published,undefined);
+  assert.equal(e.context.inspectQueue().inFlightJobId,jobId);
+  assert.equal(e.context.publishApprovedBuild().dispatchRepeated,false);assert.equal(e.state.pubPostCount,1);
+});
+test('late verified publication reconciles review hold but never confirms installation',()=>{
+  const e=publicationReady();e.context.publishApprovedBuild();
+  e.context.lbqApplyEvent_(jobId,{id:'pub-timeout',type:'timeout',expectedRevision:e.q().revision});
+  e.state.pubCompleted=true;assert.equal(runtime(e.data,e.state).context.pollPublication().status,'published');
+  assert.equal(e.q().deviceConfirmed,false);assert.equal(e.state.pubPostCount,1);
 });

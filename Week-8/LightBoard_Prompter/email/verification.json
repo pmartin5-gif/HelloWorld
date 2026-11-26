@@ -1,6 +1,6 @@
 {
   "date": "2026-11-26",
-  "status": "Live email-to-queue-to-saved-build-to-bound-result checkpoint passed; no model calls or publication/installation",
+  "status": "First bound build verified; separate exact-rebuild queue publication implemented/tested locally; push/private update/setup/publication/hardware pending",
   "focused_tests_passed": 39,
   "full_firmware_regression_suite_run": false,
   "firmware_rebuild_for_email_change": false,
@@ -34,15 +34,18 @@
     "tests/test_queue_simulation.cjs": "49404451ab0eca3f15d43f606cb82bd2063aacf448f4f7cefaef690f25100a7c",
     "email/Diagnose.gs": "85140a496d25b22dab5d3b1a10a3f57d045e2958959f152b7656ba6b7a1adb05",
     "tests/test_email_diagnostics.cjs": "4077b99f6584286f618a94f202c8a46a817761892ede3d12b9746de5640aba5f",
-    "email/Queue.gs": "b0d423934b972d2a10b3f49acf51f9a3be768761f892617b0b67e567711711c8",
+    "email/Queue.gs": "266172f019d772a94a6ebf8daa38e6463e41655fa7a9236ecc1b274160dc23bd",
     "tests/test_persistent_queue.cjs": "f94f02759d45badc7f7b088e3a9d00cfa4d13c6cbb02756bd65d54674a968373",
-    "email/GitHub.gs": "933883ceb1618b850d773f502449ea2ceffee28970759afd09880d7e7e879810",
+    "email/GitHub.gs": "43c587521172c3499654b29ddfde5567fedcd4b88d3cc7ba96315e7be7c37fbb",
     "cloud/queue_binding.py": "f28b745d8f48f3c5d28b45743015334c57a61825426d40a73dea6eb3364ad884",
-    "tests/test_github_queue.cjs": "b88bdb19b326c0af9ccfd45692eedf38e4117a6ee633f99106eeb36c1554918c",
+    "tests/test_github_queue.cjs": "7770f2de3922911877efbee7b7b503e5257b8800f027f33a735c1772b0e90e01",
     "tests/test_queue_binding.py": "a83f8bbdea51e6f34a385173821ed64c5b3065657246879441b92b8e57469fb6",
-    "../../.github/workflows/lightboard-prompt-build.yml": "fa60df4dca19d6a4b53de0457351c7f35d984719f8bc3263bd99beaf0a7d2436"
+    "../../.github/workflows/lightboard-prompt-build.yml": "fa60df4dca19d6a4b53de0457351c7f35d984719f8bc3263bd99beaf0a7d2436",
+    "cloud/queue_publication.py": "6878f022db82fb1962bbda68e5eb35cc1a1989a8f0f05506e266d354e5cd8035",
+    "tests/test_queue_publication.py": "ff364ebaef487503c95dd551f3fcebcca374bf9f08a1bf91d48b5ebb6a9edf07",
+    "../../.github/workflows/lightboard-queue-publish.yml": "fb029ca7d8cdf8aaa0708c24f61a4fe0f7021cc0282f7c80fc377c89d25b7ede"
   },
-  "next_action": "Manual email\u2192receipt\u2192durable queue\u2192saved-response GitHub build\u2192verified bound result checkpoint complete. Do not repeat. Next stage is publication and board confirmation design/implementation, preserving zero new model calls and delivery off until concretely configured. Queue job approved once only; vessel requires separate generation authorization and cannot reuse heart. Local quota fix/progress can now be committed; remote/setup source stays88eac47 until a deliberate source-pin update. No automatic push.",
+  "next_action": "User pushes newly prepared main, then updates only live Queue.gs and Github.gs using exact matched restore files; add LB_PUBLICATION_SETUP sourceCommit equal new pushed HEAD, preserve old build configuration/token/receipts. Run setupPublication (read only), then explicit publishApprovedBuild once and pollPublication. Full handoff email/queued-publication.md. No new model/generation, automatic install or confirmed-device claims.",
   "mailbox_choice": "Separate Gmail inbox configured and authorized; first fixed-reader acceptance reported",
   "network_connection_verified": "martin apple, wifi_status3, configured_matches_expectedtrue, healthtrue; November26",
   "script_project_created": true,
@@ -361,5 +364,16 @@
     "generation_step": "skipped",
     "publication_step": "skipped",
     "evidence_path": ".build/email-intake-2026-11-26/github-first-bound-build-verified.json"
-  }
+  },
+  "queued_publication_implemented_locally": true,
+  "queued_publication_installed_live": false,
+  "queued_publication_run_verified": false,
+  "manual_board_install_for_queued_job_verified": false,
+  "latest_infrastructure_tests_passed": 45,
+  "latest_infrastructure_test_commands": [
+    "node --test tests/test_github_queue.cjs tests/test_persistent_queue.cjs",
+    "python3 -m unittest discover -s tests -p test_queue_publication.py -v"
+  ],
+  "latest_node_checks": 37,
+  "latest_python_publication_checks": 8
 }
