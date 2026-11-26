@@ -2256,6 +2256,25 @@ After user completed private provisioning and cleared credential input/history, 
 
 Updated checkpoint/network evidence and plans. No password read/received, firmware upload/build, regression tests, model request, cloud dispatch, publication or device install. Network step is complete; separate Gmail inbox setup and record-only live intake are next. Routine publication/install and real authenticated acknowledgments remain later work. No repeat provisioning/network check is a resume prerequisite.
 
+## 96. Dedicated Gmail label/project created; manifest UI handoff pending
+
+**Date:** November 26, 2026
+
+### Your prompts
+
+> Great let's do that. I've created a gmail inbox already so we can configure it.
+> bear in mind the email account we will be using is [dedicated account address]
+
+### Intent and actual progress
+
+Configure the selected separate Gmail account with the prepared record-only Apps Script, keeping replies, builds, model requests, triggers and device delivery off. Used Plugin Management discovery; no relevant Apps Script authoring integration found. Browser attachment returned an app network-policy prerequisite, so used native Chrome. Confirmed the intended account in its Google account chooser and the Apps Script account-confirmation UI. Created the `Lightboard` label and private `Lightboard Inbox` project, with source saved as `Code.gs`. The exact local11,182-character source was read from its own native TextEdit document and pasted; parsed function list and saved-to-Drive state observed. No sender addresses were inferred from other accounts; approved test senders remain unanswered. Actual account/project URL is retained only in ignored private evidence, not source configuration.
+
+Enabled manifest visibility. Native editor observations became stale; several manifest replacement methods appeared unchanged, but later UI showed inconsistent appended input. Did not save or run that attempt. Discarded the unsaved edit through the browser Reload confirmation; post-reload page was blank/loading, so restored manifest contents are not verified. Source had previously been saved. Asked for user-assisted replacement of appsscript.json from the exact local manifest before any setup/authorization. This is a concrete UI-control limitation; no automatic approval rejection occurred. No authorization flow or security grant was reached.
+
+### Result and limits
+
+Label/project/source saved; complete manifest configuration, private allowed-sender properties, Gmail read-only authorization and live receipt/deduplication tests remain pending. No script execution, live intake, sent email, trigger, model call, workflow, release, board command, firmware build or full test suite. Existing source is unchanged; no redundant offline checks were needed for UI setup. Preserve the verified Wi-Fi state and prior cloud result. Continue from email/verification.json and ignored private-project evidence; do not create a second project or assume the inbox is active.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.
