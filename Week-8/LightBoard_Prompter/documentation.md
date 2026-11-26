@@ -2763,6 +2763,18 @@ Saved full publication marker and manual hardware evidence under ignored email-i
 
 **Remaining:** User push required by established network/connector boundary; then matching script/HTML installation, source refresh, owner-only Web app deployment and real UI verification. New Automatic must not precede workflow push. Actual edited-brief generation and panel result remain unverified until user sends an experiment. Current normal email history and previous successes remain intact. Keep source/creative data/credentials boundaries documented in email/prompt-lab.md.
 
+## 129. Install the pushed prompt lab and deploy its private owner page
+
+> “pushed”
+
+**Intent:** Finish activating the real-panel experiment lab after the required workflow push, without generating an unsolicited experiment.
+
+**Changes made:** Verified remote main77e702de8c410f1c03511ccfa5614acab0fc33a1 through GitHub connector. Copied matching canonical Automatic.gs14,542characters/255lines into live Apps Script and saved; new PromptLab.gs and distinct HTMLPromptLabPage were already saved. Ran continueAfterRejectedBuild once5:46:00–5:46:03PM. Original failed run45905216109 was bound and checked for code rejection with publication explicitly skipped; rejection marker saved before reservation release. No retry of esp_random prompt. Actual output waiting_for_new_email/automaticEmailProcessingtrue/modecontinuous/original21:37:15.039Zcutoff/jobIdnull/runUrlnull. LastPublished45904143531/version8d742debe7d0b21bcd41b89d remains unchanged and deviceConfirmedfalse.
+
+**Deployment result:** Apps Script Web app Version1 deployed5:46PM, execute as ixdbot.beepboop@gmail.com, access Only myself. Success dialog and private URL observed; URL stored in ignored local evidence and given directly to owner. Normal multi-account Chrome displayed Google Page Not Found before loading app. Official Google troubleshooting documents Apps Script multi-login limitation. Opened Incognito and entered bot email identifier; password screen reached. Asked user to complete password/2FA privately, then report lab opened. No credentials read, logout of other accounts, public-access workaround or permission expansion.
+
+**Verification boundary:** Actual deployed form/default brief/status/history await owner sign-in. Earlier13 focused checks remain passed; no changed source requiring a repeat. No new Gemini request, build, firmware install, preview or aesthetic test. Testing mode remains off; continuous email active. First live edited-brief experiment belongs to user's explicit Send action. Checkpoint and guide updated; evidence-only local commit must not automatically move remote source pin.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.
