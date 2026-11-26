@@ -2823,6 +2823,16 @@ Saved full publication marker and manual hardware evidence under ignored email-i
 
 **Completion/checkpoint:** inspectEmailProcessing6:15:18PM confirms continuous/activetrue/nojob/delivery_interval/lastPublished45909431659 recorded23:13:24.912Z/next23:19:24.912Z/originalcutoff preserved/deviceConfirmedfalse. Actual serial/user evidence is separate from unimplemented authenticated reporting. Two explicit new generations across both repair retries; one in this successful activation. Email task complete, no more retries/resends. Lab work remains set aside, mode off and private page preserved. When resuming lab refresh its Version1 deployment to include current scheduler/workflow hash. Save evidence-only notes locally without moving live262c61e sourcepin; preserve unrelated files.
 
+## 134. Save the next-context agenda and stop the work session
+
+> “Next time I want to get really deep under the hood with the gemini prompt and then also take a critical look at the checks you've set up to examine which ones are stylistic and which ones are to preserve functionality. Can you make a note to continue with these items next time we pick this up?”
+
+**Intent:** End this work session with an explicit, durable agenda for a fresh context window. This does not request disabling the live email pipeline or board updates.
+
+**Saved:** Added the next-session agenda at the top of RESUME.md: trace the exact Gemini instructions/creative prompt/combined request/settings/generated code, then critically inventory checks and their concrete purpose, separating style from functionality and explaining security/provenance/delivery separately where useful. Examine false rejections, overlap, cost and opportunities to keep/narrow/move/remove rules. Use the recovered successful response before making another request; actual Lightboard remains the requested result. Include private-lab deployment refresh prerequisite, lightweight verification preference and ready-to-copy resume message.
+
+**Result:** Handoff notes saved locally. No runtime/code/config changes, tests, model request, workflow dispatch, device operation or remote push. Latest confirmed email repair and automatic installation remain the completed baseline. Stop work until user resumes.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.
