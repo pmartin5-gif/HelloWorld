@@ -1,6 +1,6 @@
 # Wi-Fi/OTA pilot foundation
 
-**Verified November 23,2026:** Two known scenes installed over Wi-Fi, deferred boot validation passed for each, SDK manual rollback returned the prior image, and baseline reinstallation restored normal stones. Automatic checking/installing remains disabled. Regular prompt/publication integration passed locally November 26; revised cloud execution remains pending. Email delivery is later work. Current handoff: [RESUME.md](../RESUME.md).
+**Verified November 23,2026:** Two known scenes installed over Wi-Fi, deferred boot validation passed for each, SDK manual rollback returned the prior image, and baseline reinstallation restored normal stones. Automatic checking/installing remains disabled. Regular prompt/publication integration passed locally and in cloud run45858227133 November26; new routine publication and physical confirmation remain pending. Email delivery is later work. Current handoff: [RESUME.md](../RESUME.md).
 
 ## Running firmware and evidence
 
@@ -22,7 +22,7 @@ Preserved visible recovery sketch: `/Users/pmartin5/Documents/Arduino/Lightboard
 
 Use native Arduino IDE Upload only when recovery is needed. Rediscover USB (last `/dev/cu.usbserial-0001`), verify source/ESP32 Dev Module, pinned2.0.17 and original full profile: Upload921600, CPU240MHz, flash80MHz/QIO/4MB, default partitions, debugNone, PSRAMoff, loop/events core1, eraseAlloff, JTAGoff. No package upgrades or CLI serial/Terminal UI workaround. If stale ZigbeeMode is actually observed, reload board data, wait and reselect board; inspect actual compiled options. Record flash byte count/hash/reset and fresh boot health. IDE editor scene can differ from installed OTA scene; do not click Upload merely to resume.
 
-The revised routine prompt/publication workflows now use the sealed foundation and pass locally with saved-response reuse; cloud verification is pending. The Desktop helper and historical cloud builder still use non-OTA source. Do not deploy them over this firmware. USB recovery evidence and actual manual OTA rollback are preserved; arbitrary fault/power-cut recovery is not inferred.
+The revised routine prompt/publication workflows use the sealed foundation and pass locally and in saved-response cloud run45858227133; new routine publication/physical confirmation are pending. The Desktop helper and historical cloud builder still use non-OTA source. Do not deploy them over this firmware. USB recovery evidence and actual manual OTA rollback are preserved; arbitrary fault/power-cut recovery is not inferred.
 
 ## Credentials and connection controls
 

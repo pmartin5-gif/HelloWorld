@@ -1,6 +1,6 @@
 # Lightboard firmware delivery test
 
-**Historical Step 6 evidence:** Since November 26, the local revised publication-test workflow uses the sealed OTA routine path in [prompt-build.md](prompt-build.md), with cloud verification still pending. The non-OTA behavior below records the original verified workflow and legacy publisher, not the revised entry point.
+**Historical Step 6 evidence:** Since November 26, the local revised publication-test workflow uses the sealed OTA routine path in [prompt-build.md](prompt-build.md), with saved-response cloud verification passed in run45858227133 and publication still pending. The non-OTA behavior below records the original verified workflow and legacy publisher, not the revised entry point.
 
 This is Step 6. **Lightboard publication test** builds the preserved baseline and the exact saved heart response, prepares a small delivery package, and optionally publishes it. It makes zero model requests and performs no device operation. The test images have **no Wi-Fi or OTA support**.
 

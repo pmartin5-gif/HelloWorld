@@ -1,0 +1,10 @@
+{
+  "timeZone": "America/New_York",
+  "runtimeVersion": "V8",
+  "oauthScopes": ["https://www.googleapis.com/auth/gmail.readonly"],
+  "dependencies": {
+    "enabledAdvancedServices": [
+      {"userSymbol": "Gmail", "serviceId": "gmail", "version": "v1"}
+    ]
+  }
+}

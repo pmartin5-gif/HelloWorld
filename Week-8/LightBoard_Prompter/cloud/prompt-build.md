@@ -1,6 +1,6 @@
 # Manual prompt-to-OTA pipeline
 
-**Updated November 26, 2026.** Routine prompt build and the saved-response publication test now use the physically proven sealed OTA foundation. Local integration passed; the revised workflows have not yet run on GitHub. New Wi-Fi setup is pending and does not block compilation or public package verification.
+**Updated November 26, 2026.** Routine prompt build and the saved-response publication test now use the physically proven sealed OTA foundation. Local integration and saved-response cloud run45858227133 passed on commit289ef02. Publication was skipped. New Wi-Fi setup is pending and does not block compilation or public package verification.
 
 ## Behavior
 
@@ -38,10 +38,12 @@ python3 cloud/prompt_build.py \
 
 This uses the installed pinned toolchain and never calls the model, publishes, opens serial or uploads. Its hypothetical run-123 URLs are not live releases. Evidence is under the new work directory: `baseline/artifact/`, `candidate/artifact/`, and the four-file `package/`. The recovery binary is an application only; preserve the existing IDE recovery source, bootloader and partitions.
 
-## Current verification and next cloud check
+## Current verification and next step
 
 November 26 local routine-path build: heart **1,012,080 bytes**, headroom **298,640 bytes**, SHA `2dec6e1a896f2a1bd6cd4cab5cb46397c74cde90942cfdb7561fbd49369bd3d1`; baseline **1,011,872 bytes**. Source/foundation/version match the tested scenes; binary hashes can vary with build path. All **88 offline tests** pass and both workflow YAML files parse. See `prompt-ota-verification.json` and `.build/prompt-ota-integration-2026-11-26/`. No publication, device operation or new model call occurred. The saved heart's existing growth clipping remains unchanged.
 
-After reviewing/pushing the scoped changes, verify the public standard runner/free-use settings and existing $0 spending stop. Run **Lightboard prompt build** on **main**, with the default prompt, **Reuse saved generation on**, **Publish off**. Inspect the exact commit, foundation, version, size/hash and `model_request_in_this_run: false`. A local compile is not a cloud-run result. Keep publication and installation separate until that check passes. The new network can be configured later; actual association and physical checks remain pending.
+[Cloud run45858227133](https://github.com/pmartin5-gif/HelloWorld/actions/runs/45858227133), job140042123194, passed on `289ef02f583c63aa5e4ae6a37c518da622eecda5`. Saved-response reuse, exact-function validation, pinned toolchain, sealed baseline/candidate compilation and package preparation passed. Model generation and publication were skipped. No routine regression tests or artifacts were run/stored. Cloud heart **1,012,016 bytes**, headroom **298,704**, SHA `524ca739f55cffb3063d7a408dc4ccfc98181ee79fc75780e8b4ec701f183cb0`; foundation/version/source match the tested heart. Logs/reports/manifest are retained in `.build/cloud-prompt-run-45858227133/`. Reported hashes/size agree; no release/artifact binary was independently downloaded. No device command or new install occurred.
+
+No repeated cloud build is required merely to resume. Next configure and manually test the record-only [email intake](../email/README.md). Routine publication/installation remain separate later checks; new Wi-Fi is still pending. Automatic delivery and real installed acknowledgments remain disabled.
 
 Earlier non-OTA runs and their evidence remain in `prompt-build-reuse-verification.json`, `publication-verification.json` and `documentation.md`; they do not verify the revised workflow.

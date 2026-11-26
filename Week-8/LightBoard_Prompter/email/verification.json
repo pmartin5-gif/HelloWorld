@@ -1,0 +1,38 @@
+{
+  "date": "2026-11-26",
+  "status": "Local record-only inbox and offline queue contract checks pass; private Gmail setup/live acceptance pending",
+  "focused_tests_passed": 15,
+  "test_command": "node --test tests/test_email_intake.cjs tests/test_queue_simulation.cjs",
+  "full_firmware_regression_suite_run": false,
+  "firmware_rebuild_for_email_change": false,
+  "gmail_account_accessed": false,
+  "script_installed": false,
+  "oauth_authorized": false,
+  "live_email_processed": false,
+  "emails_sent": 0,
+  "builds_dispatched": 0,
+  "model_requests": 0,
+  "triggers_created": 0,
+  "device_commands": 0,
+  "oauth_scopes": [
+    "https://www.googleapis.com/auth/gmail.readonly"
+  ],
+  "queue_is_simulation_only": true,
+  "live_installed_acknowledgments_implemented": false,
+  "network_change_pending": true,
+  "limitations": [
+    "Gmail API, Script Properties and locks were mocked locally; no live Gmail acceptance yet.",
+    "Conservative plain-text boundaries require simple test messages; no universal email/signature parser is claimed.",
+    "Standalone marker requires direct In-Reply-To to one eligible earlier design from the same sender/thread.",
+    "Script Properties capacity is finite; processing pauses rather than deleting receipts or buying storage.",
+    "Queue reducer is an offline contract, not a durable live dispatcher or authenticated device-report channel."
+  ],
+  "files_sha256": {
+    "email/Inbox.gs": "521207bc97629a8a330e9e6b000dc6944e727df443fedcea34d84278520b14d3",
+    "email/appsscript.json": "e1839aee34c2e75f2d4635f2918b16e2b6d39a2d0864be09bb4c3461ec6053b4",
+    "email/queue-simulation.cjs": "c43e662141f895296be51f2fec32b986d68582373a580e7fc3e7389374f498b2",
+    "tests/test_email_intake.cjs": "a9227699ca8ee45c5d542b1c31e0091dda25c1a15a7dbf6bc544d7b49a201130",
+    "tests/test_queue_simulation.cjs": "49404451ab0eca3f15d43f606cb82bd2063aacf448f4f7cefaef690f25100a7c"
+  },
+  "next_action": "Choose Gmail account/label, privately configure approved senders, install script/manifest, authorize read-only access and run the manual intake acceptance steps in email/README.md."
+}

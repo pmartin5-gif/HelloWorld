@@ -206,7 +206,7 @@
   "session_paused_by_user": false,
   "pause_date": "2026-11-23",
   "assistant_background_continuation_scheduled": false,
-  "resume_next_action": "Review/push scoped source; run Lightboard prompt build on main with default prompt, reuse on and Publish off after free-use/$0-stop checks. Configure/provision the new Wi-Fi privately when ready. Publication, physical install/health and email intake remain later checkpoints.",
+  "resume_next_action": "Choose Gmail account/label, privately configure approved senders, install script/manifest, authorize read-only access and run the manual intake acceptance steps in email/README.md.",
   "offline_observed_status": {
     "version": "ota-pilot-de9996a65a5fa1a5c80b0219",
     "foundation": "3f6b7d269af316c8006155fdb9deb6711f4a0b18f2bf1294613c8784bb81343b",
@@ -1151,10 +1151,11 @@
   "controlled_ota_hardware_sequence_verified": true,
   "automatic_crash_or_power_loss_recovery_tested": false,
   "routine_prompt_integration": {
-    "status": "Local build/package passed; revised cloud check pending",
+    "status": "Local and cloud saved-response compilation/package passed; no new publication or device operation",
     "verification": "cloud/prompt-ota-verification.json",
     "new_model_requests": 0,
-    "hardware_state_freshly_observed": false
+    "hardware_state_freshly_observed": false,
+    "cloud_run_id": 45858227133
   },
   "network_transition": {
     "requested_by_user": "2026-11-26",

@@ -2,13 +2,13 @@
 
 **Updated:** November 26, 2026
 
-**Status:** Controlled Step 7 hardware tests passed: heart and baseline installed over Wi-Fi, deferred validity/health, SDK manual rollback, baseline reinstallation and final normal stones confirmed. Source051a334 is remote. All 79 offline tests and both 29-test corrected cloud runs passed. Automatic updates remain off. Heart clipping is a saved-scene geometry issue; creative refinement remains deferred. Routine prompt/publication integration now passes locally with 88 offline tests and a real sealed build; revised cloud verification is next. A different Wi-Fi network is planned but not configured.
+**Status:** Controlled Step 7 hardware tests passed: heart and baseline installed over Wi-Fi, deferred validity/health, SDK manual rollback, baseline reinstallation and final normal stones confirmed. Source051a334 is remote. All 79 offline tests and both 29-test corrected cloud runs passed. Automatic updates remain off. Heart clipping is a saved-scene geometry issue; creative refinement remains deferred. Routine prompt/publication integration passes locally and in saved-response cloud run45858227133. Record-only email intake and queue simulation pass15 focused checks; private inbox setup/live acceptance are next. A different Wi-Fi network is planned but not configured.
 
 **Goal:** Email a prompt, generate and compile an animation in the cloud, and have the ESP32 install it over Wi-Fi while your computer is off.
 
 **Budget:** Zero additional spending. Stay on verified free allowances. When a limit is reached, pause or queue requests. Do not enable paid fallback or use a time-limited paid trial as the long-term solution.
 
-**Starting point:** Cloud saved-response generation/compilation, public delivery and the separate sealed known-scene OTA workflow are verified. Current board is baseline f2e92e43…/foundation f124…/app0/VALID with saved credentials. The revised routine builder/publisher uses the sealed foundation locally; its cloud run/publication is pending. The Desktop helper still uses non-OTA source and must not overwrite the OTA board. New Wi-Fi setup is pending. Read RESUME.md for exact evidence and current next action.
+**Starting point:** Cloud saved-response generation/compilation, public delivery and the separate sealed known-scene OTA workflow are verified. Current board is baseline f2e92e43…/foundation f124…/app0/VALID with saved credentials. The revised routine builder/publisher passes the saved-response cloud build with the sealed foundation; new routine publication/physical confirmation are pending. The Desktop helper still uses non-OTA source and must not overwrite the OTA board. New Wi-Fi setup is pending. Read RESUME.md for exact evidence and current next action.
 
 ## How to use this plan
 
@@ -204,12 +204,13 @@ Actual evidence and limitations: device/verification.json, cloud/ota-publication
 
 ## Step 7A — Carry the proven OTA foundation into routine prompt delivery
 
-This bridge is required before Steps 8–10 can deploy new prompts. November 26: the regular prompt and saved-response publication-test workflows now call the sealed builder/publisher. Local baseline/heart builds and package checks pass; 88 offline tests pass. Revised cloud execution/publication and physical routine-path confirmation are pending. The Desktop helper remains on the old foundation; do not deploy it. New Wi-Fi is not configured yet; compilation/cloud readbacks do not require that network.
+This bridge is required before Steps 8–10 can deploy new prompts. November 26: the regular prompt and saved-response publication-test workflows now call the sealed builder/publisher. Local baseline/heart builds and package checks pass; earlier88 offline tests pass. Saved-response cloud run45858227133 on289ef02 passed with generation/publication skipped. New routine publication/physical confirmation remain pending. The Desktop helper remains on the old foundation; do not deploy it. New Wi-Fi is not configured yet; compilation/cloud readbacks do not require that network.
 
 - [x] Adapt regular prompt build/publication to sealed runtime/protected-source/identity checks and schema2 compatible current/previous/recovery metadata (local implementation; cloud execution pending).
 - [x] Use an existing saved response first; zero new model API calls/spending. Exact generation-record/function binding and pinned local compile passed: heart 1,012,080 bytes, headroom 298,640.
 - [x] Preserve immutable history/recovery, compatible previous, exact source-commit/size/hash checks and failure behavior in the shared publisher; offline tests pass. No new live publication is claimed.
-- [ ] Verify a real routine-path package retains the foundation, then one controlled install/health without enabling automatic delivery. Reuse completed tests where code is unchanged.
+- [x] Verify a real routine-path package retains the foundation in cloud run45858227133:1,012,016bytes, same source/version/foundation, exact reported hashes and zero new model requests.
+- [ ] Separately verify routine publication and controlled install/health when the new network is ready, keeping automatic delivery off. Reuse completed tests where code is unchanged.
 - [ ] Keep manual update behavior until an explicit tested automation/acknowledgment design exists. Never report published as installed.
 
 **Network change, November 26:** User will use a different Wi-Fi network, not configured yet. Keep existing credentials/recovery. When ready, privately provision via native Arduino IDE, then read fresh association/health. No rebuild/upload is required merely to change Wi-Fi. No new credentials have been requested or entered.
@@ -218,9 +219,14 @@ This bridge is required before Steps 8–10 can deploy new prompts. November 26:
 
 **Start with your own test messages.**
 
+November26: `email/Inbox.gs` and read-only manifest are ready;15 focused inbox/queue tests pass locally. The processor records jobs only and sends no email/build/device command. Gmail setup/authorization/live tests are pending. `email/queue-simulation.cjs` verifies queue/status rules offline; it is not a live dispatcher. See `email/README.md`.
+
+- [x] Implement local record-only intake, prompt/hash preservation, sender/thread binding, stable IDs, deduplication, capacity stops and manual setup guide.
+- [x] Run focused offline inbox/queue-contract checks; no animation assessment or full firmware suite.
+
 - [ ] Choose a dedicated Gmail inbox or a dedicated `Lightboard` label in an account you control.
 - [ ] For this prototype, use subject `Lightboard` and put only the creative prompt followed by `%%%` in the message body. Disable automatic signatures in test messages.
-- [ ] Open [Google Apps Script](https://script.google.com/) and create a project named `Lightboard Inbox`. The code for it still needs to be written.
+- [ ] Open [Google Apps Script](https://script.google.com/) and create a project named `Lightboard Inbox`. Local code/manifest and setup guide are ready in `email/`; account setup is pending.
 
 Bring back this request:
 

@@ -2197,6 +2197,37 @@ Parsed both revised workflow YAML files and checked Bash/embedded Python syntax,
 
 Routine scenes avoid repeated regression-test work and its logs. This saves runner time and tool-output/context overhead; tests themselves consume no Gemini model tokens. Actual scene compilation and transfer checks remain. The principal compile cost is unchanged. New Wi-Fi setup and revised cloud verification remain pending.
 
+## 93. Verified routine cloud build and prepared record-only email intake
+
+**Date:** November 26, 2026
+
+### Your prompts
+
+> Ok great. Let's do that.
+> I've entered that push into the terminal and run lightboard-prompt-build. here is the URL https://github.com/pmartin5-gif/HelloWorld/actions/runs/45858227133
+
+### Intent
+
+Verify the revised prompt pipeline in the cloud using the existing response, then prepare email intake and queue/status behavior while the new Wi-Fi is unavailable. Keep generation, publication, actual deployment and email replies off.
+
+### Cloud verification
+
+Initial connector read found remote main at d2e9af9. No dispatch tool is available; previous connector source writes had failed403. Prepared commits were already reviewable locally, so asked the user to push and manually run the default heart workflow with saved reuse on/Publish off, with the existing $0-stop check. User pushed and dispatched run**45858227133**, job**140042123194**, exact source**289ef02f583c63aa5e4ae6a37c518da622eecda5**. Public standard runner and full successful steps observed through the GitHub connection. Saved-response reuse, function validation, pinned CLI/core, sealed baseline/candidate compile and package preparation passed; model generation/publication skipped. No per-scene regression suite ran. Artifact listing is empty. No billing settings were changed; current billing UI was not independently inspected.
+
+Cloud heart**1,012,016bytes**, SHA**524ca739f55cffb3063d7a408dc4ccfc98181ee79fc75780e8b4ec701f183cb0**, headroom298,704, static DRAM47,928. Same exact1781c37d…source, tested709f1f9c…version and f124 foundation. Baseline**1,011,840bytes**, SHA**f7f6232b3cc3252aaa7054ad6c96c620ddb960320080e27458071bed3c2a0859**. Both reports show model_requests0. Logged manifest/current/provenance agree with the compiler reports and publishedfalse/automaticfalse. Actual source/version match; build-path differences can change binary bytes. No binary was independently downloaded because neither release nor artifact was created. Full decoded job log, final run, jobs, reports and manifest are retained under `.build/cloud-prompt-run-45858227133/`; structured results added to `cloud/prompt-ota-verification.json`.
+
+### Email and queue preparation
+
+Implemented `email/Inbox.gs` and an Apps Script V8 manifest with Advanced Gmail v1/read-only scope. Manual setup binds the mailbox, existing dedicated label, allowed test senders and start time through private Script Properties. Processing validates exact subject/sender/label/time/plain text/terminal marker, preserves prompt interior and SHA, assigns deterministic job IDs and uses one durable record as receipt/dedup marker. Lock/cursor and interrupted-page behavior prevent duplicate jobs. Capacity limits pause without deleting history. No-markers create no deployment job; standalone markers require a direct `In-Reply-To` link to exactly one earlier unmarked design by the same sender/thread. Conservative quoted-reply/forward/signature boundaries are supported; HTML-only/ambiguous MIME and unknown context stop rather than infer content. This is not a universal email parser.
+
+Added separate offline `email/queue-simulation.cjs`: FIFO/one in-flight, idempotent events, quota pause/resume, failure/offline timeout, and matching version/foundation/hash/VALID/health requirements. Simulated confirmations remain explicitly `device_confirmed_simulated`/installedOnRealBoardfalse. This is a contract simulation, not persistent live dispatch or a real authenticated device-report mechanism.
+
+All**15 focused new inbox/queue checks passed** in114ms reported by Node, using mocked read-only Gmail/properties/locks. Checks exercise exact prompt preservation, interrupted-write replay, deduplication, markers/signatures, sender/thread bindings, MIME/cutoff/labels, storage stops, wrong account, safe logs, queue sequencing and truthful simulated status. Syntax/JSON checks and diff whitespace pass. No full firmware suite, new firmware build, image preview or aesthetic review was performed for this email change. Setup guide, API references and exact manual live tests are in `email/README.md`; local code hashes/results/limitations in `email/verification.json`. Google API/Properties/lock/quotas references were checked against primary documentation; account access/live acceptance are unverified.
+
+### Result and next checkpoint
+
+Routine saved-response cloud compilation/package is verified; new routine publication/install remain separate pending steps. Record-only email intake and offline queue prototype are locally ready. Asked whether to use a dedicated label in existing Gmail or a separate inbox; no choice has arrived yet. No Google account was inspected/configured, no Apps Script installed/OAuth authorized, and no live email processed/replied to. Next choose the account/label, privately configure test senders and manually run setup/acceptance checks. Do not add triggers, dispatch credentials, model calls or installed-success acknowledgments yet. New Wi-Fi remains not configured; board and stored credentials are untouched. The only new cloud run was manually dispatched by the user; no release/publication/device command/new model call/additional spending occurred. Preserve unrelated repository files.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.
