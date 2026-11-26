@@ -2809,6 +2809,20 @@ Saved full publication marker and manual hardware evidence under ignored email-i
 
 **Remaining:** User push, matching live scheduler, continueAfterRejectedBuild verifying this failed child and publication skipped, then one explicit retry of the same saved prompt. Do not delete/overwrite original rejection or rerun guarded attempt2. Future candidate will be recoverable if further diagnosis is needed. Actual successful compilation/publication/panel result still pending. Prompt lab remains preserved and set aside.
 
+## 133. Repaired emailed prompt completes cloud build and automatic board installation
+
+> “pushed” / later “the image changed. thanks for your help.”
+
+**Intent:** Activate timing fix and retained generation logs, retry same saved email, finish this email before returning to prompt lab.
+
+**Live activation:** Verified remote262c61ee6ef49330473a03dcb323cba6190aaf72 and idle Actions. Saved matching Automatic.gs17,008characters through native VSCode/Chrome. continueAfterRejectedBuild6:10:26–6:10:30PM verified previous retry's bound code rejection/publication skipped, archived it, refreshed source and restored active continuous processing without reset. retryLastRejectedEmail6:10:50–6:10:52PM queued one linked childlb-29b27180b372-retry45908717233; no POST in helper. Timer dispatched45909431659/job140213936689/attempt1/262c61e. Original and failed-retry records retained.
+
+**Cloud result:** One Gemini request3.649s; code validation, sealed firmware/recovery compile, publication/readbacks and structured result all passed. PromptSHAf39f78e7540dafae2bb0594983471e70acda049e0ef997961c0adedd6605a2dd unchanged. Published23:12:50Z; app1,013,472bytes/SHA95500ba044f1ca0a91a4b13b7f942bd82f45b1b33bb9010430e7c50aab2737d5/versione7ecea58155b2358bcde4504/foundationa529. Feed/result agree. Complete generation record recovered from base64 log chunks and prompt/source/responseSHA770607496ee4e0a55bfb030391efc78f2219addac94e1329894e22970e18620b verified, so no extra request needed for inspection. No artifact/cache or newservice. Prior focused checks already passed; no repeat/fullsuite/creativeassessment.
+
+**Actual device:** Read-only native Serial Monitor status before delivery showed old8d742/app1/SDK2VALID/healthtrue/Wi-Fi3/RSSI-63. Natural poll later emitted exact LB_AUTO_INSTALL e7ece/95500SHA and HTTPS1,013,472byte download. New boot exacte7ece/a529 with automatic_updatestrue, Wi-Fi connected and LB_BOOT_HEALTH_PASSED observed. User confirmed image changed. No manual install, arm, auto-on, USBupload or additional model request after publication. No final newboot partition/SDK status query or independent running-partition SHA extraction claimed.
+
+**Completion/checkpoint:** inspectEmailProcessing6:15:18PM confirms continuous/activetrue/nojob/delivery_interval/lastPublished45909431659 recorded23:13:24.912Z/next23:19:24.912Z/originalcutoff preserved/deviceConfirmedfalse. Actual serial/user evidence is separate from unimplemented authenticated reporting. Two explicit new generations across both repair retries; one in this successful activation. Email task complete, no more retries/resends. Lab work remains set aside, mode off and private page preserved. When resuming lab refresh its Version1 deployment to include current scheduler/workflow hash. Save evidence-only notes locally without moving live262c61e sourcepin; preserve unrelated files.
+
 ## Recording approach for the remainder of this conversation
 
 For subsequent work, append entries identifying what the user wanted, any interpretation needed, the changes actually made, and their observed results. Record requested or proposed work as such until implemented. Include material corrections, limitations, and outstanding decisions when relevant. Keep this record focused on the conversation and its outcomes; do not convert temporary experiments into standing instructions.
