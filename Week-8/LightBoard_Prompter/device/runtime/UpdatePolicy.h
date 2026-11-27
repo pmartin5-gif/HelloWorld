@@ -7,6 +7,7 @@
 // These pure checks are shared by the ESP32 implementation and native C++ tests.
 namespace lightboard {
 static const char kFeedUrl[] = "https://raw.githubusercontent.com/pmartin5-gif/HelloWorld/lightboard-feed/manifest.json";
+static const char kApiFeedUrl[] = "https://api.github.com/repos/pmartin5-gif/HelloWorld/contents/manifest.json?ref=lightboard-feed";
 static const char kDevice[] = "esp32-32x32";
 static const uint32_t kAppSlotBytes = 0x140000;
 static const size_t kMaxManifest = 8192;
@@ -15,6 +16,18 @@ inline bool feedRequestUrl(char* output, size_t capacity, uint32_t boot, uint32_
   int count = snprintf(output, capacity, "%s?lb=%08lx%08lx", kFeedUrl,
       (unsigned long)boot, (unsigned long)sequence);
   return count > 0 && (size_t)count < capacity;
+}
+inline bool apiFeedRequestUrl(char* output, size_t capacity, uint32_t boot, uint32_t sequence) {
+  int count = snprintf(output, capacity, "%s&lb=%08lx%08lx", kApiFeedUrl,
+      (unsigned long)boot, (unsigned long)sequence);
+  return count > 0 && (size_t)count < capacity;
+}
+inline bool apiFeedUrl(const char* value) {
+  if (!value || strncmp(value, kApiFeedUrl, sizeof(kApiFeedUrl) - 1) != 0) return false;
+  const char* suffix = value + sizeof(kApiFeedUrl) - 1;
+  if (!*suffix) return true;
+  if (strncmp(suffix, "&lb=", 4) || strlen(suffix + 4) != 16) return false;
+  return strspn(suffix + 4, "0123456789abcdef") == 16;
 }
 inline bool reportingUrl(const char* value) {
   static const char prefix[] = "https://script.google.com/macros/s/";

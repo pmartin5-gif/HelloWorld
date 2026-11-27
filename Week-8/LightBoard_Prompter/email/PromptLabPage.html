@@ -39,6 +39,14 @@
         <p class="mode" id="mode">Loading…</p>
         <p class="small muted" id="modeHelp">Email submissions keep their place while you test.</p>
         <p class="small" id="delivery">Installation confirmation is loading…</p>
+        <details id="reportSetup"><summary>Connect board reporting</summary>
+          <label for="reportUrl">Reporting service URL</label>
+          <input id="reportUrl" type="url" autocomplete="off" placeholder="https://script.google.com/macros/s/…/exec">
+          <label for="reportKey">Private reporting key</label>
+          <input id="reportKey" type="password" autocomplete="off" maxlength="64">
+          <p class="hint">Enter the key privately. It stays on the server and board, and this field clears after submission.</p>
+          <button id="connectReporting" type="button">Connect reporting</button>
+        </details>
         <button id="resume" type="button" class="hidden">Resume email processing</button>
       </section>
       <section class="panel" aria-labelledby="historyTitle">
@@ -89,7 +97,9 @@
       LB_AUTO_EXPERIMENT_TOO_LARGE: 'This experiment is too long to save. Shorten the instructions or prompt.',
       LB_GH_SOURCE: 'The repository changed. Refresh the source connection when the current job is finished.',
       LB_GH_QUOTA: 'GitHub has reached a service limit. Wait for it to reset; no new generation was requested.',
-      LB_AUTO_PUBLICATION_UNCERTAIN: 'This failure may involve publication. Inspect the build log before continuing; the held job has not been released.'
+      LB_AUTO_PUBLICATION_UNCERTAIN: 'This failure may involve publication. Inspect the build log before continuing; the held job has not been released.',
+      LB_AUTO_REPORT_CONFIG: 'Enter the reporting service URL and its private 64-character key.',
+      LB_AUTO_REPORT_CONNECTION: 'Reporting authentication failed. Check the service URL and key.'
     };
     function status(text, error=false) {$('status').textContent=text;$('status').classList.toggle('error',error);}
     function rpc(name,...args) {
@@ -146,6 +156,7 @@
         $('mode').textContent=next.labActive?'Testing on the Lightboard':'Email processing';
         $('modeHelp').textContent=next.labActive?'Incoming emails wait while you compare experiments. Resume them when finished.':'Emails run normally. Sending an experiment holds new email jobs.';
         const delivery=next.delivery;
+        $('reportSetup').classList.toggle('hidden',!!(delivery&&delivery.reportingConfigured));
         $('delivery').textContent=!delivery||!delivery.reportingConfigured?'Board reporting is not configured.':delivery.deviceConfirmed?'Installed · healthy boot confirmed '+new Date(delivery.installedAt).toLocaleTimeString():delivery.status==='published_awaiting_device'?'Published · awaiting board confirmation.':'No published image awaiting confirmation.';
         if(delivery&&delivery.lastReportAt)$('delivery').textContent+=' Last board report: '+new Date(delivery.lastReportAt).toLocaleTimeString()+'.';
         $('resume').classList.toggle('hidden',!next.labActive);
@@ -174,6 +185,14 @@
         pendingRequest=null;try{localStorage.removeItem('lightboard-lab-pending');}catch(_){}
         status('Experiment saved. The workflow will generate, compile and publish it for automatic installation.');
       }catch(e){sendError=e.message;}finally{sending=false;await refresh();if(sendError)status(sendError,true);}
+    };
+    $('connectReporting').onclick=async()=>{
+      $('connectReporting').disabled=true;
+      let message='Board reporting connected. Awaiting a matching healthy installation.', failed=false;
+      try {const result=await rpc('connectDeviceReporting',{url:$('reportUrl').value.trim(),key:$('reportKey').value.trim()});
+        if(result.status!=='configured')throw new Error('Reporting is not connected.');
+      } catch(e) {message=e.message;failed=true;}
+      finally {$('reportKey').value='';$('connectReporting').disabled=false;await refresh();status(message,failed);}
     };
     $('resume').onclick=async()=>{try{await rpc('resumeEmailFromLab');await refresh();}catch(e){status(e.message,true);}};
     $('continue').onclick=async()=>{try{await rpc('continueAfterRejectedBuild');await refresh();}catch(e){status(e.message,true);}};

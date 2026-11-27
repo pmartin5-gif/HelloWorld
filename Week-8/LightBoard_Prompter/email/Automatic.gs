@@ -5,7 +5,7 @@ const LBAUTO = Object.freeze({key: 'LB_EMAIL_PILOT', handler: 'emailPilotTick',
   labVersion: 1, labPrefix: 'LB_LAB_RECEIPT_',
   workflow: 'lightboard-email-pilot.yml', workflowPath: '.github/workflows/lightboard-email-pilot.yml',
   workflowSha256: '91b48cc72a1d6cb4411b92bbeed4fcaa0ceb99fe35727a737eca54d09f24c195',
-  foundation: '65386614eb48384defc7091f1cd5f12b5b6d11feb4f6c9f3186d87ad098a094e'});
+  foundation: 'fe520e315c9961ca5c534c3c0b0a1b13e812268c4b279fb52ef8b2d2e6277458'});
 
 function lbaLocked_(work) {
   const lock = LockService.getScriptLock();
@@ -63,7 +63,7 @@ function startEmailPilot() {
     const workflowId = lbghCheckSource_(snapshot, head.sha, undefined, LBAUTO);
     lbghCheckFile_(snapshot, LBAUTO.workflowPath, head.sha, LBAUTO.workflowSha256);
     lbghCheckFile_(snapshot, 'Week-8/LightBoard_Prompter/device/foundation-lock.json', head.sha,
-      'ff6368ffe050a5d60f58b102e05af6eab865f54313d3cbccdfee8a5e53860e99');
+      '0110b68aa1f98dcace2c78dab5a119e4a1fdb4d8ada675e0d109cd7a8965bb17');
     const state = {schemaVersion: 1, active: true, status: 'waiting_for_new_email',
       accountSha256: lbHash(inbox.account), sourceCommit: head.sha, workflowId, startMs: Date.now()};
     lbaSave_(store, snapshot, state); // Reserve mode before creating the timer.
@@ -93,7 +93,7 @@ function startContinuousEmail() {
     const workflowId = lbghCheckSource_(snapshot, head.sha, undefined, LBAUTO);
     lbghCheckFile_(snapshot, LBAUTO.workflowPath, head.sha, LBAUTO.workflowSha256);
     lbghCheckFile_(snapshot, 'Week-8/LightBoard_Prompter/device/foundation-lock.json', head.sha,
-      'ff6368ffe050a5d60f58b102e05af6eab865f54313d3cbccdfee8a5e53860e99');
+      '0110b68aa1f98dcace2c78dab5a119e4a1fdb4d8ada675e0d109cd7a8965bb17');
     if (existing && existing.mode !== 'continuous' && !snapshot.LB_EMAIL_FIRST_PILOT) {
       lbSet(store, snapshot, 'LB_EMAIL_FIRST_PILOT', existing);
     }

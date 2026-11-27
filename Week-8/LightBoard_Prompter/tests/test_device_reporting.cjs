@@ -59,7 +59,7 @@ test('private reader matches exact published firmware once; wrong hash cannot co
 });
 
 test('maintenance publication tracking verifies completed run and feed without claiming installation',()=>{
-  const h=environment();h.data.LB_RUNTIME_UPDATE_RUN_ID='321';
+  const h=environment();
   const state={mode:'continuous',active:false}, sha='a'.repeat(40);
   const manifest={schema_version:2,repository:'pmartin5-gif/HelloWorld',published:true,automatic_updates:true,
     foundation_id:h.report.foundation,build:{run_id:'321',commit_sha:sha},current:{version:h.report.version,
@@ -74,7 +74,8 @@ test('maintenance publication tracking verifies completed run and feed without c
     lbaLocked_:fn=>fn(h.store,h.store.getProperties()),lbaState_:()=>state,
     lbaRequire_:(ok,code)=>{if(!ok)throw Error(code);},lbaSave_:()=>{},lbaReport_:()=>({deviceConfirmed:false}),
     lbSet:(store,snapshot,k,v)=>{store.setProperty(k,JSON.stringify(v));snapshot[k]=JSON.stringify(v);},
-    lbghGet_:(snapshot,path)=>path.startsWith('/actions/')?run:path==='/commits/main'?{sha}:
+    lbghGet_:(snapshot,path)=>path.startsWith('/actions/workflows/')?{workflow_runs:[run]}:
+      path.startsWith('/actions/')?run:path==='/commits/main'?{sha}:
       {encoding:'base64',size:1000,content:Buffer.from(JSON.stringify(manifest)).toString('base64')}});
   vm.runInContext(readFileSync(join(__dirname,'../email/DeviceReports.gs'),'utf8'),h.ctx);
   assert.equal(h.ctx.trackRuntimeUpdatePublication().deviceConfirmed,false);
@@ -85,4 +86,22 @@ test('maintenance publication tracking verifies completed run and feed without c
   assert.throws(()=>h.ctx.trackRuntimeUpdatePublication());
   assert.equal(h.data['LB_EMAIL_PUBLISHED_lb-runtime-321'],saved);
   assert.equal(h.data['LB_DEVICE_INSTALLED_lb-runtime-321'],undefined);
+});
+
+test('private connection form authenticates before saving and never returns or transmits the key',()=>{
+  const h=environment(), url='https://script.google.com/macros/s/'+'x'.repeat(40)+'/exec';
+  Object.assign(h.ctx,{lbaLocked_:fn=>fn(h.store,h.store.getProperties()),lbReport:x=>x,
+    lbaRequire_:(ok,code)=>{if(!ok)throw Error(code);},
+    lbSet:(store,snapshot,k,v)=>{store.setProperty(k,JSON.stringify(v));snapshot[k]=JSON.stringify(v);},
+    UrlFetchApp:{fetch:(destination,options)=>{
+      assert.equal(destination,url);assert.equal(options.payload.includes(key),false);
+      const result=h.ctx.lbrHandle_(JSON.parse(options.payload),h.store,now);
+      return {getResponseCode:()=>200,getContentText:()=>JSON.stringify(result)};
+    }}});
+  vm.runInContext(readFileSync(join(__dirname,'../email/DeviceReports.gs'),'utf8'),h.ctx);
+  const result=h.ctx.connectDeviceReporting({url,key});
+  assert.equal(result.status,'configured');assert.equal(JSON.stringify(result).includes(key),false);
+  const saved=h.data.LB_DEVICE_REPORT_CONNECTION;
+  assert.throws(()=>h.ctx.connectDeviceReporting({url,key:'0'.repeat(64)}));
+  assert.equal(h.data.LB_DEVICE_REPORT_CONNECTION,saved);
 });

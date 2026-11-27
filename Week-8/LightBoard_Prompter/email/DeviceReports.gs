@@ -28,8 +28,11 @@ function lbdrFetch_(config) {
   return report;
 }
 function setupDeviceReportingConnection() {
+  const input = JSON.parse(PropertiesService.getScriptProperties().getProperty('LB_DEVICE_REPORT_SETUP') || 'null');
+  return connectDeviceReporting(input);
+}
+function connectDeviceReporting(input) {
   return lbaLocked_((store, snapshot) => {
-    const input = JSON.parse(snapshot.LB_DEVICE_REPORT_SETUP || 'null');
     lbaRequire_(input, 'REPORT_CONFIG');
     const config = {schemaVersion: 1, boardId: LBDR.board, url: input.url, key: input.key};
     lbdrConfig_({[LBDR.config]: JSON.stringify(config)});
@@ -69,7 +72,13 @@ function lbdrDelivery_(snapshot, jobId) {
 }
 function trackRuntimeUpdatePublication() {
   return lbaLocked_((store, snapshot) => {
-    const state = lbaState_(snapshot), id = snapshot.LB_RUNTIME_UPDATE_RUN_ID;
+    const state = lbaState_(snapshot);
+    let id = snapshot.LB_RUNTIME_UPDATE_RUN_ID;
+    if (!id) {
+      const recent = lbghGet_(snapshot, '/actions/workflows/lightboard-runtime-update.yml/runs?event=workflow_dispatch&branch=main&per_page=1');
+      lbaRequire_(Array.isArray(recent.workflow_runs) && recent.workflow_runs.length === 1, 'RUNTIME_UPDATE');
+      id = String(recent.workflow_runs[0].id);
+    }
     lbaRequire_(state && state.mode === 'continuous' && !state.active && !state.dispatchId &&
       /^[1-9][0-9]*$/.test(id || ''), 'RUNTIME_UPDATE');
     const run = lbghGet_(snapshot, '/actions/runs/' + id);

@@ -11,6 +11,12 @@ int main() {
   assert(allowedHttps(fresh) && strcmp(fresh, otherFresh) != 0);
   assert(strncmp(fresh, kFeedUrl, strlen(kFeedUrl)) == 0);
   assert(!feedRequestUrl(tooSmall, sizeof(tooSmall), 12, 1));
+  assert(apiFeedRequestUrl(fresh, sizeof(fresh), 12, 1));
+  assert(apiFeedUrl(fresh));
+  assert(!allowedHttps(fresh)); // API exception belongs only to feed requests, never firmware redirects.
+  assert(!apiFeedUrl("https://api.github.com/repos/other/repo/contents/manifest.json?ref=main"));
+  assert(!apiFeedUrl((std::string(kApiFeedUrl)+"&lb=wrong").c_str()));
+  assert(!apiFeedUrl((std::string(kApiFeedUrl)+"&lb=0000000000000000&other=1").c_str()));
   assert(reportingUrl("https://script.google.com/macros/s/abcdefghijklmnopqrstuv/exec"));
   assert(!reportingUrl("https://script.google.com.evil.test/macros/s/abcdefghijklmnopqrstuv/exec"));
   assert(!reportingUrl("https://script.google.com/macros/s/abcdefghijklmnopqrstuv/exec?key=secret"));

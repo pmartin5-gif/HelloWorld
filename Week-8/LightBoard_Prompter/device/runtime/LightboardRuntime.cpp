@@ -51,6 +51,7 @@ AutoSettings autoSettings = {1, 0, {0}};
 uint32_t lastAutomaticCheck = 0;
 bool feedAllowsAutomatic = false;
 uint32_t feedBoot = 0, feedSequence = 0;
+time_t feedApiResumeAt = 0;
 struct ReportSettings { uint32_t format; char url[256]; char key[65]; };
 ReportSettings reportSettings = {};
 struct InstallReceipt { uint32_t format; uint32_t address; uint32_t bytes;
@@ -270,13 +271,21 @@ struct Headers {
   char location[3072];
   bool rejected;
   int cacheAge;
+  int rateRemaining;
+  time_t rateReset;
 };
 esp_err_t httpEvent(esp_http_client_event_t* event) {
   if (event->event_id != HTTP_EVENT_ON_HEADER || !event->header_key || !event->header_value) return ESP_OK;
   Headers* h = (Headers*)event->user_data;
-  if (strcasecmp(event->header_key, "Age") == 0 && strlen(event->header_value) < 10 &&
+  if (strcasecmp(event->header_key, "Age") == 0 && event->header_value[0] && strlen(event->header_value) < 10 &&
       strspn(event->header_value, "0123456789") == strlen(event->header_value))
     h->cacheAge = atoi(event->header_value);
+  if (strcasecmp(event->header_key, "X-RateLimit-Remaining") == 0 && event->header_value[0] &&
+      strlen(event->header_value) < 8 && strspn(event->header_value, "0123456789") == strlen(event->header_value))
+    h->rateRemaining = atoi(event->header_value);
+  if (strcasecmp(event->header_key, "X-RateLimit-Reset") == 0 && event->header_value[0] &&
+      strlen(event->header_value) <= 10 && strspn(event->header_value, "0123456789") == strlen(event->header_value))
+    h->rateReset = (time_t)strtoull(event->header_value, nullptr, 10);
   if (strcasecmp(event->header_key, "Location") == 0) {
     if (strlen(event->header_value) >= sizeof(h->location)) h->rejected = true;
     else strcpy(h->location, event->header_value);
@@ -291,9 +300,9 @@ class HttpsStream {
   Headers headers = {};
   ~HttpsStream() { close(); }
   void close() { if (client) { esp_http_client_cleanup(client); client = nullptr; } }
-  bool open(const char* initial, bool freshFeed = false) {
+  bool open(const char* initial, bool freshFeed = false, bool apiFeed = false) {
     char url[3072];
-    if (!allowedHttps(initial) || !timeReady()) {
+    if ((!allowedHttps(initial) && !(apiFeed && apiFeedUrl(initial))) || !timeReady()) {
       Serial.println("LB_HTTPS_DIAG: initial URL policy or clock rejected"); return false;
     }
     strcpy(url, initial);
@@ -301,6 +310,7 @@ class HttpsStream {
       close();
       memset(&headers, 0, sizeof(headers));
       headers.cacheAge = -1;
+      headers.rateRemaining = -1;
       esp_http_client_config_t config = {};
       config.url = url;
       config.timeout_ms = 8000;
@@ -318,6 +328,10 @@ class HttpsStream {
       esp_http_client_set_header(client, "Accept-Encoding", "identity");
       esp_http_client_set_header(client, "Connection", "close");
       if (freshFeed) esp_http_client_set_header(client, "Cache-Control", "no-cache, max-age=0");
+      if (apiFeed) {
+        esp_http_client_set_header(client, "Accept", "application/vnd.github.raw+json");
+        esp_http_client_set_header(client, "X-GitHub-Api-Version", "2022-11-28");
+      }
       esp_err_t openResult = esp_http_client_open(client, 0);
       Serial.printf("LB_HTTPS_DIAG {\"hop\":%d,\"open_result\":%d,\"heap_free\":%u}\n",
           redirect, (int)openResult, ESP.getFreeHeap());
@@ -377,10 +391,25 @@ void probeFirmware(const char* url) {
 }
 bool downloadManifest(char* output, size_t capacity) {
   HttpsStream stream;
-  char requestUrl[192];
+  char requestUrl[192]; bool opened = false;
   if (!feedBoot) feedBoot = esp_random();
-  if (!feedRequestUrl(requestUrl, sizeof(requestUrl), feedBoot, ++feedSequence) ||
-      !stream.open(requestUrl, true)) { Serial.println("LB_STOP: verified HTTPS feed unavailable (Wi-Fi/clock/certificate/status)"); return false; }
+  if (timeReady() && time(nullptr) >= feedApiResumeAt &&
+      apiFeedRequestUrl(requestUrl, sizeof(requestUrl), feedBoot, ++feedSequence)) {
+    opened = stream.open(requestUrl, true, true);
+    // Forty normal checks/hour plus at most ten publication rechecks leaves
+    // headroom under GitHub's 60/hour unauthenticated IP limit. Honor shared-IP exhaustion.
+    if (stream.headers.rateRemaining == 0 && stream.headers.rateReset > time(nullptr))
+      feedApiResumeAt = stream.headers.rateReset + 5;
+    if (!opened && feedApiResumeAt <= time(nullptr)) feedApiResumeAt = time(nullptr) + 300;
+    Serial.printf("LB_FEED_SOURCE {\"source\":\"github_api\",\"available\":%s,\"rate_remaining\":%d}\n",
+      opened ? "true" : "false", stream.headers.rateRemaining);
+  }
+  if (!opened) {
+    stream.close();
+    opened = feedRequestUrl(requestUrl, sizeof(requestUrl), feedBoot, ++feedSequence) && stream.open(requestUrl, true);
+    Serial.println("LB_FEED_SOURCE {\"source\":\"raw_fallback\"}");
+  }
+  if (!opened) { Serial.println("LB_STOP: verified HTTPS feed unavailable (Wi-Fi/clock/certificate/status)"); return false; }
   int length = esp_http_client_get_content_length(stream.client);
   if (length > (int)capacity - 1) { Serial.println("LB_STOP: manifest exceeds bound"); return false; }
   size_t used = 0;
@@ -638,7 +667,7 @@ void provisionReporting(const char* key) {
 void automaticUpdate() {
   if (!autoSettings.enabled || !healthy || pendingVerify || terminalHealthFailure || provisionPhase ||
       reportProvisionPhase || !reconnectEnabled || WiFi.status() != WL_CONNECTED ||
-      !expired(millis(), lastAutomaticCheck, 60000)) return;
+      !expired(millis(), lastAutomaticCheck, 90000)) return;
   lastAutomaticCheck = millis();
   if (!checkFeed(false) || !feedAllowsAutomatic ||
       strcmp(checkedCandidate.version, LB_FIRMWARE_VERSION) == 0 ||
@@ -673,7 +702,7 @@ void command(char* input) {
     AutoSettings next = {1, strcmp(input, "auto-on") == 0 ? 1U : 0U, {0}};
     if (saveAutoSettings(next)) {
       lastAutomaticCheck = millis();
-      Serial.println(next.enabled ? "LB_AUTO_ENABLED: eligible published feed checked every 60 seconds" : "LB_AUTO_DISABLED");
+      Serial.println(next.enabled ? "LB_AUTO_ENABLED: eligible published feed checked every 90 seconds" : "LB_AUTO_DISABLED");
     } else Serial.println("LB_STOP: automatic setting was not saved");
   }
   else if (strcmp(input, "wifi-diagnose") == 0) diagnoseWifi();
