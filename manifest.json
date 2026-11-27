@@ -2,23 +2,23 @@
   "automatic_updates": true,
   "build": {
     "attempt": "1",
-    "commit_sha": "262c61ee6ef49330473a03dcb323cba6190aaf72",
-    "run_id": "45910268762"
+    "commit_sha": "cbbd00c5fcb5344d735b7b28b6465ff6b84319a6",
+    "run_id": "45914964569"
   },
   "channel": "ota-pilot",
   "current": {
-    "bytes": 1013680,
-    "release_tag": "lightboard-ota-45910268762-1",
-    "sha256": "883d810c81559d893691994813ec3e79383d66b86b4737ac2d921e92795434fe",
+    "bytes": 1030912,
+    "release_tag": "lightboard-ota-45914964569-1",
+    "sha256": "7a116bf2444ec7025386578b002bc58e4f4d77253b5f38782b7f235cd1f979f9",
     "source_sha256": "7fabd3e33bae871204e4cbff071339bda80dbe6f4388df782f3389efd1e955c7",
-    "url": "https://github.com/pmartin5-gif/HelloWorld/releases/download/lightboard-ota-45910268762-1/firmware.bin",
-    "version": "ota-pilot-85a093c4aa648ef301d2b626"
+    "url": "https://github.com/pmartin5-gif/HelloWorld/releases/download/lightboard-ota-45914964569-1/firmware.bin",
+    "version": "ota-pilot-a8f2d42917624da02ae2370e"
   },
   "device": "esp32-32x32",
-  "foundation_id": "a529d5f9a72ca4858e0ab09ae66ec5eaecff656fdeb6d6a4f040e40633959ec1",
+  "foundation_id": "65386614eb48384defc7091f1cd5f12b5b6d11feb4f6c9f3186d87ad098a094e",
   "fqbn": "esp32:esp32:esp32:UploadSpeed=921600,CPUFreq=240,FlashFreq=80,FlashMode=qio,FlashSize=4M,PartitionScheme=default,DebugLevel=none,PSRAM=disabled,LoopCore=1,EventsCore=1,EraseFlash=none,JTAGAdapter=default",
   "generation": {
-    "model_request_in_this_run": true,
+    "model_request_in_this_run": false,
     "response_sha256": "f584d43d98cf5b964d6816e1c96ed389867ed7e1922b897cf2bcbdc68ef92669",
     "run_id": "45910268762"
   },
@@ -67,31 +67,24 @@
     }
   },
   "ota_enabled": true,
-  "previous": {
-    "bytes": 1013472,
-    "release_tag": "lightboard-ota-45909431659-1",
-    "sha256": "95500ba044f1ca0a91a4b13b7f942bd82f45b1b33bb9010430e7c50aab2737d5",
-    "source_sha256": "13c8cc6f92ba401374ea2851cac4b2ea42ef38e654783d832b7775309f0f1a4a",
-    "url": "https://github.com/pmartin5-gif/HelloWorld/releases/download/lightboard-ota-45909431659-1/firmware.bin",
-    "version": "ota-pilot-e7ecea58155b2358bcde4504"
-  },
+  "previous": null,
   "published": true,
   "repository": "pmartin5-gif/HelloWorld",
   "scene": "generated",
   "schema_version": 2,
   "superseded_ota": {
     "compatible_for_ota": false,
-    "foundation_id": "f1244292bbdf180ad5ea8b4ffbf46c72b9772ef8ad2407276ae26e3786132522",
-    "manifest_sha256": "d67c09c2900be711160f05f588f7f384a896dba4e7c8f16ed4c3c1036934a667",
-    "manifest_url": "https://github.com/pmartin5-gif/HelloWorld/releases/download/lightboard-ota-45891588901-1/manifest.json"
+    "foundation_id": "a529d5f9a72ca4858e0ab09ae66ec5eaecff656fdeb6d6a4f040e40633959ec1",
+    "manifest_sha256": "489e2fb47993314fbd21b82ac05eb88951108a4db0787bea7f9e63365e69af37",
+    "manifest_url": "https://github.com/pmartin5-gif/HelloWorld/releases/download/lightboard-ota-45910268762-1/manifest.json"
   },
   "usb_recovery": {
-    "bytes": 1013360,
-    "release_tag": "lightboard-ota-45910268762-1",
-    "sha256": "62aa387e633786f4e6c14cb48201af0c4b14a46b059b5ea4c8ef7e164ece784a",
+    "bytes": 1030576,
+    "release_tag": "lightboard-ota-45914964569-1",
+    "sha256": "c0a5c6174855b7e9ff0db86e9ee5a0caef0c06f4f78884d2ef1429da17fe18b9",
     "source_sha256": "74dd87bbec18694cc78024a76bc045c177ee4958bd8fe8f9bfa18f9975df7724",
-    "url": "https://github.com/pmartin5-gif/HelloWorld/releases/download/lightboard-ota-45910268762-1/recovery.bin",
-    "version": "ota-pilot-10ec1a9d4bfbd65cb22e0ece"
+    "url": "https://github.com/pmartin5-gif/HelloWorld/releases/download/lightboard-ota-45914964569-1/recovery.bin",
+    "version": "ota-pilot-da2a76cacf77c6a0ee450465"
   },
   "usb_recovery_scope": "Application only; preserve matching bootloader/partitions and IDE recovery source"
 }
